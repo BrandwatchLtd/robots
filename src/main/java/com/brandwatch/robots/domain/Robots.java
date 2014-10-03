@@ -62,12 +62,16 @@ public final class Robots {
         @Nonnull
         private final ImmutableList.Builder<Directive> nonGroupDirectives = ImmutableList.builder();
 
-        public void withGroup(@Nonnull Group group) {
+        @Nonnull
+        public Builder withGroup(@Nonnull Group group) {
             groups.add(checkNotNull(group, "group is null"));
+            return this;
         }
 
-        public void withNonGroupDirective(@Nonnull Directive directive) {
+        @Nonnull
+        public Builder withNonGroupDirective(@Nonnull Directive directive) {
             nonGroupDirectives.add(checkNotNull(directive, "directive is null"));
+            return this;
         }
 
         @Nonnull

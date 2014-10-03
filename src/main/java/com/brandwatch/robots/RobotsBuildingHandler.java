@@ -7,7 +7,7 @@ import com.google.common.base.Supplier;
 
 import javax.annotation.Nonnull;
 
-class RobotsBuilderHandler implements RobotsTxtParserHandler, Supplier<Robots> {
+class RobotsBuildingHandler implements RobotsTxtParserHandler, Supplier<Robots> {
 
     @Nonnull
     private final Robots.Builder robots = new Robots.Builder();

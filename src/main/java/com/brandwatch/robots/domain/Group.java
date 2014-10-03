@@ -66,12 +66,16 @@ public final class Group {
         @Nonnull
         private final ImmutableList.Builder<Directive> directives = ImmutableList.builder();
 
-        public void withUserAgent(@Nonnull String userAgent) {
+        @Nonnull
+        public Builder withUserAgent(@Nonnull String userAgent) {
             userAgents.add(checkNotNull(userAgent, "userAgent is null"));
+            return this;
         }
 
-        public void withDirective(@Nonnull Directive directive) {
+        @Nonnull
+        public Builder withDirective(@Nonnull Directive directive) {
             directives.add(checkNotNull(directive, "directive is null"));
+            return this;
         }
 
         @Nonnull

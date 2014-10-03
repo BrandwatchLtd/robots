@@ -12,22 +12,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 
 @RunWith(Parameterized.class)
-public class RobotsBuilderHandlerDataTest extends AbstractDataTest {
+public class RobotsBuildingHandlerDataTest extends AbstractDataTest {
 
-    private RobotsBuilderHandler handler;
+    private RobotsBuildingHandler handler;
 
-    public RobotsBuilderHandlerDataTest(String resourceName) {
+    public RobotsBuildingHandlerDataTest(String resourceName) {
         super(resourceName);
     }
 
     @Before
     public void setup() throws IOException {
-        handler = new RobotsBuilderHandler();
-    }
-
-    @Test
-    public void whenParse_thenNoExceptionThrown() throws IOException, ParseException {
-        robotsTxtParser.parse(handler);
+        handler = new RobotsBuildingHandler();
     }
 
     @Test
