@@ -1,0 +1,9 @@
+User-agent: iisbot/1.0 (+http://www.iis.net/iisbot.html)
+Allow: /
+
+User-agent: *
+Disallow: /wp-admin/
+Disallow: /wp-includes/
+
+Sitemap: http://www.brandwatch.com/sitemap.xml.gz
+Sitemap: http://www.brandwatch.com/de/sitemap.xml.gz
