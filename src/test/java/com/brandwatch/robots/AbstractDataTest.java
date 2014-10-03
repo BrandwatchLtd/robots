@@ -1,6 +1,6 @@
-package com.brandwatch.robotstxt;
+package com.brandwatch.robots;
 
-import com.brandwatch.robotstxt.parser.RobotsTxtParser;
+import com.brandwatch.robots.parser.RobotsTxtParser;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Resources;

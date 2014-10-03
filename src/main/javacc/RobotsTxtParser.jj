@@ -25,7 +25,7 @@ options {
 
 PARSER_BEGIN(RobotsTxtParser)
 
-package com.brandwatch.robotstxt.parser;
+package com.brandwatch.robots.parser;
 
 public class RobotsTxtParser {
 }

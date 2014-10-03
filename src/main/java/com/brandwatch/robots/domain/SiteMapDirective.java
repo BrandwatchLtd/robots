@@ -1,4 +1,4 @@
-package com.brandwatch.robotstxt.domain;
+package com.brandwatch.robots.domain;
 
 import com.google.common.base.Objects;
 
@@ -8,31 +8,23 @@ import javax.annotation.concurrent.Immutable;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Immutable
-public final class PathDirective implements Directive {
-
-    @Nonnull
-    private final Field field;
+public final class SiteMapDirective implements Directive {
 
     @Nonnull
     private final String value;
 
-    public PathDirective(@Nonnull Field field, @Nonnull String value) {
-        this.field = checkNotNull(field, "field is null");
+    public SiteMapDirective(@Nonnull String value) {
         this.value = checkNotNull(value, "value is null");
     }
 
-    public enum Field {
-        allow, disallow
-    }
-
-    @Nonnull
     @Override
+    @Nonnull
     public String getField() {
-        return field.toString();
+        return "sitemap";
     }
 
-    @Nonnull
     @Override
+    @Nonnull
     public String getValue() {
         return value;
     }
@@ -41,21 +33,18 @@ public final class PathDirective implements Directive {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PathDirective that = (PathDirective) o;
-        return field == that.field && value.equals(that.value);
+        SiteMapDirective that = (SiteMapDirective) o;
+        return value.equals(that.value);
     }
 
     @Override
     public int hashCode() {
-        int result = field.hashCode();
-        result = 31 * result + value.hashCode();
-        return result;
+        return value.hashCode();
     }
 
     @Override
     public String toString() {
         return Objects.toStringHelper(this)
-                .add("field", field)
                 .add("value", value)
                 .toString();
     }

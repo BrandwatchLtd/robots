@@ -1,4 +1,4 @@
-package com.brandwatch.robotstxt.parser;
+package com.brandwatch.robots.parser;
 
 import javax.annotation.Nonnull;
 

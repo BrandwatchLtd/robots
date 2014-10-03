@@ -1,4 +1,4 @@
-package com.brandwatch.robotstxt.domain;
+package com.brandwatch.robots.domain;
 
 import javax.annotation.Nonnull;
 

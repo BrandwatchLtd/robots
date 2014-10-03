@@ -1,4 +1,4 @@
-package com.brandwatch.robotstxt.domain;
+package com.brandwatch.robots.domain;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;

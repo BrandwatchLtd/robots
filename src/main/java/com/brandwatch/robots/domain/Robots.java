@@ -1,4 +1,4 @@
-package com.brandwatch.robotstxt.domain;
+package com.brandwatch.robots.domain;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
@@ -10,14 +10,14 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Immutable
-public final class RobotsTxt {
+public final class Robots {
 
     @Nonnull
     private final ImmutableList<Group> groups;
     @Nonnull
     private final ImmutableList<Directive> nonGroupDirectives;
 
-    private RobotsTxt(@Nonnull Builder builder) {
+    private Robots(@Nonnull Builder builder) {
         groups = builder.groups.build();
         nonGroupDirectives = builder.nonGroupDirectives.build();
     }
@@ -36,8 +36,8 @@ public final class RobotsTxt {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RobotsTxt robotsTxt = (RobotsTxt) o;
-        return groups.equals(robotsTxt.groups) && nonGroupDirectives.equals(robotsTxt.nonGroupDirectives);
+        Robots robots = (Robots) o;
+        return groups.equals(robots.groups) && nonGroupDirectives.equals(robots.nonGroupDirectives);
     }
 
     @Override
@@ -71,8 +71,8 @@ public final class RobotsTxt {
         }
 
         @Nonnull
-        public RobotsTxt build() {
-            return new RobotsTxt(this);
+        public Robots build() {
+            return new Robots(this);
         }
 
     }

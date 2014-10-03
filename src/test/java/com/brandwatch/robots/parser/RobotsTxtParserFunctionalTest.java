@@ -1,4 +1,4 @@
-package com.brandwatch.robotstxt.parser;
+package com.brandwatch.robots.parser;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,7 +9,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.IOException;
 import java.io.Reader;
 
-import static com.brandwatch.robotstxt.AbstractDataTest.resourceReader;
+import static com.brandwatch.robots.AbstractDataTest.resourceReader;
 import static org.mockito.Mockito.inOrder;
 
 @RunWith(MockitoJUnitRunner.class)

@@ -1,6 +1,6 @@
-package com.brandwatch.robotstxt.parser;
+package com.brandwatch.robots.parser;
 
-import com.brandwatch.robotstxt.AbstractDataTest;
+import com.brandwatch.robots.AbstractDataTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
