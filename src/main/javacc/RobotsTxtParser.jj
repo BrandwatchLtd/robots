@@ -1,0 +1,152 @@
+
+options {
+  LOOKAHEAD = 1;
+  CHOICE_AMBIGUITY_CHECK = 2;
+  OTHER_AMBIGUITY_CHECK = 1;
+  STATIC = false;
+  SUPPORT_CLASS_VISIBILITY_PUBLIC = false;
+  DEBUG_PARSER = false;
+  DEBUG_LOOKAHEAD = false;
+  DEBUG_TOKEN_MANAGER = false;
+  ERROR_REPORTING = true;
+  JAVA_UNICODE_ESCAPE = false;
+  UNICODE_INPUT = true;
+  IGNORE_CASE = false;
+  USER_TOKEN_MANAGER = false;
+  USER_CHAR_STREAM = false;
+  BUILD_PARSER = true;
+  BUILD_TOKEN_MANAGER = true;
+  TOKEN_MANAGER_USES_PARSER = false;
+  TOKEN_EXTENDS = "";
+  TOKEN_FACTORY = "";
+  SANITY_CHECK = true;
+  FORCE_LA_CHECK = false;
+}
+
+PARSER_BEGIN(RobotsTxtParser)
+
+package com.brandwatch.robotstxt.parser;
+
+public class RobotsTxtParser {
+}
+
+PARSER_END(RobotsTxtParser)
+
+SKIP :
+{
+    " " | "\t" | "\f"
+}
+
+TOKEN : {
+    < EOL: ( "\n\r" | "\n" | "\r") >
+}
+
+<DEFAULT>
+TOKEN [IGNORE_CASE] :
+{
+    < USER_AGENT: "user-agent" >
+    | < ALLOW: "allow" >
+    | < DISALLOW: "disallow" >
+    | < SITE_MAP: "sitemap" >
+    | < OTHER_FIELD: ( ~[":", "\n", "\r", "#"] )+ >
+}
+
+<DEFAULT>
+TOKEN :
+{
+    < DELIMITER: [":"] (" "  | "\t" | "\f")* > : IN_TEXT_VALUE
+}
+
+<DEFAULT, IN_TEXT_VALUE>
+MORE :
+{
+	"#" : IN_COMMENT
+}
+
+<IN_COMMENT>
+SPECIAL_TOKEN :
+{
+    <COMMENT: <EOL> > : DEFAULT
+}
+
+<IN_COMMENT>
+MORE :
+{
+	< ~[] >
+}
+
+<IN_TEXT_VALUE>
+TOKEN:
+{
+  <TEXT_VALUE: ( ~["\n","\r", "#"] )* > : DEFAULT
+}
+
+void parse(RobotsTxtHandler handler) : {}
+{
+    ( <EOL> )*
+    (
+        nonGroupLine(handler)
+        |
+        otherLine(handler)
+    )*
+    ( entry(handler) )*
+    <EOF>
+}
+
+void entry(RobotsTxtHandler handler) : {}
+{
+    { handler.startEntry(); }
+    ( LOOKAHEAD(1) startGroupLine(handler) )+
+    (
+        groupMemberLine(handler)
+        |
+        nonGroupLine(handler)
+        |
+        otherLine(handler)
+    )*
+    { handler.endEntry(); }
+}
+
+void startGroupLine(RobotsTxtHandler handler) : {}
+{
+    <USER_AGENT> <DELIMITER> { handler.userAgent(textValue()); } eol()
+}
+
+void groupMemberLine(RobotsTxtHandler handler) : {}
+{
+    (
+        <ALLOW> <DELIMITER> { handler.allow(textValue()); }
+    |
+        <DISALLOW> <DELIMITER> { handler.disallow(textValue()); }
+    ) eol()
+}
+
+void nonGroupLine(RobotsTxtHandler handler) : {}
+{
+    <SITE_MAP> <DELIMITER> { handler.siteMap(textValue()); } eol()
+}
+
+void otherLine(RobotsTxtHandler handler) : {
+    Token field;
+    String value;
+}
+{
+    field = <OTHER_FIELD> <DELIMITER> value = textValue() eol()
+    { handler.otherDirective(field.image, value); }
+}
+
+
+String textValue() : {
+    Token token;
+}
+{
+    token = <TEXT_VALUE>
+    {
+        return token.image.trim();
+    }
+}
+
+void eol() : {}
+{
+    ((<EOL>)+ | <EOF>)
+}
