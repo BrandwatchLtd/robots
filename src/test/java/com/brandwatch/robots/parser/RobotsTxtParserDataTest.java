@@ -17,11 +17,11 @@ public class RobotsTxtParserDataTest extends AbstractDataTest {
         super(resourceName);
     }
 
-    private RobotsTxtHandler handler;
+    private RobotsTxtParserHandler handler;
 
     @Before
     public void setup() throws IOException {
-        handler = mock(RobotsTxtHandler.class);
+        handler = mock(RobotsTxtParserHandler.class);
     }
 
 

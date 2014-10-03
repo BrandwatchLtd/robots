@@ -16,7 +16,7 @@ import static org.mockito.Mockito.inOrder;
 public class RobotsTxtParserFunctionalTest {
 
     @Mock
-    private RobotsTxtHandler handler;
+    private RobotsTxtParserHandler handler;
 
     @Test
     public void givenDailyMailBoards_whenParse_thenHandlerInteractionsAreExpected() throws IOException, ParseException {

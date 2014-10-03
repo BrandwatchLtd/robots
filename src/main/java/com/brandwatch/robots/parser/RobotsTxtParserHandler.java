@@ -2,7 +2,7 @@ package com.brandwatch.robots.parser;
 
 import javax.annotation.Nonnull;
 
-public interface RobotsTxtHandler {
+public interface RobotsTxtParserHandler {
 
     void startEntry();
 

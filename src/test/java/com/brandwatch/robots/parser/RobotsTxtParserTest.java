@@ -18,7 +18,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 public class RobotsTxtParserTest {
 
     @Mock
-    private RobotsTxtHandler handler;
+    private RobotsTxtParserHandler handler;
 
     @Test(expected = NullPointerException.class)
     public void givenNullInputStream_whenNewInstance_thenThrowsNPE() {
