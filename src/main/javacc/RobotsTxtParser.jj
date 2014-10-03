@@ -81,7 +81,7 @@ TOKEN:
   <TEXT_VALUE: ( ~["\n","\r", "#"] )* > : DEFAULT
 }
 
-void parse(RobotsTxtHandler handler) : {}
+void parse(RobotsTxtParserHandler handler) : {}
 {
     ( <EOL> )*
     (
@@ -93,7 +93,7 @@ void parse(RobotsTxtHandler handler) : {}
     <EOF>
 }
 
-void entry(RobotsTxtHandler handler) : {}
+void entry(RobotsTxtParserHandler handler) : {}
 {
     { handler.startEntry(); }
     ( LOOKAHEAD(1) startGroupLine(handler) )+
@@ -107,12 +107,12 @@ void entry(RobotsTxtHandler handler) : {}
     { handler.endEntry(); }
 }
 
-void startGroupLine(RobotsTxtHandler handler) : {}
+void startGroupLine(RobotsTxtParserHandler handler) : {}
 {
     <USER_AGENT> <DELIMITER> { handler.userAgent(textValue()); } eol()
 }
 
-void groupMemberLine(RobotsTxtHandler handler) : {}
+void groupMemberLine(RobotsTxtParserHandler handler) : {}
 {
     (
         <ALLOW> <DELIMITER> { handler.allow(textValue()); }
@@ -121,12 +121,12 @@ void groupMemberLine(RobotsTxtHandler handler) : {}
     ) eol()
 }
 
-void nonGroupLine(RobotsTxtHandler handler) : {}
+void nonGroupLine(RobotsTxtParserHandler handler) : {}
 {
     <SITE_MAP> <DELIMITER> { handler.siteMap(textValue()); } eol()
 }
 
-void otherLine(RobotsTxtHandler handler) : {
+void otherLine(RobotsTxtParserHandler handler) : {
     Token field;
     String value;
 }

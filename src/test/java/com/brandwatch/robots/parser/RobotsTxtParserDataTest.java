@@ -13,11 +13,11 @@ import static org.mockito.Mockito.mock;
 @RunWith(Parameterized.class)
 public class RobotsTxtParserDataTest extends AbstractDataTest {
 
+    private RobotsTxtParserHandler handler;
+
     public RobotsTxtParserDataTest(String resourceName) {
         super(resourceName);
     }
-
-    private RobotsTxtParserHandler handler;
 
     @Before
     public void setup() throws IOException {

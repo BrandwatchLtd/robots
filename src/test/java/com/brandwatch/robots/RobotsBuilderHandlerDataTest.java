@@ -1,6 +1,5 @@
 package com.brandwatch.robots;
 
-import com.brandwatch.robots.domain.Robots;
 import com.brandwatch.robots.parser.ParseException;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,10 +36,4 @@ public class RobotsBuilderHandlerDataTest extends AbstractDataTest {
         assertThat(handler.get(), notNullValue());
     }
 
-    @Test
-    public void whenParser_then() throws IOException, ParseException {
-        robotsTxtParser.parse(handler);
-        Robots robots = handler.get();
-        System.out.println(robots);
-    }
 }

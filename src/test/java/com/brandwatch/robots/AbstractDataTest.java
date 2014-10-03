@@ -15,8 +15,9 @@ import static com.google.common.io.Resources.getResource;
 public abstract class AbstractDataTest {
 
     private final String resourceName;
+    protected RobotsTxtParser robotsTxtParser;
 
-    public AbstractDataTest(String resourceName) {
+    protected AbstractDataTest(String resourceName) {
         this.resourceName = resourceName;
     }
 
@@ -37,17 +38,15 @@ public abstract class AbstractDataTest {
                 .build();
     }
 
-    protected RobotsTxtParser robotsTxtParser;
-
-    @Before
-    public final void setupAbstractTest() throws IOException {
-        robotsTxtParser = new RobotsTxtParser(resourceReader(resourceName));
-    }
-
     public static Reader resourceReader(String name) throws IOException {
         return Resources.asCharSource(
                 getResource(AbstractDataTest.class, name), Charsets.UTF_8
         ).openBufferedStream();
+    }
+
+    @Before
+    public final void setupAbstractTest() throws IOException {
+        robotsTxtParser = new RobotsTxtParser(resourceReader(resourceName));
     }
 
 }

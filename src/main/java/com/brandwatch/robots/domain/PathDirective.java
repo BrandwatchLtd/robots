@@ -21,10 +21,6 @@ public final class PathDirective implements Directive {
         this.value = checkNotNull(value, "value is null");
     }
 
-    public enum Field {
-        allow, disallow
-    }
-
     @Nonnull
     @Override
     public String getField() {
@@ -58,5 +54,9 @@ public final class PathDirective implements Directive {
                 .add("field", field)
                 .add("value", value)
                 .toString();
+    }
+
+    public enum Field {
+        allow, disallow
     }
 }
