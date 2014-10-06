@@ -1,9 +1,11 @@
 package com.brandwatch.robots;
 
+import com.brandwatch.robots.domain.Group;
 import com.brandwatch.robots.domain.Robots;
 import com.brandwatch.robots.net.RobotsDownloader;
 import com.brandwatch.robots.net.RobotsSource;
 import com.brandwatch.robots.net.RobotsSourceFactory;
+import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -20,15 +22,17 @@ public class RobotExclusionServiceImpl extends AbstractIdleService implements Ro
 
     private static final Logger log = LoggerFactory.getLogger(RobotExclusionServiceImpl.class);
 
-    private final RobotsSourceFactory sourceFactory;
-    private final RobotsDownloader downloader;
+    private RobotsSourceFactory sourceFactory;
+    private RobotsDownloader downloader;
+    private RobotsUtilities utilities;
 
     private LoadingCache<RobotsSource, Robots> robotsCache;
 
 
-    public RobotExclusionServiceImpl(RobotsSourceFactory sourceFactory, RobotsDownloader downloader) {
+    public RobotExclusionServiceImpl(RobotsSourceFactory sourceFactory, RobotsDownloader downloader, RobotsUtilities utilities) {
         this.sourceFactory = checkNotNull(sourceFactory, "sourceFactory");
         this.downloader = checkNotNull(downloader, "downloader");
+        this.utilities = checkNotNull(utilities, "utilities");
     }
 
     @Override
@@ -62,8 +66,20 @@ public class RobotExclusionServiceImpl extends AbstractIdleService implements Ro
             return true;
         }
 
-        // TODO:
-        // get group that best applies to our user agent
+        if (robots.getGroups().isEmpty()) {
+            return true;
+        }
+
+        String crawlerAgent = "magpie";
+
+        Optional<Group> group = utilities.getBestMatchingGroup(robots.getGroups(), crawlerAgent);
+
+        if (!group.isPresent()) {
+            return true;
+        }
+
+
+        //
         // match resourceUri path against path in the group
         // return whether paths match resourceUri path
 
