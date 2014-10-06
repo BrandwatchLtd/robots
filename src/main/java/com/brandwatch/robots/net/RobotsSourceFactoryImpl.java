@@ -15,7 +15,7 @@ public class RobotsSourceFactoryImpl implements RobotsSourceFactory {
         log.debug("Resolving robot.txt URL for resource: {}", resourceUri);
         try {
             final URI robotsUri = new RobotsURIBuilder()
-                    .copyFrom(resourceUri)
+                    .fromUri(resourceUri)
                     .build();
             log.debug("Resolved robot URI for resource {} to: {}", resourceUri, robotsUri);
             return new RobotsSource(robotsUri);

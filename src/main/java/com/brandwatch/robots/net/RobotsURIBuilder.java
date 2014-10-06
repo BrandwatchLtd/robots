@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
+import java.net.IDN;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -33,6 +34,7 @@ final class RobotsURIBuilder {
     @Nonnull
     public RobotsURIBuilder withScheme(@Nonnull String scheme) {
         checkNotNull(scheme, "scheme is null");
+        checkArgument(!scheme.isEmpty(), "empty scheme");
         this.scheme = Optional.of(scheme);
         return this;
     }
@@ -40,6 +42,7 @@ final class RobotsURIBuilder {
     @Nonnull
     public RobotsURIBuilder withUserInfo(@Nonnull String userInfo) {
         checkNotNull(userInfo, "userInfo is null");
+        checkArgument(!userInfo.isEmpty(), "empty userInfo");
         this.userInfo = Optional.of(userInfo);
         return this;
     }
@@ -47,46 +50,53 @@ final class RobotsURIBuilder {
     @Nonnull
     public RobotsURIBuilder withHost(@Nonnull String host) {
         checkNotNull(host, "host is null");
-        this.host = Optional.of(host);
+        checkArgument(!host.isEmpty(), "host userInfo");
+        this.host = Optional.of(IDN.toASCII(host));
         return this;
     }
 
     @Nonnull
     public RobotsURIBuilder withPort(int port) {
-        checkArgument(port > 0, "port is negative");
+        checkArgument(port >= 0, "port is negative");
+        checkArgument(port <= 65535, "port too large");
         this.port = Optional.of(port);
         return this;
     }
 
     @Nonnull
-    public RobotsURIBuilder copyFrom(@Nonnull URI uri) {
-        checkNotNull(uri, "uri is null");
-        return from(Optional.fromNullable(uri.getScheme()),
-                Optional.fromNullable(uri.getUserInfo()),
-                uri.getHost(),
-                Optional.fromNullable(uri.getPort()));
+    public RobotsURIBuilder fromUriString(@Nonnull String uriString) {
+        return fromUri(URI.create(IDN.toASCII(uriString)));
     }
 
     @Nonnull
-    public RobotsURIBuilder copyFrom(@Nonnull URL uri) {
+    public RobotsURIBuilder fromUri(@Nonnull URI uri) {
         checkNotNull(uri, "uri is null");
-        return from(Optional.fromNullable(uri.getProtocol()),
+        return from(uri.getScheme(),
                 Optional.fromNullable(uri.getUserInfo()),
                 uri.getHost(),
-                Optional.fromNullable(uri.getPort()));
+                uri.getPort() >= 0 ? Optional.of(uri.getPort()) : Optional.<Integer>absent());
     }
 
     @Nonnull
-    private RobotsURIBuilder from(@Nonnull Optional<String> scheme,
+    public RobotsURIBuilder fromURL(@Nonnull URL url) {
+        checkNotNull(url, "uri is null");
+        return from(url.getProtocol(),
+                Optional.fromNullable(url.getUserInfo()),
+                url.getHost(),
+                url.getPort() >= 0 ? Optional.of(url.getPort()) : Optional.<Integer>absent());
+    }
+
+    @Nonnull
+    private RobotsURIBuilder from(@Nonnull String scheme,
                                   @Nonnull Optional<String> userInfo,
                                   @Nonnull String host,
                                   @Nonnull Optional<Integer> port) {
+        checkNotNull(scheme, "scheme");
+        checkNotNull(host, "host");
+        withScheme(scheme);
         withHost(host);
         if (port.isPresent()) {
             withPort(port.get());
-        }
-        if (scheme.isPresent()) {
-            withScheme(scheme.get());
         }
         if (userInfo.isPresent()) {
             withUserInfo(userInfo.get());
@@ -100,7 +110,7 @@ final class RobotsURIBuilder {
             throw new IllegalStateException("Required field 'host' is not set.");
         }
         if (!scheme.isPresent()) {
-            setDefaultSchema();
+            throw new IllegalStateException("Required field 'scheme' is not set.");
         }
         if (!port.isPresent()) {
             setDefaultPort();
@@ -112,19 +122,12 @@ final class RobotsURIBuilder {
         }
     }
 
-    private void setDefaultSchema() {
-        if (port.isPresent() && Defaults.SCHEMA_FOR_PORT.containsKey(port.get())) {
-            scheme = Optional.of(Defaults.SCHEMA_FOR_PORT.get(port.get()));
-        } else {
-            scheme = Optional.of(Defaults.SCHEMA);
-        }
-    }
-
     private void setDefaultPort() {
         if (scheme.isPresent() && Defaults.PORT_FOR_SCHEMA.containsKey(scheme.get().toLowerCase())) {
             port = Optional.of(Defaults.PORT_FOR_SCHEMA.get(scheme.get().toLowerCase()));
+        } else {
+            port = Optional.of(Defaults.PORT);
         }
-        port = Optional.of(Defaults.PORT);
     }
 
     @Immutable
@@ -134,27 +137,13 @@ final class RobotsURIBuilder {
         private static final int PORT = 80;
 
         @Nonnull
-        private static final String SCHEMA = "http";
-
-        @Nonnull
         private static final Map<String, Integer> PORT_FOR_SCHEMA;
 
-        @Nonnull
-        private static final Map<Integer, String> SCHEMA_FOR_PORT;
-
         static {
-            SCHEMA_FOR_PORT = ImmutableMap.<Integer, String>builder()
-                    .put(80, "http")
-                    .put(443, "https")
-                    .put(20, "ftp")
-                    .put(21, "ftp")
-                    .put(989, "ftps")
-                    .put(990, "ftps")
-                    .build();
             PORT_FOR_SCHEMA = ImmutableMap.<String, Integer>builder()
                     .put("http", 80)
                     .put("https", 443)
-                    .put("ftp", 20)
+                    .put("ftp", 21)
                     .put("ftps", 989)
                     .build();
         }
