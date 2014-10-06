@@ -3,6 +3,7 @@ package com.brandwatch.robots.net;
 import com.brandwatch.robots.domain.Robots;
 import com.brandwatch.robots.parser.ParseException;
 import com.brandwatch.robots.parser.RobotsTxtParser;
+import com.google.common.io.CharSource;
 import com.google.common.io.Closer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,7 @@ public class RobotsDownloaderImpl implements RobotsDownloader {
 
     @Nonnull
     @Override
-    public Robots load(@Nonnull RobotsSource robotsSource) {
+    public Robots load(@Nonnull CharSource robotsSource) {
         checkNotNull(robotsSource, "robotsSource");
 
         final RobotsBuildingHandler handler = new RobotsBuildingHandler();
