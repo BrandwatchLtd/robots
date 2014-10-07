@@ -36,9 +36,18 @@ public class RobotExclusionServiceImpl extends AbstractIdleService implements Ro
 
     @Override
     protected void startUp() throws Exception {
+        log.info("Starting up");
+
+
+        final long expires = 24;
+        final TimeUnit expiresUnit = TimeUnit.HOURS;
+        final long maxSize = 10000;
+
+        log.debug("Initializing cache (maxSize: {}, expires after: {} {})", maxSize, expires, expiresUnit);
+
         robotsCache = CacheBuilder.newBuilder()
-                .maximumSize(10000)
-                .expireAfterWrite(24, TimeUnit.HOURS)
+                .maximumSize(maxSize)
+                .expireAfterWrite(expires, expiresUnit)
                 .recordStats()
                 .build(new CacheLoader<CharSource, Robots>() {
                     @Override
@@ -50,6 +59,7 @@ public class RobotExclusionServiceImpl extends AbstractIdleService implements Ro
 
     @Override
     protected void shutDown() throws Exception {
+        log.info("Shutting down");
         robotsCache.invalidateAll();
         robotsCache.cleanUp();
         log.debug("Cache stats: {}", robotsCache.stats().toString());
@@ -59,15 +69,18 @@ public class RobotExclusionServiceImpl extends AbstractIdleService implements Ro
     public boolean isAllowed(@Nonnull URI resourceUri) {
         checkNotNull(resourceUri, "resourceUri is null");
 
+        log.debug("evaluating: {}", resourceUri);
         final Robots robots;
         try {
             CharSource source = sourceFactory.createFor(resourceUri);
             robots = robotsCache.getUnchecked(source);
         } catch (RuntimeException e) {
+            log.debug("robots.txt download failure; allowing: {}", resourceUri);
             return true;
         }
 
         if (robots.getGroups().isEmpty()) {
+            log.debug("robots.txt contains no agent groups; allowing: {}", resourceUri);
             return true;
         }
 
@@ -77,15 +90,19 @@ public class RobotExclusionServiceImpl extends AbstractIdleService implements Ro
         Optional<Group> group = utilities.getBestMatchingGroup(robots.getGroups(), crawlerAgent);
 
         if (!group.isPresent()) {
+            log.debug("No matching groups; allowing: {}", resourceUri);
             return true;
         }
 
         for (PathDirective pathDirective : group.get().getDirectives(PathDirective.class)) {
             if (pathDirective.matches(resourceUri)) {
+                log.debug("Path directive {} matches; {}: {}", pathDirective.getValue(),
+                        pathDirective.isAllowed() ? "allowing" : "disallowing" , resourceUri);
                 return pathDirective.isAllowed();
             }
         }
 
+        log.debug("No matching path directive; allowing: {}", resourceUri);
         return true;
     }
 

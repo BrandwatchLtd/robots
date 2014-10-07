@@ -37,7 +37,7 @@ public final class Group {
     public <T extends Directive> List<T> getDirectives(Class<T> directiveType) {
         ImmutableList.Builder<T> result = ImmutableList.builder();
         for (Directive directive : directives) {
-            if (directiveType.isAssignableFrom(directiveType.getClass())) {
+            if (directiveType.isAssignableFrom(directive.getClass())) {
                 result.add((T) directive);
             }
         }
