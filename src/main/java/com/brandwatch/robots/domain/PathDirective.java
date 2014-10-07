@@ -43,6 +43,10 @@ public final class PathDirective implements Directive {
         return pattern.matcher(uri.getPath()).matches();
     }
 
+    public boolean isAllowed() {
+        return field.isAllowed();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -67,6 +71,19 @@ public final class PathDirective implements Directive {
     }
 
     public enum Field {
-        allow, disallow
+        allow {
+            @Override
+            public boolean isAllowed() {
+                return true;
+            }
+        },
+        disallow {
+            @Override
+            public boolean isAllowed() {
+                return false;
+            }
+        };
+
+        public abstract boolean isAllowed();
     }
 }

@@ -1,6 +1,7 @@
 package com.brandwatch.robots;
 
 import com.brandwatch.robots.domain.Group;
+import com.brandwatch.robots.domain.PathDirective;
 import com.brandwatch.robots.domain.Robots;
 import com.brandwatch.robots.net.RobotsCharSourceFactory;
 import com.google.common.base.Optional;
@@ -12,6 +13,7 @@ import com.google.common.util.concurrent.AbstractIdleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
@@ -24,9 +26,7 @@ public class RobotExclusionServiceImpl extends AbstractIdleService implements Ro
     private RobotsCharSourceFactory sourceFactory;
     private RobotsDownloader downloader;
     private RobotsUtilities utilities;
-
     private LoadingCache<CharSource, Robots> robotsCache;
-
 
     public RobotExclusionServiceImpl(RobotsCharSourceFactory sourceFactory, RobotsDownloader downloader, RobotsUtilities utilities) {
         this.sourceFactory = checkNotNull(sourceFactory, "sourceFactory");
@@ -51,11 +51,13 @@ public class RobotExclusionServiceImpl extends AbstractIdleService implements Ro
     @Override
     protected void shutDown() throws Exception {
         robotsCache.invalidateAll();
+        robotsCache.cleanUp();
         log.debug("Cache stats: {}", robotsCache.stats().toString());
     }
 
     @Override
-    public boolean isAllowed(URI resourceUri) {
+    public boolean isAllowed(@Nonnull URI resourceUri) {
+        checkNotNull(resourceUri, "resourceUri is null");
 
         final Robots robots;
         try {
@@ -69,6 +71,7 @@ public class RobotExclusionServiceImpl extends AbstractIdleService implements Ro
             return true;
         }
 
+        // FIXME
         String crawlerAgent = "magpie";
 
         Optional<Group> group = utilities.getBestMatchingGroup(robots.getGroups(), crawlerAgent);
@@ -77,12 +80,13 @@ public class RobotExclusionServiceImpl extends AbstractIdleService implements Ro
             return true;
         }
 
+        for (PathDirective pathDirective : group.get().getDirectives(PathDirective.class)) {
+            if (pathDirective.matches(resourceUri)) {
+                return pathDirective.isAllowed();
+            }
+        }
 
-        //
-        // match resourceUri path against path in the group
-        // return whether paths match resourceUri path
-
-        return false;
+        return true;
     }
 
 

@@ -33,6 +33,17 @@ public final class Group {
         return directives;
     }
 
+    @Nonnull
+    public <T extends Directive> List<T> getDirectives(Class<T> directiveType) {
+        ImmutableList.Builder<T> result = ImmutableList.builder();
+        for (Directive directive : directives) {
+            if (directiveType.isAssignableFrom(directiveType.getClass())) {
+                result.add((T) directive);
+            }
+        }
+        return result.build();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
