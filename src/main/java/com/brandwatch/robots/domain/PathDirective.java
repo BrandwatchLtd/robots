@@ -3,6 +3,7 @@ package com.brandwatch.robots.domain;
 import com.google.common.base.Objects;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import java.net.URI;
 import java.util.regex.Pattern;
@@ -39,7 +40,7 @@ public final class PathDirective implements Directive {
         return value;
     }
 
-    public boolean matches(URI uri) {
+    public boolean matches(@Nonnull URI uri) {
         return pattern.matcher(uri.getPath()).matches();
     }
 
@@ -48,7 +49,7 @@ public final class PathDirective implements Directive {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PathDirective that = (PathDirective) o;
@@ -62,6 +63,7 @@ public final class PathDirective implements Directive {
         return result;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return Objects.toStringHelper(this)

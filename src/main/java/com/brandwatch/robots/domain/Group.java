@@ -4,6 +4,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import java.util.List;
 
@@ -34,18 +35,18 @@ public final class Group {
     }
 
     @Nonnull
-    public <T extends Directive> List<T> getDirectives(Class<T> directiveType) {
+    public <T extends Directive> List<T> getDirectives(@Nonnull Class<T> directiveType) {
         ImmutableList.Builder<T> result = ImmutableList.builder();
         for (Directive directive : directives) {
             if (directiveType.isAssignableFrom(directive.getClass())) {
-                result.add((T) directive);
+                result.add(directiveType.cast(directive));
             }
         }
         return result.build();
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Group group = (Group) o;
@@ -60,6 +61,7 @@ public final class Group {
         return result;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return Objects.toStringHelper(this)

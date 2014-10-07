@@ -19,7 +19,7 @@ public class RobotsDownloaderImpl implements RobotsDownloader {
     private static final Logger log = LoggerFactory.getLogger(RobotsDownloaderImpl.class);
     private final RobotsUtilities utilities;
 
-    public RobotsDownloaderImpl(RobotsUtilities utilities) {
+    public RobotsDownloaderImpl(@Nonnull RobotsUtilities utilities) {
         this.utilities = checkNotNull(utilities, "utilities is null");
     }
 
@@ -41,7 +41,7 @@ public class RobotsDownloaderImpl implements RobotsDownloader {
 
             } catch (ParseException e) {
                 log.warn("Failed to parse robots.txt: ", e);
-                closer.rethrow(e);
+                throw closer.rethrow(e);
             } catch (Throwable t) {
                 log.warn("Failed to download robots.txt: ", t);
                 throw closer.rethrow(t);

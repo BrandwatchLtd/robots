@@ -4,6 +4,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public final class Robots {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Robots robots = (Robots) o;
@@ -47,6 +48,7 @@ public final class Robots {
         return result;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return Objects.toStringHelper(this)

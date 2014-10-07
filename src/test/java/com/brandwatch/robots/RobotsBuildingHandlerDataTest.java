@@ -18,7 +18,6 @@ import static org.mockito.Mockito.when;
 @RunWith(Parameterized.class)
 public class RobotsBuildingHandlerDataTest extends AbstractDataTest {
 
-    private RobotsUtilities utilities;
     private RobotsBuildingHandler handler;
 
     public RobotsBuildingHandlerDataTest(String resourceName) {
@@ -27,7 +26,7 @@ public class RobotsBuildingHandlerDataTest extends AbstractDataTest {
 
     @Before
     public void setup() throws IOException {
-        utilities = mock(RobotsUtilities.class);
+        RobotsUtilities utilities = mock(RobotsUtilities.class);
         when(utilities.compilePathExpression(anyString())).thenReturn(Pattern.compile(""));
         handler = new RobotsBuildingHandler(utilities);
     }

@@ -133,20 +133,16 @@ final class RobotsURIBuilder {
     @Immutable
     private static final class Defaults {
 
-        @Nonnull
         private static final int PORT = 80;
 
         @Nonnull
-        private static final Map<String, Integer> PORT_FOR_SCHEMA;
-
-        static {
-            PORT_FOR_SCHEMA = ImmutableMap.<String, Integer>builder()
-                    .put("http", 80)
-                    .put("https", 443)
-                    .put("ftp", 21)
-                    .put("ftps", 989)
-                    .build();
-        }
+        private static final Map<String, Integer> PORT_FOR_SCHEMA
+                = ImmutableMap.<String, Integer>builder()
+                .put("http", 80)
+                .put("https", 443)
+                .put("ftp", 21)
+                .put("ftps", 989)
+                .build();
 
     }
 }

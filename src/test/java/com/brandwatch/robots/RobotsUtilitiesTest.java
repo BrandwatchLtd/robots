@@ -9,6 +9,7 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import javax.annotation.Nonnull;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
@@ -178,8 +179,11 @@ public class RobotsUtilitiesTest {
     @RunWith(Parameterized.class)
     public static class GetBestMatchingGroupDataTests {
 
+        @Nonnull
         private static final Group firstGroup = new Group.Builder().withUserAgent("googlebot-news").build();
+        @Nonnull
         private static final Group secondGroup = new Group.Builder().withUserAgent("*").build();
+        @Nonnull
         private static final Group thirdGroup = new Group.Builder().withUserAgent("googlebot").build();
         private static final List<Group> groups = ImmutableList.<Group>builder()
                 .add(firstGroup).add(secondGroup).add(thirdGroup)
@@ -240,12 +244,13 @@ public class RobotsUtilitiesTest {
     public static class CompilePathExpressionDataTests {
 
         private final String pathPattern;
+        @Nonnull
         private final URI uri;
         private final boolean expectedResult;
 
         private RobotsUtilities utilities;
 
-        public CompilePathExpressionDataTests(String pathPattern, String path, boolean expectedResult) {
+        public CompilePathExpressionDataTests(String pathPattern, @Nonnull String path, boolean expectedResult) {
             this.pathPattern = pathPattern;
             this.uri = URI.create("http://www.example.com" + (path.startsWith("/") ? "" : "/") + path);
             this.expectedResult = expectedResult;

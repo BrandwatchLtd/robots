@@ -19,7 +19,7 @@ class RobotsBuildingHandler implements RobotsTxtParserHandler, Supplier<Robots> 
     @Nonnull
     private Optional<Group.Builder> group = Optional.absent();
 
-    RobotsBuildingHandler(RobotsUtilities utilities) {
+    RobotsBuildingHandler(@Nonnull RobotsUtilities utilities) {
         this.utilities = checkNotNull(utilities, "utilities");
     }
 

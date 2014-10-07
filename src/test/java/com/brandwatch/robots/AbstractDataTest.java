@@ -7,6 +7,7 @@ import com.google.common.io.Resources;
 import org.junit.Before;
 import org.junit.runners.Parameterized;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Reader;
 
@@ -38,7 +39,7 @@ public abstract class AbstractDataTest {
                 .build();
     }
 
-    public static Reader resourceReader(String name) throws IOException {
+    public static Reader resourceReader(@Nonnull String name) throws IOException {
         return Resources.asCharSource(
                 getResource(AbstractDataTest.class, name), Charsets.UTF_8
         ).openBufferedStream();

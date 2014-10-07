@@ -3,6 +3,7 @@ package com.brandwatch.robots.domain;
 import com.google.common.base.Objects;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -30,7 +31,7 @@ public final class SiteMapDirective implements Directive {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SiteMapDirective that = (SiteMapDirective) o;
@@ -42,6 +43,7 @@ public final class SiteMapDirective implements Directive {
         return value.hashCode();
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return Objects.toStringHelper(this)

@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Reader;
 
@@ -37,6 +38,7 @@ public class RobotsDownloaderImplTest {
     @Test(expected = RuntimeException.class)
     public void givenSourceThrowsIOException_whenLoad_thenThrowsRuntimeException() {
         instance.load(new CharSource() {
+            @Nonnull
             @Override
             public Reader openStream() throws IOException {
                 throw new IOException();

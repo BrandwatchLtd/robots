@@ -3,6 +3,7 @@ package com.brandwatch.robots.domain;
 import com.google.common.base.Objects;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -33,7 +34,7 @@ public final class OtherDirective implements Directive {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OtherDirective that = (OtherDirective) o;
@@ -47,6 +48,7 @@ public final class OtherDirective implements Directive {
         return result;
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return Objects.toStringHelper(this)

@@ -23,12 +23,12 @@ public class RobotExclusionServiceImpl extends AbstractIdleService implements Ro
 
     private static final Logger log = LoggerFactory.getLogger(RobotExclusionServiceImpl.class);
 
-    private RobotsCharSourceFactory sourceFactory;
-    private RobotsDownloader downloader;
-    private RobotsUtilities utilities;
+    private final RobotsCharSourceFactory sourceFactory;
+    private final RobotsDownloader downloader;
+    private final RobotsUtilities utilities;
     private LoadingCache<CharSource, Robots> robotsCache;
 
-    public RobotExclusionServiceImpl(RobotsCharSourceFactory sourceFactory, RobotsDownloader downloader, RobotsUtilities utilities) {
+    public RobotExclusionServiceImpl(@Nonnull RobotsCharSourceFactory sourceFactory, @Nonnull RobotsDownloader downloader, @Nonnull RobotsUtilities utilities) {
         this.sourceFactory = checkNotNull(sourceFactory, "sourceFactory");
         this.downloader = checkNotNull(downloader, "downloader");
         this.utilities = checkNotNull(utilities, "utilities");
@@ -50,8 +50,9 @@ public class RobotExclusionServiceImpl extends AbstractIdleService implements Ro
                 .expireAfterWrite(expires, expiresUnit)
                 .recordStats()
                 .build(new CacheLoader<CharSource, Robots>() {
+                    @Nonnull
                     @Override
-                    public Robots load(CharSource key) throws Exception {
+                    public Robots load(@Nonnull CharSource key) throws Exception {
                         return downloader.load(key);
                     }
                 });

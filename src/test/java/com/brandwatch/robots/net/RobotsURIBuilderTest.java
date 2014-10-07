@@ -3,6 +3,7 @@ package com.brandwatch.robots.net;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.annotation.Nonnull;
 import java.net.URI;
 import java.net.URL;
 
@@ -12,7 +13,9 @@ import static org.junit.Assert.assertThat;
 
 public class RobotsURIBuilderTest {
 
+    @Nonnull
     private static final String VALID_HOST = "www.example.com";
+    @Nonnull
     private static final String VALID_SCHEME = "http";
     private RobotsURIBuilder builder;
 
@@ -74,12 +77,12 @@ public class RobotsURIBuilderTest {
 
     @Test(expected = NullPointerException.class)
     public void givenNullURL_whenCopyFrom_thenThrowsNPE() {
-        builder.fromURL((URL) null);
+        builder.fromURL(null);
     }
 
     @Test(expected = NullPointerException.class)
     public void givenNullURI_whenCopyFrom_thenThrowsNPE() {
-        builder.fromUri((URI) null);
+        builder.fromUri(null);
     }
 
     @Test(expected = IllegalStateException.class)

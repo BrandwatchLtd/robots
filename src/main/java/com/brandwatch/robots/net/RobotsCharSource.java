@@ -5,6 +5,7 @@ import com.google.common.base.Objects;
 import com.google.common.io.CharSource;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -21,15 +22,18 @@ class RobotsCharSource extends CharSource {
         this.uri = checkNotNull(uri);
     }
 
+    @Nonnull
     public URI getUri() {
         return uri;
     }
 
+    @Nonnull
     @Override
     public Reader openStream() throws IOException {
         return new InputStreamReader(uri.toURL().openStream(), Charsets.UTF_8);
     }
 
+    @Nonnull
     @Override
     public String toString() {
         return Objects.toStringHelper(this)
@@ -38,7 +42,7 @@ class RobotsCharSource extends CharSource {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RobotsCharSource that = (RobotsCharSource) o;

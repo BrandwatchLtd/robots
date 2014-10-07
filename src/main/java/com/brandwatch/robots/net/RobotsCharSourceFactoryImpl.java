@@ -5,14 +5,16 @@ import com.google.common.io.CharSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.net.URI;
 
 public class RobotsCharSourceFactoryImpl implements RobotsCharSourceFactory {
 
     private final Logger log = LoggerFactory.getLogger(RobotsCharSourceFactoryImpl.class);
 
+    @Nonnull
     @Override
-    public CharSource createFor(URI resourceUri) {
+    public CharSource createFor(@Nonnull URI resourceUri) {
         log.debug("Resolving robot.txt URL for resource: {}", resourceUri);
         try {
             final URI robotsUri = new RobotsURIBuilder()

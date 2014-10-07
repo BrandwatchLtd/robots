@@ -1,7 +1,6 @@
 package com.brandwatch.robots;
 
 import com.brandwatch.robots.net.RobotsCharSourceFactory;
-import com.brandwatch.robots.net.RobotsCharSourceFactoryImpl;
 import com.google.common.base.Charsets;
 import org.junit.After;
 import org.junit.Before;

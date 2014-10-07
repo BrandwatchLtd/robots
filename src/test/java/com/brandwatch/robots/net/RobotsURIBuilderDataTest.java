@@ -17,9 +17,9 @@ import static org.junit.Assert.assertThat;
 @RunWith(Parameterized.class)
 public class RobotsURIBuilderDataTest {
 
+    private final String resource;
+    private final String robots;
     private RobotsURIBuilder builder;
-    private String resource;
-    private String robots;
 
     public RobotsURIBuilderDataTest(String resource, String robots) {
         this.resource = resource;

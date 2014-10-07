@@ -51,7 +51,6 @@ public class RobotExclusionServiceImplTest {
     public void givenNullAgent_whenIsAllowed_thenThrowsNPE() {
         String crawlerAgent = null;
         URI resourceUri = URI.create("http://example.org/index.html");
-        ;
         instance.isAllowed(crawlerAgent, resourceUri);
     }
 
