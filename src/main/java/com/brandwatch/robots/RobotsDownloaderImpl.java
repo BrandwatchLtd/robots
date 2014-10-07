@@ -17,13 +17,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class RobotsDownloaderImpl implements RobotsDownloader {
 
     private static final Logger log = LoggerFactory.getLogger(RobotsDownloaderImpl.class);
+    private final RobotsUtilities utilities;
+
+    public RobotsDownloaderImpl(RobotsUtilities utilities) {
+        this.utilities = checkNotNull(utilities, "utilities is null");
+    }
 
     @Nonnull
     @Override
     public Robots load(@Nonnull CharSource robotsSource) {
         checkNotNull(robotsSource, "robotsSource");
 
-        final RobotsBuildingHandler handler = new RobotsBuildingHandler();
+        final RobotsBuildingHandler handler = new RobotsBuildingHandler(utilities);
         final Closer closer = Closer.create();
 
         try {

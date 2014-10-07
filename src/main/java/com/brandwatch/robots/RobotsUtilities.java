@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import java.net.URI;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -68,17 +67,8 @@ public class RobotsUtilities {
         }
     }
 
-    public boolean isPathExpressionMatched(@Nonnull String pathExpression, @Nonnull URI uri) {
-        return isPathExpressionMatched(pathExpression, uri.getPath());
-    }
-
-    boolean isPathExpressionMatched(@Nonnull String pathExpression, @Nonnull String absolutePath) {
-        checkArgument(absolutePath.startsWith("/"), "path is not absolute");
-        return compilePathExpression(pathExpression).matcher(absolutePath).matches();
-    }
-
     @Nonnull
-    Pattern compilePathExpression(@Nonnull String pathExpression) {
+    public Pattern compilePathExpression(@Nonnull String pathExpression) {
         final StringBuilder regex = new StringBuilder().append("^");
 
         switch (pathExpression.charAt(0)) {

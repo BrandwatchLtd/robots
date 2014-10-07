@@ -4,6 +4,8 @@ import com.google.common.base.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
+import java.net.URI;
+import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -16,7 +18,11 @@ public final class PathDirective implements Directive {
     @Nonnull
     private final String value;
 
-    public PathDirective(@Nonnull Field field, @Nonnull String value) {
+    @Nonnull
+    private final Pattern pattern;
+
+    public PathDirective(@Nonnull Field field, @Nonnull String value, @Nonnull Pattern pattern) {
+        this.pattern = checkNotNull(pattern, "pattern is null");
         this.field = checkNotNull(field, "field is null");
         this.value = checkNotNull(value, "value is null");
     }
@@ -31,6 +37,10 @@ public final class PathDirective implements Directive {
     @Override
     public String getValue() {
         return value;
+    }
+
+    public boolean matches(URI uri) {
+        return pattern.matcher(uri.getPath()).matches();
     }
 
     @Override

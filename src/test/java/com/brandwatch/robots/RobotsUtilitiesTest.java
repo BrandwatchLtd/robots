@@ -12,9 +12,9 @@ import org.junit.runners.Parameterized;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(Enclosed.class)
@@ -233,62 +233,11 @@ public class RobotsUtilitiesTest {
 
     }
 
-
-    public static class IsPathPatternMatchedTest {
-
-        private RobotsUtilities utilities;
-
-        @Before
-        public final void setup() {
-            utilities = new RobotsUtilities();
-        }
-
-        @Test
-        public void givenMatchingArgs_whenIsPathPatternMatched_thenReturnsTrue() {
-            String pathPattern = "/";
-            String path = "/index.html";
-            boolean result = utilities.isPathExpressionMatched(pathPattern, path);
-            assertThat(result, is(true));
-        }
-
-        @Test
-        public void givenNonMatchingArgs_whenIsPathPatternMatched_thenReturnsFalse() {
-            String pathPattern = "/stuff";
-            String path = "/index.html";
-            boolean result = utilities.isPathExpressionMatched(pathPattern, path);
-            assertThat(result, is(false));
-        }
-
-        @Test
-        public void givenMatchingWildcardPattern_whenIsPathPatternMatched_thenReturnsTrue() {
-            String pathPattern = "/*";
-            String path = "/index.html";
-            boolean result = utilities.isPathExpressionMatched(pathPattern, path);
-            assertThat(result, is(true));
-        }
-
-        @Test(expected = NullPointerException.class)
-        public void givenNullPattern_whenIsPathPatternMatched_thenThrowsNPE() {
-            String pathPattern = null;
-            String path = "/index.html";
-            utilities.isPathExpressionMatched(pathPattern, path);
-        }
-
-        @Test(expected = NullPointerException.class)
-        public void givenNullPath_whenIsPathPatternMatched_thenThrowsNPE() {
-            String pathPattern = "/";
-            String path = null;
-            utilities.isPathExpressionMatched(pathPattern, path);
-        }
-
-
-        // missing prefix slash
-
-    }
-
-
+    /**
+     * Created by hamish on 07/10/14.
+     */
     @RunWith(Parameterized.class)
-    public static class IsPathPatternMatchedTestDataTests {
+    public static class CompilePathExpressionDataTests {
 
         private final String pathPattern;
         private final URI uri;
@@ -296,7 +245,7 @@ public class RobotsUtilitiesTest {
 
         private RobotsUtilities utilities;
 
-        public IsPathPatternMatchedTestDataTests(String pathPattern, String path, boolean expectedResult) {
+        public CompilePathExpressionDataTests(String pathPattern, String path, boolean expectedResult) {
             this.pathPattern = pathPattern;
             this.uri = URI.create("http://www.example.com" + (path.startsWith("/") ? "" : "/") + path);
             this.expectedResult = expectedResult;
@@ -400,11 +349,10 @@ public class RobotsUtilitiesTest {
 
         @Test
         public void whenIsPathPatternMatched_thenResultEqualsExpected() {
-            boolean result = utilities.isPathExpressionMatched(pathPattern, uri);
+            Pattern pattern = utilities.compilePathExpression(pathPattern);
+            boolean result = pattern.matcher(uri.getPath()).matches();
             assertThat(result, equalTo(expectedResult));
         }
 
     }
-
-
 }

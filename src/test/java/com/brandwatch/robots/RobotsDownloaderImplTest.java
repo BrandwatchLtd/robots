@@ -2,9 +2,10 @@ package com.brandwatch.robots;
 
 import com.brandwatch.robots.domain.Robots;
 import com.google.common.io.CharSource;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
@@ -16,12 +17,11 @@ import static org.junit.Assert.assertThat;
 @RunWith(MockitoJUnitRunner.class)
 public class RobotsDownloaderImplTest {
 
-    private RobotsDownloaderImpl instance;
+    @Mock
+    private RobotsUtilities utilities;
 
-    @Before
-    public void setup() throws IOException {
-        instance = new RobotsDownloaderImpl();
-    }
+    @InjectMocks
+    private RobotsDownloaderImpl instance;
 
     @Test(expected = NullPointerException.class)
     public void givenNullSource_whenLoad_thenThrowsNPE() {
