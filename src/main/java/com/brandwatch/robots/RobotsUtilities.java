@@ -71,6 +71,10 @@ public class RobotsUtilities {
     public Pattern compilePathExpression(@Nonnull String pathExpression) {
         final StringBuilder regex = new StringBuilder().append("^");
 
+        if(pathExpression.isEmpty()) {
+            return Pattern.compile(".*?");
+        }
+
         switch (pathExpression.charAt(0)) {
             default:
                 regex.append('/');

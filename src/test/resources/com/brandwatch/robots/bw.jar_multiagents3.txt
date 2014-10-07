@@ -1,0 +1,4 @@
+User-agent: webcrawler
+User-agent: excite
+User-agent: magpie-crawler
+Disallow: /

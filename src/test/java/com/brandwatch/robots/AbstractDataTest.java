@@ -36,6 +36,12 @@ public abstract class AbstractDataTest {
                 .add(new Object[]{"bush_http_www.whitehouse.gov_robots.txt"})
                 .add(new Object[]{"http_www.last.fm_robots.txt"})
                 .add(new Object[]{"http_www.reddit.com_robots.txt"})
+                .add(new Object[]{"bw.jar_http_www.manutd.com_robots.txt"})
+                .add(new Object[]{"bw.jar_multiagents1.txt"})
+                .add(new Object[]{"bw.jar_multiagents2.txt"})
+                .add(new Object[]{"bw.jar_multiagents3.txt"})
+                .add(new Object[]{"bw.jar_multirecords.txt"})
+                .add(new Object[]{"bw.jar_http_www.robotstxt.org_norobots-rfc.txt"})
                 .build();
     }
 
