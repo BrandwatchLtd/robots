@@ -42,21 +42,32 @@ public class RobotExclusionServiceImplTest {
 
     @Test(expected = NullPointerException.class)
     public void givenNullUri_whenIsAllowed_thenThrowsNPE() {
+        String crawlerAgent = "magpie";
         URI resourceUri = null;
-        instance.isAllowed(resourceUri);
+        instance.isAllowed(crawlerAgent, resourceUri);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void givenNullAgent_whenIsAllowed_thenThrowsNPE() {
+        String crawlerAgent = null;
+        URI resourceUri = URI.create("http://example.org/index.html");
+        ;
+        instance.isAllowed(crawlerAgent, resourceUri);
     }
 
     @Test
     public void givenExampleUri_whenIsAllowed_thenReturnsTrue() {
+        String crawlerAgent = "magpie";
         URI resourceUri = URI.create("http://example.org/absolute/URI/with/absolute/path/to/resource.txt");
-        boolean result = instance.isAllowed(resourceUri);
+        boolean result = instance.isAllowed(crawlerAgent, resourceUri);
         assertThat(result, is(true));
     }
 
     @Test
     public void givenExampleUri_whenIsAllowed_thenSourceFactoryIsInvoked() {
+        String crawlerAgent = "magpie";
         URI resourceUri = URI.create("http://example.org/index.html");
-        instance.isAllowed(resourceUri);
+        instance.isAllowed(crawlerAgent, resourceUri);
         verify(sourceFactory).createFor(resourceUri);
     }
 }

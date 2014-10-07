@@ -66,7 +66,8 @@ public class RobotExclusionServiceImpl extends AbstractIdleService implements Ro
     }
 
     @Override
-    public boolean isAllowed(@Nonnull URI resourceUri) {
+    public boolean isAllowed(@Nonnull String crawlerAgentString, @Nonnull URI resourceUri) {
+        checkNotNull(crawlerAgentString, "crawlerAgentString is null");
         checkNotNull(resourceUri, "resourceUri is null");
 
         log.debug("evaluating: {}", resourceUri);
@@ -84,10 +85,7 @@ public class RobotExclusionServiceImpl extends AbstractIdleService implements Ro
             return true;
         }
 
-        // FIXME
-        String crawlerAgent = "magpie";
-
-        Optional<Group> group = utilities.getBestMatchingGroup(robots.getGroups(), crawlerAgent);
+        Optional<Group> group = utilities.getBestMatchingGroup(robots.getGroups(), crawlerAgentString);
 
         if (!group.isPresent()) {
             log.debug("No matching groups; allowing: {}", resourceUri);

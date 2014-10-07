@@ -4,6 +4,6 @@ import java.net.URI;
 
 public interface RobotExclusionService {
 
-    boolean isAllowed(URI url);
+    boolean isAllowed(String crawlerAgentString, URI url);
 
 }

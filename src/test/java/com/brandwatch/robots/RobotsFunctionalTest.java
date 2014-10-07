@@ -49,14 +49,14 @@ public class RobotsFunctionalTest {
     @Test
     public void standardUseCase() throws Exception {
         URI uri = URI.create("http://www.brandwatch.com/the-team/");
-        boolean allowed = service.isAllowed(uri);
+        boolean allowed = service.isAllowed("magpie", uri);
         assertThat(allowed, is(true));
     }
 
     @Test
     public void standardDisallow() throws Exception {
         URI uri = URI.create("http://www.brandwatch.com/wp-admin/");
-        boolean allowed = service.isAllowed(uri);
+        boolean allowed = service.isAllowed("magpie", uri);
         assertThat(allowed, is(false));
     }
 
