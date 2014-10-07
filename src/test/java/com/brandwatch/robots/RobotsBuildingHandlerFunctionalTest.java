@@ -1,10 +1,9 @@
-package com.brandwatch.robots.net;
+package com.brandwatch.robots;
 
 import com.brandwatch.robots.domain.Group;
 import com.brandwatch.robots.domain.PathDirective;
 import com.brandwatch.robots.domain.Robots;
 import com.brandwatch.robots.domain.SiteMapDirective;
-import com.brandwatch.robots.net.RobotsBuildingHandler;
 import com.brandwatch.robots.parser.ParseException;
 import com.brandwatch.robots.parser.RobotsTxtParser;
 import org.junit.Test;

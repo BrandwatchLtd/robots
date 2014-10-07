@@ -1,4 +1,4 @@
-package com.brandwatch.robots.net;
+package com.brandwatch.robots;
 
 import com.brandwatch.robots.domain.Robots;
 import com.google.common.io.CharSource;

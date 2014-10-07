@@ -1,5 +1,6 @@
 package com.brandwatch.robots.net;
 
+import com.google.common.io.CharSource;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,14 +11,14 @@ import java.net.URISyntaxException;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-public class RobotsSourceFactoryImplTest {
+public class RobotsCharSourceFactoryImplTest {
 
 
-    private RobotsSourceFactoryImpl sourceFactory;
+    private RobotsCharSourceFactoryImpl sourceFactory;
 
     @Before
     public void setup() {
-        sourceFactory = new RobotsSourceFactoryImpl();
+        sourceFactory = new RobotsCharSourceFactoryImpl();
     }
 
     @Test(expected = NullPointerException.class)
@@ -29,21 +30,21 @@ public class RobotsSourceFactoryImplTest {
     @Test
     public void givenValidUri_whenCreateFor_thenReturnsSource() {
         URI resourceUri = URI.create("http://www.example.com:80/");
-        RobotsSource source = sourceFactory.createFor(resourceUri);
+        CharSource source = sourceFactory.createFor(resourceUri);
         assertThat(source, notNullValue());
     }
 
     @Test
     public void givenMissingPort_whenCreateFor_thenReturnsSource() {
         URI resourceUri = URI.create("http://www.example.com");
-        RobotsSource source = sourceFactory.createFor(resourceUri);
+        CharSource source = sourceFactory.createFor(resourceUri);
         assertThat(source, notNullValue());
     }
 
     @Test
     public void givenMissingSchema_whenCreateFor_thenReturnsSource() throws MalformedURLException, URISyntaxException {
         URI resourceUri = URI.create("fakeschema://www.example.com:80");
-        RobotsSource source = sourceFactory.createFor(resourceUri);
+        CharSource source = sourceFactory.createFor(resourceUri);
         assertThat(source, notNullValue());
     }
 

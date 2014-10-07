@@ -12,12 +12,12 @@ import java.net.URI;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class RobotsSource extends CharSource {
+class RobotsCharSource extends CharSource {
 
     @Nonnull
     private final URI uri;
 
-    public RobotsSource(@Nonnull URI uri) {
+    public RobotsCharSource(@Nonnull URI uri) {
         this.uri = checkNotNull(uri);
     }
 
@@ -41,7 +41,7 @@ public class RobotsSource extends CharSource {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RobotsSource that = (RobotsSource) o;
+        RobotsCharSource that = (RobotsCharSource) o;
         return uri.equals(that.uri);
     }
 

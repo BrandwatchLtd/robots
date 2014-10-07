@@ -1,7 +1,5 @@
-package com.brandwatch.robots.net;
+package com.brandwatch.robots;
 
-import com.brandwatch.robots.AbstractDataTest;
-import com.brandwatch.robots.net.RobotsBuildingHandler;
 import com.brandwatch.robots.parser.ParseException;
 import org.junit.Before;
 import org.junit.Test;

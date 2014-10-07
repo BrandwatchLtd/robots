@@ -1,24 +1,25 @@
 package com.brandwatch.robots.net;
 
 
+import com.google.common.io.CharSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 
-public class RobotsSourceFactoryImpl implements RobotsSourceFactory {
+public class RobotsCharSourceFactoryImpl implements RobotsCharSourceFactory {
 
-    private final Logger log = LoggerFactory.getLogger(RobotsSourceFactoryImpl.class);
+    private final Logger log = LoggerFactory.getLogger(RobotsCharSourceFactoryImpl.class);
 
     @Override
-    public RobotsSource createFor(URI resourceUri) {
+    public CharSource createFor(URI resourceUri) {
         log.debug("Resolving robot.txt URL for resource: {}", resourceUri);
         try {
             final URI robotsUri = new RobotsURIBuilder()
                     .fromUri(resourceUri)
                     .build();
             log.debug("Resolved robot URI for resource {} to: {}", resourceUri, robotsUri);
-            return new RobotsSource(robotsUri);
+            return new RobotsCharSource(robotsUri);
         } catch (RuntimeException ex) {
             log.error("Failed to resolve robots.txt URL for resource {}, due to exception: {}", resourceUri, ex);
             throw ex;

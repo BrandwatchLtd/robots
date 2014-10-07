@@ -2,13 +2,12 @@ package com.brandwatch.robots;
 
 import com.brandwatch.robots.domain.Group;
 import com.brandwatch.robots.domain.Robots;
-import com.brandwatch.robots.net.RobotsDownloader;
-import com.brandwatch.robots.net.RobotsSource;
-import com.brandwatch.robots.net.RobotsSourceFactory;
+import com.brandwatch.robots.net.RobotsCharSourceFactory;
 import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.io.CharSource;
 import com.google.common.util.concurrent.AbstractIdleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,14 +21,14 @@ public class RobotExclusionServiceImpl extends AbstractIdleService implements Ro
 
     private static final Logger log = LoggerFactory.getLogger(RobotExclusionServiceImpl.class);
 
-    private RobotsSourceFactory sourceFactory;
+    private RobotsCharSourceFactory sourceFactory;
     private RobotsDownloader downloader;
     private RobotsUtilities utilities;
 
-    private LoadingCache<RobotsSource, Robots> robotsCache;
+    private LoadingCache<CharSource, Robots> robotsCache;
 
 
-    public RobotExclusionServiceImpl(RobotsSourceFactory sourceFactory, RobotsDownloader downloader, RobotsUtilities utilities) {
+    public RobotExclusionServiceImpl(RobotsCharSourceFactory sourceFactory, RobotsDownloader downloader, RobotsUtilities utilities) {
         this.sourceFactory = checkNotNull(sourceFactory, "sourceFactory");
         this.downloader = checkNotNull(downloader, "downloader");
         this.utilities = checkNotNull(utilities, "utilities");
@@ -41,9 +40,9 @@ public class RobotExclusionServiceImpl extends AbstractIdleService implements Ro
                 .maximumSize(10000)
                 .expireAfterWrite(24, TimeUnit.HOURS)
                 .recordStats()
-                .build(new CacheLoader<RobotsSource, Robots>() {
+                .build(new CacheLoader<CharSource, Robots>() {
                     @Override
-                    public Robots load(RobotsSource key) throws Exception {
+                    public Robots load(CharSource key) throws Exception {
                         return downloader.load(key);
                     }
                 });
@@ -60,7 +59,7 @@ public class RobotExclusionServiceImpl extends AbstractIdleService implements Ro
 
         final Robots robots;
         try {
-            RobotsSource source = sourceFactory.createFor(resourceUri);
+            CharSource source = sourceFactory.createFor(resourceUri);
             robots = robotsCache.getUnchecked(source);
         } catch (RuntimeException e) {
             return true;
