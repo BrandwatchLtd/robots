@@ -17,28 +17,26 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 public class BwJarRobotsTxtTest {
 
     private RobotsCharSourceFactory sourceFactory;
-    private RobotExclusionServiceImpl service;
+    private RobotExclusionService service;
     private String agent = "magpie-crawler";
 
     @Before
     public void setup() {
 
-        RobotsUtilities utilities = new RobotsUtilities();
 
         // mock sourceFactory so we don't cause network IO
         sourceFactory = mock(RobotsCharSourceFactory.class);
 
-        RobotsDownloader downloader = new RobotsDownloaderImpl(utilities);
-        service = new RobotExclusionServiceImpl(sourceFactory, downloader, utilities);
+        RobotExclusionConfig config = spy(new RobotExclusionConfig());
+        when(config.getRobotsCharSourceFactory()).thenReturn(sourceFactory);
 
-
-        service.startAsync();
-        service.awaitRunning();
+        service = config.getRobotExclusionService();
     }
 
     @Test

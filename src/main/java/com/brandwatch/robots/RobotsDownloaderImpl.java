@@ -14,7 +14,7 @@ import java.io.Reader;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class RobotsDownloaderImpl implements RobotsDownloader {
+class RobotsDownloaderImpl implements RobotsDownloader {
 
     private static final Logger log = LoggerFactory.getLogger(RobotsDownloaderImpl.class);
     private final RobotsUtilities utilities;

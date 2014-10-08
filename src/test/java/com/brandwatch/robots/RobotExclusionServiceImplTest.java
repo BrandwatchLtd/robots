@@ -14,6 +14,7 @@ import java.net.URI;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RobotExclusionServiceImplTest {
@@ -27,17 +28,28 @@ public class RobotExclusionServiceImplTest {
     @Mock
     private RobotsUtilities utilities;
 
-    @InjectMocks
+    @Mock
+    private RobotExclusionConfig config;
+
     private RobotExclusionServiceImpl instance;
 
     @Before
     public final void startUp() throws Exception {
-        instance.startUp();
+
+        when(config.getRobotExclusionService()).thenReturn(instance);
+        when(config.getRobotsDownloader()).thenReturn(downloader);
+        when(config.getRobotsCharSourceFactory()).thenReturn(sourceFactory);
+        when(config.getRobotsUtilities()).thenReturn(utilities);
+
+        instance = new RobotExclusionServiceImpl(config);
+        instance.startAsync();
+        instance.awaitRunning();
     }
 
     @After
     public final void shutDown() throws Exception {
-        instance.shutDown();
+        instance.stopAsync();
+        instance.awaitTerminated();
     }
 
     @Test(expected = NullPointerException.class)

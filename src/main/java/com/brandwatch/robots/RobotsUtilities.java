@@ -2,8 +2,6 @@ package com.brandwatch.robots;
 
 import com.brandwatch.robots.domain.Group;
 import com.google.common.base.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -15,8 +13,6 @@ import static java.util.regex.Pattern.compile;
 import static java.util.regex.Pattern.quote;
 
 public class RobotsUtilities {
-
-    private static final Logger log = LoggerFactory.getLogger(RobotsUtilities.class);
 
     @Nonnull
     public Optional<Group> getBestMatchingGroup(@Nonnull List<Group> groups, @Nonnull String agentString) {
@@ -71,7 +67,7 @@ public class RobotsUtilities {
     public Pattern compilePathExpression(@Nonnull String pathExpression) {
         final StringBuilder regex = new StringBuilder().append("^");
 
-        if(pathExpression.isEmpty()) {
+        if (pathExpression.isEmpty()) {
             return Pattern.compile(".*?");
         }
 

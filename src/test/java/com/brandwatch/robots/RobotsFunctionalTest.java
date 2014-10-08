@@ -14,16 +14,15 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 public class RobotsFunctionalTest {
 
-    private RobotExclusionServiceImpl service;
+    private RobotExclusionService service;
 
     @Before
     public void setup() {
-
-        RobotsUtilities utilities = new RobotsUtilities();
 
         // mock sourceFactory so we don't cause network IO
         RobotsCharSourceFactory sourceFactory = mock(RobotsCharSourceFactory.class);
@@ -31,18 +30,10 @@ public class RobotsFunctionalTest {
                 asCharSource(getResource(RobotsFunctionalTest.class,
                         "http_www.brandwatch.com_robots.txt"), Charsets.UTF_8));
 
-        RobotsDownloader downloader = new RobotsDownloaderImpl(utilities);
-        service = new RobotExclusionServiceImpl(sourceFactory, downloader, utilities);
+        RobotExclusionConfig config = spy(new RobotExclusionConfig());
+        when(config.getRobotsCharSourceFactory()).thenReturn(sourceFactory);
 
-
-        service.startAsync();
-        service.awaitRunning();
-    }
-
-    @After
-    public void tearDown() {
-        service.stopAsync();
-        service.awaitTerminated();
+        service = config.getRobotExclusionService();
     }
 
     @Test

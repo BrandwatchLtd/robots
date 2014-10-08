@@ -19,35 +19,33 @@ import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class RobotExclusionServiceImpl extends AbstractIdleService implements RobotExclusionService {
+class RobotExclusionServiceImpl extends AbstractIdleService implements RobotExclusionService {
 
     private static final Logger log = LoggerFactory.getLogger(RobotExclusionServiceImpl.class);
 
+    private final RobotExclusionConfig config;
     private final RobotsCharSourceFactory sourceFactory;
     private final RobotsDownloader downloader;
     private final RobotsUtilities utilities;
     private LoadingCache<CharSource, Robots> robotsCache;
 
-    public RobotExclusionServiceImpl(@Nonnull RobotsCharSourceFactory sourceFactory, @Nonnull RobotsDownloader downloader, @Nonnull RobotsUtilities utilities) {
-        this.sourceFactory = checkNotNull(sourceFactory, "sourceFactory");
-        this.downloader = checkNotNull(downloader, "downloader");
-        this.utilities = checkNotNull(utilities, "utilities");
+    public RobotExclusionServiceImpl(@Nonnull RobotExclusionConfig robotExclusionConfig) {
+        this.config = checkNotNull(robotExclusionConfig, "robotExclusionConfig");
+        this.sourceFactory = checkNotNull(robotExclusionConfig.getRobotsCharSourceFactory(), "sourceFactory");
+        this.downloader = checkNotNull(robotExclusionConfig.getRobotsDownloader(), "downloader");
+        this.utilities = checkNotNull(robotExclusionConfig.getRobotsUtilities(), "utilities");
     }
 
     @Override
     protected void startUp() throws Exception {
         log.info("Starting up");
 
-
-        final long expires = 24;
-        final TimeUnit expiresUnit = TimeUnit.HOURS;
-        final long maxSize = 10000;
-
-        log.debug("Initializing cache (maxSize: {}, expires after: {} {})", maxSize, expires, expiresUnit);
+        log.debug("Initializing cache (maxSize: {}, expires after: {} hours)",
+                config.getCacheMaxSizeRecords(), config.getCachedExpiresHours());
 
         robotsCache = CacheBuilder.newBuilder()
-                .maximumSize(maxSize)
-                .expireAfterWrite(expires, expiresUnit)
+                .maximumSize(config.getCacheMaxSizeRecords())
+                .expireAfterWrite(config.getCachedExpiresHours(), TimeUnit.HOURS)
                 .recordStats()
                 .build(new CacheLoader<CharSource, Robots>() {
                     @Nonnull
