@@ -1,8 +1,5 @@
 package com.brandwatch.robots;
 
-import com.brandwatch.robots.net.RobotsCharSourceFactory;
-import com.brandwatch.robots.net.RobotsCharSourceFactoryImpl;
-
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 
@@ -57,13 +54,8 @@ public class RobotExclusionConfig {
     }
 
     @Nonnull
-    RobotsCharSourceFactory getRobotsCharSourceFactory() {
-        return new RobotsCharSourceFactoryImpl();
-    }
-
-    @Nonnull
     RobotsDownloader getRobotsDownloader() {
-        return new RobotsDownloaderImpl(robotsUtilities);
+        return new RobotsDownloaderImpl(getRobotsUtilities());
     }
 
     @Nonnull

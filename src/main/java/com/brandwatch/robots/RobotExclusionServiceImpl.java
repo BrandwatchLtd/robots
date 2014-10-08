@@ -3,12 +3,11 @@ package com.brandwatch.robots;
 import com.brandwatch.robots.domain.Group;
 import com.brandwatch.robots.domain.PathDirective;
 import com.brandwatch.robots.domain.Robots;
-import com.brandwatch.robots.net.RobotsCharSourceFactory;
+import com.brandwatch.robots.net.RobotsURIBuilder;
 import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.io.CharSource;
 import com.google.common.util.concurrent.AbstractIdleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,14 +23,12 @@ class RobotExclusionServiceImpl extends AbstractIdleService implements RobotExcl
     private static final Logger log = LoggerFactory.getLogger(RobotExclusionServiceImpl.class);
 
     private final RobotExclusionConfig config;
-    private final RobotsCharSourceFactory sourceFactory;
     private final RobotsDownloader downloader;
     private final RobotsUtilities utilities;
-    private LoadingCache<CharSource, Robots> robotsCache;
+    private LoadingCache<URI, Robots> robotsCache;
 
     public RobotExclusionServiceImpl(@Nonnull RobotExclusionConfig robotExclusionConfig) {
         this.config = checkNotNull(robotExclusionConfig, "robotExclusionConfig");
-        this.sourceFactory = checkNotNull(robotExclusionConfig.getRobotsCharSourceFactory(), "sourceFactory");
         this.downloader = checkNotNull(robotExclusionConfig.getRobotsDownloader(), "downloader");
         this.utilities = checkNotNull(robotExclusionConfig.getRobotsUtilities(), "utilities");
     }
@@ -47,10 +44,10 @@ class RobotExclusionServiceImpl extends AbstractIdleService implements RobotExcl
                 .maximumSize(config.getCacheMaxSizeRecords())
                 .expireAfterWrite(config.getCachedExpiresHours(), TimeUnit.HOURS)
                 .recordStats()
-                .build(new CacheLoader<CharSource, Robots>() {
+                .build(new CacheLoader<URI, Robots>() {
                     @Nonnull
                     @Override
-                    public Robots load(@Nonnull CharSource key) throws Exception {
+                    public Robots load(@Nonnull URI key) throws Exception {
                         return downloader.load(key);
                     }
                 });
@@ -70,10 +67,20 @@ class RobotExclusionServiceImpl extends AbstractIdleService implements RobotExcl
         checkNotNull(resourceUri, "resourceUri is null");
 
         log.debug("evaluating: {}", resourceUri);
+
+        final URI robotsUri;
+        log.debug("Resolving robot.txt URL for resource: {}", resourceUri);
+        try {
+            robotsUri = utilities.getRobotsURIForResource(resourceUri);
+            log.debug("Resolved robot URI for resource {} to: {}", resourceUri, robotsUri);
+        } catch (RuntimeException ex) {
+            log.error("Failed to resolve robots.txt URL for resource {}, due to exception: {}", resourceUri, ex);
+            throw ex;
+        }
+
         final Robots robots;
         try {
-            CharSource source = sourceFactory.createFor(resourceUri);
-            robots = robotsCache.getUnchecked(source);
+            robots = robotsCache.getUnchecked(robotsUri);
         } catch (RuntimeException e) {
             log.debug("robots.txt download failure; allowing: {}", resourceUri);
             return true;
@@ -94,7 +101,7 @@ class RobotExclusionServiceImpl extends AbstractIdleService implements RobotExcl
         for (PathDirective pathDirective : group.get().getDirectives(PathDirective.class)) {
             if (pathDirective.matches(resourceUri)) {
                 log.debug("Path directive {} matches; {}: {}", pathDirective.getValue(),
-                        pathDirective.isAllowed() ? "allowing" : "disallowing" , resourceUri);
+                        pathDirective.isAllowed() ? "allowing" : "disallowing", resourceUri);
                 return pathDirective.isAllowed();
             }
         }

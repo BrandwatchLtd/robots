@@ -1,11 +1,9 @@
 package com.brandwatch.robots;
 
-import com.brandwatch.robots.net.RobotsCharSourceFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -18,9 +16,6 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RobotExclusionServiceImplTest {
-
-    @Mock
-    private RobotsCharSourceFactory sourceFactory;
 
     @Mock
     private RobotsDownloader downloader;
@@ -38,7 +33,6 @@ public class RobotExclusionServiceImplTest {
 
         when(config.getRobotExclusionService()).thenReturn(instance);
         when(config.getRobotsDownloader()).thenReturn(downloader);
-        when(config.getRobotsCharSourceFactory()).thenReturn(sourceFactory);
         when(config.getRobotsUtilities()).thenReturn(utilities);
 
         instance = new RobotExclusionServiceImpl(config);
@@ -79,6 +73,6 @@ public class RobotExclusionServiceImplTest {
         String crawlerAgent = "magpie";
         URI resourceUri = URI.create("http://example.org/index.html");
         instance.isAllowed(crawlerAgent, resourceUri);
-        verify(sourceFactory).createFor(resourceUri);
+        verify(utilities).getRobotsURIForResource(resourceUri);
     }
 }

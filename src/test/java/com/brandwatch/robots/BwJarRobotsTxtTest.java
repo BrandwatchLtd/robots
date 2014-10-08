@@ -1,40 +1,34 @@
 package com.brandwatch.robots;
 
-import com.brandwatch.robots.net.RobotsCharSourceFactory;
 import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableSet;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.util.Set;
 
 import static com.google.common.io.Resources.asCharSource;
 import static com.google.common.io.Resources.getResource;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class BwJarRobotsTxtTest {
 
-    private RobotsCharSourceFactory sourceFactory;
+    private RobotsUtilities utilities;
     private RobotExclusionService service;
     private String agent = "magpie-crawler";
 
     @Before
     public void setup() {
 
-
         // mock sourceFactory so we don't cause network IO
-        sourceFactory = mock(RobotsCharSourceFactory.class);
+        utilities = spy(new RobotsUtilities());
 
         RobotExclusionConfig config = spy(new RobotExclusionConfig());
-        when(config.getRobotsCharSourceFactory()).thenReturn(sourceFactory);
+        when(config.getRobotsUtilities()).thenReturn(utilities);
 
         service = config.getRobotExclusionService();
     }
@@ -70,7 +64,7 @@ public class BwJarRobotsTxtTest {
 
     @Test
     public void testMultiAgents2() throws Exception {
-         parse("bw.jar_multiagents2.txt");
+        parse("bw.jar_multiagents2.txt");
         assertFalse(isAllowed("http://www.example.com/"));
         assertFalse(isAllowed("http://www.example.com/index.html"));
     }
@@ -89,10 +83,11 @@ public class BwJarRobotsTxtTest {
         assertTrue(isAllowed("http://www.example.com/unhipbot.html"));
     }
 
-    private void parse(String resource) throws IOException {
-        when(sourceFactory.createFor(any(URI.class))).thenReturn(
+    private void parse(String robotsResourceName) throws IOException {
+        doReturn(
                 asCharSource(getResource(BwJarRobotsTxtTest.class,
-                        resource), Charsets.UTF_8));
+                        robotsResourceName), Charsets.UTF_8))
+                .when(utilities).createCharSourceFor(any(URI.class));
     }
 
     private boolean isAllowed(String url) throws MalformedURLException {

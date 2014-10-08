@@ -3,7 +3,6 @@ package com.brandwatch.robots;
 import com.brandwatch.robots.domain.Robots;
 import com.brandwatch.robots.parser.ParseException;
 import com.brandwatch.robots.parser.RobotsTxtParser;
-import com.google.common.io.CharSource;
 import com.google.common.io.Closer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Reader;
+import java.net.URI;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -25,17 +25,20 @@ class RobotsDownloaderImpl implements RobotsDownloader {
 
     @Nonnull
     @Override
-    public Robots load(@Nonnull CharSource robotsSource) {
-        checkNotNull(robotsSource, "robotsSource");
+    public Robots load(@Nonnull URI robotsResource) {
+        checkNotNull(robotsResource, "robotsResource");
 
         final RobotsBuildingHandler handler = new RobotsBuildingHandler(utilities);
         final Closer closer = Closer.create();
 
         try {
             try {
-                log.debug("Downloading and parsing robot.txt: {}", robotsSource);
+                log.debug("Downloading and parsing robot.txt: {}", robotsResource);
 
-                final Reader reader = closer.register(robotsSource.openBufferedStream());
+                final Reader reader = closer.register(
+                        utilities.createCharSourceFor(robotsResource).openBufferedStream());
+
+
                 final RobotsTxtParser parser = new RobotsTxtParser(reader);
                 parser.parse(handler);
 
@@ -55,4 +58,5 @@ class RobotsDownloaderImpl implements RobotsDownloader {
 
         return handler.get();
     }
+
 }

@@ -1,9 +1,16 @@
 package com.brandwatch.robots;
 
 import com.brandwatch.robots.domain.Group;
+import com.brandwatch.robots.net.RobotsURIBuilder;
+import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
+import com.google.common.io.CharSource;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URI;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -13,6 +20,27 @@ import static java.util.regex.Pattern.compile;
 import static java.util.regex.Pattern.quote;
 
 public class RobotsUtilities {
+
+    @Nonnull
+    public CharSource createCharSourceFor(final URI robotsResource) {
+        checkNotNull(robotsResource, "robotsResource");
+        return new CharSource() {
+            @Override
+            public Reader openStream() throws IOException {
+                return new InputStreamReader(
+                        robotsResource.toURL().openStream(),
+                        Charsets.UTF_8);
+            }
+        };
+    }
+
+    @Nonnull
+    public URI getRobotsURIForResource(@Nonnull final URI resourceUri) {
+        checkNotNull(resourceUri, "resourceUri");
+        return new RobotsURIBuilder()
+                .fromUri(resourceUri)
+                .build();
+    }
 
     @Nonnull
     public Optional<Group> getBestMatchingGroup(@Nonnull List<Group> groups, @Nonnull String agentString) {

@@ -1,8 +1,6 @@
 package com.brandwatch.robots;
 
-import com.brandwatch.robots.net.RobotsCharSourceFactory;
 import com.google.common.base.Charsets;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,9 +11,7 @@ import static com.google.common.io.Resources.getResource;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class RobotsFunctionalTest {
 
@@ -25,13 +21,14 @@ public class RobotsFunctionalTest {
     public void setup() {
 
         // mock sourceFactory so we don't cause network IO
-        RobotsCharSourceFactory sourceFactory = mock(RobotsCharSourceFactory.class);
-        when(sourceFactory.createFor(any(URI.class))).thenReturn(
-                asCharSource(getResource(RobotsFunctionalTest.class,
-                        "http_www.brandwatch.com_robots.txt"), Charsets.UTF_8));
+        RobotsUtilities utilities = spy(new RobotsUtilities());
+
+        doReturn(asCharSource(getResource(RobotsFunctionalTest.class,
+                "http_www.brandwatch.com_robots.txt"), Charsets.UTF_8))
+                .when(utilities).createCharSourceFor(any(URI.class));
 
         RobotExclusionConfig config = spy(new RobotExclusionConfig());
-        when(config.getRobotsCharSourceFactory()).thenReturn(sourceFactory);
+        when(config.getRobotsUtilities()).thenReturn(utilities);
 
         service = config.getRobotExclusionService();
     }

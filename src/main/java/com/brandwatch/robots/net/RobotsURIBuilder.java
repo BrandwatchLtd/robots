@@ -14,7 +14,7 @@ import java.util.Map;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-final class RobotsURIBuilder {
+public final class RobotsURIBuilder {
 
     @Nonnull
     private static final String PATH = "/robots.txt";

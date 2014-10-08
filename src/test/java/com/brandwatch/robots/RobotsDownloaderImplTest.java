@@ -11,9 +11,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Reader;
+import java.net.URI;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RobotsDownloaderImplTest {
@@ -31,19 +34,23 @@ public class RobotsDownloaderImplTest {
 
     @Test
     public void givenEmptySource_whenLoad_thenReturnsNonNull() {
-        Robots result = instance.load(CharSource.empty());
+        when(utilities.createCharSourceFor(any(URI.class)))
+                .thenReturn(CharSource.empty());
+        Robots result = instance.load(URI.create("http://example.com/robots.txt"));
         assertThat(result, notNullValue());
     }
 
     @Test(expected = RuntimeException.class)
     public void givenSourceThrowsIOException_whenLoad_thenThrowsRuntimeException() {
-        instance.load(new CharSource() {
-            @Nonnull
-            @Override
-            public Reader openStream() throws IOException {
-                throw new IOException();
-            }
-        });
+        when(utilities.createCharSourceFor(any(URI.class)))
+                .thenReturn(new CharSource() {
+                    @Nonnull
+                    @Override
+                    public Reader openStream() throws IOException {
+                        throw new IOException();
+                    }
+                });
+        instance.load(URI.create("http://example.com/robots.txt"));
     }
 
 }
