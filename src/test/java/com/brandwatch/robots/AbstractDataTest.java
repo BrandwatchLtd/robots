@@ -1,6 +1,6 @@
 package com.brandwatch.robots;
 
-import com.brandwatch.robots.parser.RobotsTxtParser;
+import com.brandwatch.robots.parser.RobotsParser;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Resources;
@@ -16,7 +16,7 @@ import static com.google.common.io.Resources.getResource;
 public abstract class AbstractDataTest {
 
     private final String resourceName;
-    protected RobotsTxtParser robotsTxtParser;
+    protected RobotsParser robotsTxtParser;
 
     protected AbstractDataTest(String resourceName) {
         this.resourceName = resourceName;
@@ -53,7 +53,7 @@ public abstract class AbstractDataTest {
 
     @Before
     public final void setupAbstractTest() throws IOException {
-        robotsTxtParser = new RobotsTxtParser(resourceReader(resourceName));
+        robotsTxtParser = new RobotsParser(resourceReader(resourceName));
     }
 
 }

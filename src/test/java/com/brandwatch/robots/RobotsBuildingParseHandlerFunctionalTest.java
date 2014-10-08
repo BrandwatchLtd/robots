@@ -2,7 +2,7 @@ package com.brandwatch.robots;
 
 import com.brandwatch.robots.domain.*;
 import com.brandwatch.robots.parser.ParseException;
-import com.brandwatch.robots.parser.RobotsTxtParser;
+import com.brandwatch.robots.parser.RobotsParser;
 import com.brandwatch.robots.util.ExpressionCompiler;
 import com.brandwatch.robots.util.Matcher;
 import org.junit.Test;
@@ -17,7 +17,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RobotsBuildingHandlerFunctionalTest {
+public class RobotsBuildingParseHandlerFunctionalTest {
 
     RobotsConfig config = new RobotsConfig();
     ExpressionCompiler agentExpressionCompiler = config.getAgentExpressionCompiler();
@@ -27,8 +27,8 @@ public class RobotsBuildingHandlerFunctionalTest {
     @Test
     public void givenDailyMailBoards_whenParse_thenRobotsObjectEqualsExpected() throws IOException, ParseException {
         Reader reader = resourceReader("http_boards.dailymail.co.uk_robots.txt");
-        RobotsTxtParser robotsTxtParser = new RobotsTxtParser(reader);
-        RobotsBuildingHandler handler = new RobotsBuildingHandler(
+        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsBuildingParseHandler handler = new RobotsBuildingParseHandler(
                 pathExpressionCompiler,
                 agentExpressionCompiler);
         robotsTxtParser.parse(handler);
@@ -52,9 +52,9 @@ public class RobotsBuildingHandlerFunctionalTest {
     @Test
     public void givenWwwBrandwatchCom_whenParse_thenRobotsObjectEqualsExpected() throws IOException, ParseException {
         Reader reader = resourceReader("http_www.brandwatch.com_robots.txt");
-        RobotsTxtParser robotsTxtParser = new RobotsTxtParser(reader);
+        RobotsParser robotsTxtParser = new RobotsParser(reader);
         RobotsConfig config = new RobotsConfig();
-        RobotsBuildingHandler handler = new RobotsBuildingHandler(pathExpressionCompiler, agentExpressionCompiler);
+        RobotsBuildingParseHandler handler = new RobotsBuildingParseHandler(pathExpressionCompiler, agentExpressionCompiler);
         robotsTxtParser.parse(handler);
 
         Robots expected = new Robots.Builder()

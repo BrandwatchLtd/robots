@@ -1,7 +1,7 @@
 package com.brandwatch.robots;
 
 import com.brandwatch.robots.domain.*;
-import com.brandwatch.robots.parser.RobotsTxtParserHandler;
+import com.brandwatch.robots.parser.RobotsParseHandler;
 import com.brandwatch.robots.util.ExpressionCompiler;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-class RobotsBuildingHandler implements RobotsTxtParserHandler, Supplier<Robots> {
+class RobotsBuildingParseHandler implements RobotsParseHandler, Supplier<Robots> {
 
     private final ExpressionCompiler pathExpressionCompiler;
     private final ExpressionCompiler agentExpressionCompiler;
@@ -20,8 +20,8 @@ class RobotsBuildingHandler implements RobotsTxtParserHandler, Supplier<Robots> 
     @Nonnull
     private Optional<Group.Builder> group = Optional.absent();
 
-    RobotsBuildingHandler(@Nonnull ExpressionCompiler pathExpressionCompiler,
-                          @Nonnull ExpressionCompiler agentExpressionCompiler) {
+    RobotsBuildingParseHandler(@Nonnull ExpressionCompiler pathExpressionCompiler,
+                               @Nonnull ExpressionCompiler agentExpressionCompiler) {
         this.pathExpressionCompiler = checkNotNull(pathExpressionCompiler, "pathExpressionCompiler");
         this.agentExpressionCompiler = checkNotNull(agentExpressionCompiler, "agentExpressionCompiler");
     }

@@ -121,8 +121,8 @@ public class RobotsConfig {
         return service;
     }
 
-    public RobotsBuildingHandler getRobotsBuildingHandler() {
-        return new RobotsBuildingHandler(
+    public RobotsBuildingParseHandler getRobotsBuildingHandler() {
+        return new RobotsBuildingParseHandler(
                 getPathExpressionCompiler(),
                 getAgentExpressionCompiler());
     }

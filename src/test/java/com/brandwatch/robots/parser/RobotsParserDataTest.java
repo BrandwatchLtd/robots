@@ -11,17 +11,17 @@ import java.io.IOException;
 import static org.mockito.Mockito.mock;
 
 @RunWith(Parameterized.class)
-public class RobotsTxtParserDataTest extends AbstractDataTest {
+public class RobotsParserDataTest extends AbstractDataTest {
 
-    private RobotsTxtParserHandler handler;
+    private RobotsParseHandler handler;
 
-    public RobotsTxtParserDataTest(String resourceName) {
+    public RobotsParserDataTest(String resourceName) {
         super(resourceName);
     }
 
     @Before
     public void setup() throws IOException {
-        handler = mock(RobotsTxtParserHandler.class);
+        handler = mock(RobotsParseHandler.class);
     }
 
 

@@ -27,7 +27,7 @@ public class RobotsLoaderDefaultImplTest {
     @Mock
     private RobotsUtilities utilities;
     @Mock
-    private RobotsBuildingHandler handler;
+    private RobotsBuildingParseHandler handler;
     @Mock
     private RobotsConfig config;
 

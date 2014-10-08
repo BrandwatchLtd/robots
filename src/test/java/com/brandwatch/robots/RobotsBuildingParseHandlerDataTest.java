@@ -14,18 +14,18 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
 
 @RunWith(Parameterized.class)
-public class RobotsBuildingHandlerDataTest extends AbstractDataTest {
+public class RobotsBuildingParseHandlerDataTest extends AbstractDataTest {
 
-    private RobotsBuildingHandler handler;
+    private RobotsBuildingParseHandler handler;
 
-    public RobotsBuildingHandlerDataTest(String resourceName) {
+    public RobotsBuildingParseHandlerDataTest(String resourceName) {
         super(resourceName);
     }
 
     @Before
     public void setup() throws IOException {
         ExpressionCompiler expressionCompiler = new ExpressionCompilerBuilder().build();
-        handler = new RobotsBuildingHandler(expressionCompiler, expressionCompiler);
+        handler = new RobotsBuildingParseHandler(expressionCompiler, expressionCompiler);
     }
 
     @Test

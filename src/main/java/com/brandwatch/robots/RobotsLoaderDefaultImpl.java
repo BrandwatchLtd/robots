@@ -2,7 +2,7 @@ package com.brandwatch.robots;
 
 import com.brandwatch.robots.domain.Robots;
 import com.brandwatch.robots.parser.ParseException;
-import com.brandwatch.robots.parser.RobotsTxtParser;
+import com.brandwatch.robots.parser.RobotsParser;
 import com.google.common.io.Closer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ final class RobotsLoaderDefaultImpl implements RobotsLoader {
     public Robots load(@Nonnull URI robotsResource) throws IOException {
         checkNotNull(robotsResource, "robotsResource");
 
-        final RobotsBuildingHandler handler = config.getRobotsBuildingHandler();
+        final RobotsBuildingParseHandler handler = config.getRobotsBuildingHandler();
         final Closer closer = Closer.create();
 
         try {
@@ -41,7 +41,7 @@ final class RobotsLoaderDefaultImpl implements RobotsLoader {
                                 .createCharSourceFor(robotsResource)
                                 .openBufferedStream());
 
-                final RobotsTxtParser parser = new RobotsTxtParser(reader);
+                final RobotsParser parser = new RobotsParser(reader);
                 parser.parse(handler);
 
             } catch (ParseException e) {

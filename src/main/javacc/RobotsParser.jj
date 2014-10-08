@@ -23,14 +23,14 @@ options {
   FORCE_LA_CHECK = false;
 }
 
-PARSER_BEGIN(RobotsTxtParser)
+PARSER_BEGIN(RobotsParser)
 
 package com.brandwatch.robots.parser;
 
-public class RobotsTxtParser {
+public class RobotsParser {
 }
 
-PARSER_END(RobotsTxtParser)
+PARSER_END(RobotsParser)
 
 SKIP :
 {
@@ -81,7 +81,7 @@ TOKEN:
   <TEXT_VALUE: ( ~["\n","\r", "#"] )* > : DEFAULT
 }
 
-void parse(RobotsTxtParserHandler handler) : {}
+void parse(RobotsParseHandler handler) : {}
 {
     ( <EOL> )*
     (
@@ -93,7 +93,7 @@ void parse(RobotsTxtParserHandler handler) : {}
     <EOF>
 }
 
-void entry(RobotsTxtParserHandler handler) : {}
+void entry(RobotsParseHandler handler) : {}
 {
     { handler.startEntry(); }
     ( LOOKAHEAD(1) startGroupLine(handler) )+
@@ -107,12 +107,12 @@ void entry(RobotsTxtParserHandler handler) : {}
     { handler.endEntry(); }
 }
 
-void startGroupLine(RobotsTxtParserHandler handler) : {}
+void startGroupLine(RobotsParseHandler handler) : {}
 {
     <USER_AGENT> <DELIMITER> { handler.userAgent(textValue()); } eol()
 }
 
-void groupMemberLine(RobotsTxtParserHandler handler) : {}
+void groupMemberLine(RobotsParseHandler handler) : {}
 {
     (
         <ALLOW> <DELIMITER> { handler.allow(textValue()); }
@@ -121,12 +121,12 @@ void groupMemberLine(RobotsTxtParserHandler handler) : {}
     ) eol()
 }
 
-void nonGroupLine(RobotsTxtParserHandler handler) : {}
+void nonGroupLine(RobotsParseHandler handler) : {}
 {
     <SITE_MAP> <DELIMITER> { handler.siteMap(textValue()); } eol()
 }
 
-void otherLine(RobotsTxtParserHandler handler) : {
+void otherLine(RobotsParseHandler handler) : {
     Token field;
     String value;
 }
