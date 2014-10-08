@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 public class BwJarRobotsTxtTest {
 
     private RobotsUtilities utilities;
-    private RobotExclusionService service;
+    private RobotsService service;
     private String agent = "magpie-crawler";
 
     @Before
@@ -27,7 +27,7 @@ public class BwJarRobotsTxtTest {
         // mock sourceFactory so we don't cause network IO
         utilities = spy(new RobotsUtilities());
 
-        RobotExclusionConfig config = spy(new RobotExclusionConfig());
+        RobotsConfig config = spy(new RobotsConfig());
         when(config.getUtilities()).thenReturn(utilities);
 
         service = config.getService();

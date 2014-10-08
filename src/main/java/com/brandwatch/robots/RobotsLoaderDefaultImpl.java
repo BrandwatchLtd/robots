@@ -18,9 +18,9 @@ final class RobotsLoaderDefaultImpl implements RobotsLoader {
 
     private static final Logger log = LoggerFactory.getLogger(RobotsLoaderDefaultImpl.class);
 
-    private final RobotExclusionConfig config;
+    private final RobotsConfig config;
 
-    public RobotsLoaderDefaultImpl(@Nonnull RobotExclusionConfig config) {
+    public RobotsLoaderDefaultImpl(@Nonnull RobotsConfig config) {
         this.config = checkNotNull(config, "config is null");
     }
 

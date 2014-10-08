@@ -19,7 +19,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(MockitoJUnitRunner.class)
 public class RobotsBuildingHandlerFunctionalTest {
 
-    RobotExclusionConfig config = new RobotExclusionConfig();
+    RobotsConfig config = new RobotsConfig();
     ExpressionCompiler agentExpressionCompiler = config.getAgentExpressionCompiler();
     ExpressionCompiler pathExpressionCompiler = config.getPathExpressionCompiler();
     Matcher<String> ALL = pathExpressionCompiler.compile("*");
@@ -53,7 +53,7 @@ public class RobotsBuildingHandlerFunctionalTest {
     public void givenWwwBrandwatchCom_whenParse_thenRobotsObjectEqualsExpected() throws IOException, ParseException {
         Reader reader = resourceReader("http_www.brandwatch.com_robots.txt");
         RobotsTxtParser robotsTxtParser = new RobotsTxtParser(reader);
-        RobotExclusionConfig config = new RobotExclusionConfig();
+        RobotsConfig config = new RobotsConfig();
         RobotsBuildingHandler handler = new RobotsBuildingHandler(pathExpressionCompiler, agentExpressionCompiler);
         robotsTxtParser.parse(handler);
 

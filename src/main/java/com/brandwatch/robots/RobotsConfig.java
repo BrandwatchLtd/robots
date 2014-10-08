@@ -17,9 +17,9 @@ import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-public class RobotExclusionConfig {
+public class RobotsConfig {
 
-    private static final Logger log = LoggerFactory.getLogger(RobotExclusionConfig.class);
+    private static final Logger log = LoggerFactory.getLogger(RobotsConfig.class);
 
     private static final Function<String, String> PATH_EXPRESSION_PREPROCESSOR = new Function<String, String>() {
         @Nullable
@@ -114,8 +114,8 @@ public class RobotExclusionConfig {
     }
 
     @Nonnull
-    public RobotExclusionService getService() {
-        RobotExclusionServiceImpl service = new RobotExclusionServiceImpl(this);
+    public RobotsService getService() {
+        RobotsServiceImpl service = new RobotsServiceImpl(this);
         service.startAsync();
         service.awaitRunning();
         return service;

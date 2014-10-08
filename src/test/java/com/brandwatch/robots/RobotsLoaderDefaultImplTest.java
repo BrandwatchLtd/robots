@@ -29,7 +29,7 @@ public class RobotsLoaderDefaultImplTest {
     @Mock
     private RobotsBuildingHandler handler;
     @Mock
-    private RobotExclusionConfig config;
+    private RobotsConfig config;
 
     @InjectMocks
     private RobotsLoaderDefaultImpl instance;

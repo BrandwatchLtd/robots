@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
 
 public class RobotsFunctionalTest {
 
-    private RobotExclusionService service;
+    private RobotsService service;
 
     @Before
     public void setup() {
@@ -27,7 +27,7 @@ public class RobotsFunctionalTest {
                 "http_www.brandwatch.com_robots.txt"), Charsets.UTF_8))
                 .when(utilities).createCharSourceFor(any(URI.class));
 
-        RobotExclusionConfig config = spy(new RobotExclusionConfig());
+        RobotsConfig config = spy(new RobotsConfig());
         when(config.getUtilities()).thenReturn(utilities);
 
         service = config.getService();

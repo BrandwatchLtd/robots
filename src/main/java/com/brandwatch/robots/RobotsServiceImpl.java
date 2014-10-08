@@ -13,18 +13,18 @@ import java.net.URI;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-class RobotExclusionServiceImpl extends AbstractIdleService implements RobotExclusionService {
+class RobotsServiceImpl extends AbstractIdleService implements RobotsService {
 
-    private static final Logger log = LoggerFactory.getLogger(RobotExclusionServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(RobotsServiceImpl.class);
 
-    private final RobotExclusionConfig config;
+    private final RobotsConfig config;
     private final RobotsLoader loader;
     private final RobotsUtilities utilities;
 
-    public RobotExclusionServiceImpl(@Nonnull RobotExclusionConfig robotExclusionConfig) {
-        this.config = checkNotNull(robotExclusionConfig, "robotExclusionConfig");
-        this.loader = checkNotNull(robotExclusionConfig.getLoader(), "loader");
-        this.utilities = checkNotNull(robotExclusionConfig.getUtilities(), "utilities");
+    public RobotsServiceImpl(@Nonnull RobotsConfig robotsConfig) {
+        this.config = checkNotNull(robotsConfig, "robotExclusionConfig");
+        this.loader = checkNotNull(robotsConfig.getLoader(), "loader");
+        this.utilities = checkNotNull(robotsConfig.getUtilities(), "utilities");
     }
 
     @Override

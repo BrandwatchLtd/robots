@@ -17,7 +17,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RobotExclusionServiceImplTest {
+public class RobotsServiceImplTest {
 
     @Mock
     private RobotsLoader loader;
@@ -26,9 +26,9 @@ public class RobotExclusionServiceImplTest {
     private RobotsUtilities utilities;
 
     @Mock
-    private RobotExclusionConfig config;
+    private RobotsConfig config;
 
-    private RobotExclusionServiceImpl instance;
+    private RobotsServiceImpl instance;
 
     @Before
     public final void startUp() throws Exception {
@@ -38,7 +38,7 @@ public class RobotExclusionServiceImplTest {
         when(config.getUtilities()).thenReturn(utilities);
 
         when(loader.load(any(URI.class))).thenReturn(new Robots.Builder().build());
-        instance = new RobotExclusionServiceImpl(config);
+        instance = new RobotsServiceImpl(config);
         instance.startAsync();
         instance.awaitRunning();
     }
