@@ -2,6 +2,7 @@ package com.brandwatch.robots;
 
 import com.brandwatch.robots.domain.Robots;
 import com.google.common.io.CharSource;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -16,6 +17,8 @@ import java.net.URI;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -23,9 +26,19 @@ public class RobotsLoaderDefaultImplTest {
 
     @Mock
     private RobotsUtilities utilities;
+    @Mock
+    private RobotsBuildingHandler handler;
+    @Mock
+    private RobotExclusionConfig config;
 
     @InjectMocks
     private RobotsLoaderDefaultImpl instance;
+
+    @Before
+    public void setup() {
+        when(config.getUtilities()).thenReturn(utilities);
+        when(config.getRobotsBuildingHandler()).thenReturn(handler);
+    }
 
     @Test(expected = NullPointerException.class)
     public void givenNullSource_whenLoad_thenThrowsNPE() throws IOException {
@@ -33,11 +46,11 @@ public class RobotsLoaderDefaultImplTest {
     }
 
     @Test
-    public void givenEmptySource_whenLoad_thenReturnsNonNull() throws IOException {
+    public void givenEmptySource_whenLoad_thenHandlerGetInvoked() throws IOException {
         when(utilities.createCharSourceFor(any(URI.class)))
                 .thenReturn(CharSource.empty());
         Robots result = instance.load(URI.create("http://example.com/robots.txt"));
-        assertThat(result, notNullValue());
+        verify(handler).get();
     }
 
     @Test(expected = IOException.class)

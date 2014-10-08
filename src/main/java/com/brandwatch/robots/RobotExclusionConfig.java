@@ -1,6 +1,7 @@
 package com.brandwatch.robots;
 
 import com.brandwatch.robots.domain.Robots;
+import com.google.common.base.Function;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.slf4j.Logger;
@@ -66,8 +67,12 @@ public class RobotExclusionConfig {
     @Nonnull
     RobotsLoader getLoader() {
         return new RobotsLoaderCachedImpl(
-                new RobotsLoaderDefaultImpl(getUtilities()),
+                new RobotsLoaderDefaultImpl(this),
                 getCache());
+    }
+
+    Function<String, Matcher<String>> getExpressionCompiler() {
+        return new ExpressionCompiler();
     }
 
     private Cache<URI, Robots> getCache() {
@@ -82,7 +87,6 @@ public class RobotExclusionConfig {
                 .build();
     }
 
-
     @Nonnull
     public RobotExclusionService getService() {
         RobotExclusionServiceImpl service = new RobotExclusionServiceImpl(this);
@@ -91,4 +95,7 @@ public class RobotExclusionConfig {
         return service;
     }
 
+    public RobotsBuildingHandler getRobotsBuildingHandler() {
+        return new RobotsBuildingHandler(getExpressionCompiler());
+    }
 }

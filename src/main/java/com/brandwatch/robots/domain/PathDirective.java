@@ -1,12 +1,12 @@
 package com.brandwatch.robots.domain;
 
+import com.brandwatch.robots.Matcher;
 import com.google.common.base.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import java.net.URI;
-import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -20,10 +20,10 @@ public final class PathDirective implements Directive {
     private final String value;
 
     @Nonnull
-    private final Pattern pattern;
+    private final Matcher<String> pathMatcher;
 
-    public PathDirective(@Nonnull Field field, @Nonnull String value, @Nonnull Pattern pattern) {
-        this.pattern = checkNotNull(pattern, "pattern is null");
+    public PathDirective(@Nonnull Field field, @Nonnull String value, @Nonnull Matcher<String> pathMatcher) {
+        this.pathMatcher = checkNotNull(pathMatcher, "pathMatcher is null");
         this.field = checkNotNull(field, "field is null");
         this.value = checkNotNull(value, "value is null");
     }
@@ -41,7 +41,7 @@ public final class PathDirective implements Directive {
     }
 
     public boolean matches(@Nonnull URI uri) {
-        return pattern.matcher(uri.getPath()).matches();
+        return pathMatcher.matches(uri.getPath());
     }
 
     public boolean isAllowed() {

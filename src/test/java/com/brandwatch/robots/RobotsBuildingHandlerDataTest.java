@@ -1,17 +1,17 @@
 package com.brandwatch.robots;
 
 import com.brandwatch.robots.parser.ParseException;
+import com.google.common.base.Function;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
-import java.util.regex.Pattern;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -26,9 +26,19 @@ public class RobotsBuildingHandlerDataTest extends AbstractDataTest {
 
     @Before
     public void setup() throws IOException {
-        RobotsUtilities utilities = mock(RobotsUtilities.class);
-        when(utilities.compilePathExpression(anyString())).thenReturn(Pattern.compile(""));
-        handler = new RobotsBuildingHandler(utilities);
+        RobotExclusionConfig config = mock(RobotExclusionConfig.class);
+        when(config.getExpressionCompiler()).thenReturn(new ExpressionCompiler());
+
+        Function<String, Matcher<String>> expressionCompiler = new Function<String, Matcher<String>>() {
+
+            @Nullable
+            @Override
+            public Matcher<String> apply(String input) {
+                return ExpressionCompiler.ALL;
+            }
+        };
+
+        handler = new RobotsBuildingHandler(expressionCompiler);
     }
 
     @Test

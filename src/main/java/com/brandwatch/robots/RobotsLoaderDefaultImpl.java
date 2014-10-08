@@ -17,10 +17,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 final class RobotsLoaderDefaultImpl implements RobotsLoader {
 
     private static final Logger log = LoggerFactory.getLogger(RobotsLoaderDefaultImpl.class);
-    private final RobotsUtilities utilities;
 
-    public RobotsLoaderDefaultImpl(@Nonnull RobotsUtilities utilities) {
-        this.utilities = checkNotNull(utilities, "utilities is null");
+    private final RobotExclusionConfig config;
+
+    public RobotsLoaderDefaultImpl(@Nonnull RobotExclusionConfig config) {
+        this.config = checkNotNull(config, "config is null");
     }
 
     @Nonnull
@@ -28,7 +29,7 @@ final class RobotsLoaderDefaultImpl implements RobotsLoader {
     public Robots load(@Nonnull URI robotsResource) throws IOException {
         checkNotNull(robotsResource, "robotsResource");
 
-        final RobotsBuildingHandler handler = new RobotsBuildingHandler(utilities);
+        final RobotsBuildingHandler handler = config.getRobotsBuildingHandler();
         final Closer closer = Closer.create();
 
         try {
@@ -36,8 +37,9 @@ final class RobotsLoaderDefaultImpl implements RobotsLoader {
                 log.debug("Downloading and parsing robot.txt: {}", robotsResource);
 
                 final Reader reader = closer.register(
-                        utilities.createCharSourceFor(robotsResource).openBufferedStream());
-
+                        config.getUtilities()
+                                .createCharSourceFor(robotsResource)
+                                .openBufferedStream());
 
                 final RobotsTxtParser parser = new RobotsTxtParser(reader);
                 parser.parse(handler);
