@@ -14,18 +14,18 @@ import java.net.URI;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-class RobotsDownloaderImpl implements RobotsDownloader {
+final class RobotsLoaderDefaultImpl implements RobotsLoader {
 
-    private static final Logger log = LoggerFactory.getLogger(RobotsDownloaderImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(RobotsLoaderDefaultImpl.class);
     private final RobotsUtilities utilities;
 
-    public RobotsDownloaderImpl(@Nonnull RobotsUtilities utilities) {
+    public RobotsLoaderDefaultImpl(@Nonnull RobotsUtilities utilities) {
         this.utilities = checkNotNull(utilities, "utilities is null");
     }
 
     @Nonnull
     @Override
-    public Robots load(@Nonnull URI robotsResource) {
+    public Robots load(@Nonnull URI robotsResource) throws IOException {
         checkNotNull(robotsResource, "robotsResource");
 
         final RobotsBuildingHandler handler = new RobotsBuildingHandler(utilities);
@@ -53,7 +53,7 @@ class RobotsDownloaderImpl implements RobotsDownloader {
             }
         } catch (IOException ex) {
             log.warn("Failed to download robots.txt: ", ex);
-            throw new RuntimeException(ex);
+            throw ex;
         }
 
         return handler.get();

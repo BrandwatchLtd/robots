@@ -1,11 +1,20 @@
 package com.brandwatch.robots;
 
+import com.brandwatch.robots.domain.Robots;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
 public class RobotExclusionConfig {
+    private static final Logger log = LoggerFactory.getLogger(RobotExclusionConfig.class);
 
     private final RobotsUtilities robotsUtilities = new RobotsUtilities();
 
@@ -48,18 +57,34 @@ public class RobotExclusionConfig {
         this.maxFileSizeBytes = maxFileSizeBytes;
     }
 
+
     @Nonnull
-    RobotsUtilities getRobotsUtilities() {
+    RobotsUtilities getUtilities() {
         return robotsUtilities;
     }
 
     @Nonnull
-    RobotsDownloader getRobotsDownloader() {
-        return new RobotsDownloaderImpl(getRobotsUtilities());
+    RobotsLoader getLoader() {
+        return new RobotsLoaderCachedImpl(
+                new RobotsLoaderDefaultImpl(getUtilities()),
+                getCache());
     }
 
+    private Cache<URI, Robots> getCache() {
+
+        log.debug("Initializing cache (maxSize: {}, expires after: {} hours)",
+                getCacheMaxSizeRecords(), this.getCachedExpiresHours());
+
+        return CacheBuilder.newBuilder()
+                .maximumSize(getCacheMaxSizeRecords())
+                .expireAfterWrite(getCachedExpiresHours(), TimeUnit.HOURS)
+                .recordStats()
+                .build();
+    }
+
+
     @Nonnull
-    public RobotExclusionService getRobotExclusionService() {
+    public RobotExclusionService getService() {
         RobotExclusionServiceImpl service = new RobotExclusionServiceImpl(this);
         service.startAsync();
         service.awaitRunning();

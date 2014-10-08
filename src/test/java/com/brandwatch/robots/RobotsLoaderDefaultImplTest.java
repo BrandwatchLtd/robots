@@ -19,29 +19,29 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RobotsDownloaderImplTest {
+public class RobotsLoaderDefaultImplTest {
 
     @Mock
     private RobotsUtilities utilities;
 
     @InjectMocks
-    private RobotsDownloaderImpl instance;
+    private RobotsLoaderDefaultImpl instance;
 
     @Test(expected = NullPointerException.class)
-    public void givenNullSource_whenLoad_thenThrowsNPE() {
+    public void givenNullSource_whenLoad_thenThrowsNPE() throws IOException {
         instance.load(null);
     }
 
     @Test
-    public void givenEmptySource_whenLoad_thenReturnsNonNull() {
+    public void givenEmptySource_whenLoad_thenReturnsNonNull() throws IOException {
         when(utilities.createCharSourceFor(any(URI.class)))
                 .thenReturn(CharSource.empty());
         Robots result = instance.load(URI.create("http://example.com/robots.txt"));
         assertThat(result, notNullValue());
     }
 
-    @Test(expected = RuntimeException.class)
-    public void givenSourceThrowsIOException_whenLoad_thenThrowsRuntimeException() {
+    @Test(expected = IOException.class)
+    public void givenSourceThrowsIOE_whenLoad_thenThrowsIOE() throws IOException {
         when(utilities.createCharSourceFor(any(URI.class)))
                 .thenReturn(new CharSource() {
                     @Nonnull

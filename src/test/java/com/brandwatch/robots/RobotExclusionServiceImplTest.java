@@ -1,5 +1,6 @@
 package com.brandwatch.robots;
 
+import com.brandwatch.robots.domain.Robots;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +12,7 @@ import java.net.URI;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -18,7 +20,7 @@ import static org.mockito.Mockito.when;
 public class RobotExclusionServiceImplTest {
 
     @Mock
-    private RobotsDownloader downloader;
+    private RobotsLoader loader;
 
     @Mock
     private RobotsUtilities utilities;
@@ -31,10 +33,11 @@ public class RobotExclusionServiceImplTest {
     @Before
     public final void startUp() throws Exception {
 
-        when(config.getRobotExclusionService()).thenReturn(instance);
-        when(config.getRobotsDownloader()).thenReturn(downloader);
-        when(config.getRobotsUtilities()).thenReturn(utilities);
+        when(config.getService()).thenReturn(instance);
+        when(config.getLoader()).thenReturn(loader);
+        when(config.getUtilities()).thenReturn(utilities);
 
+        when(loader.load(any(URI.class))).thenReturn(new Robots.Builder().build());
         instance = new RobotExclusionServiceImpl(config);
         instance.startAsync();
         instance.awaitRunning();

@@ -1,14 +1,13 @@
 package com.brandwatch.robots;
 
 import com.brandwatch.robots.domain.Robots;
-import com.google.common.io.CharSource;
 
 import javax.annotation.Nonnull;
 import java.net.URI;
 
-public interface RobotsDownloader {
+public interface RobotsLoader {
 
     @Nonnull
-    Robots load(URI robotsResource);
+    Robots load(@Nonnull URI robotsResource) throws Exception;
 
 }

@@ -28,9 +28,9 @@ public class BwJarRobotsTxtTest {
         utilities = spy(new RobotsUtilities());
 
         RobotExclusionConfig config = spy(new RobotExclusionConfig());
-        when(config.getRobotsUtilities()).thenReturn(utilities);
+        when(config.getUtilities()).thenReturn(utilities);
 
-        service = config.getRobotExclusionService();
+        service = config.getService();
     }
 
     @Test
