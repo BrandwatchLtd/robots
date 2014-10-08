@@ -1,6 +1,9 @@
 package com.brandwatch.robots;
 
+import com.brandwatch.robots.domain.AgentDirective;
 import com.brandwatch.robots.domain.Group;
+import com.brandwatch.robots.util.ExpressionCompiler;
+import com.brandwatch.robots.util.ExpressionCompilerBuilder;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
@@ -10,10 +13,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import javax.annotation.Nonnull;
-import java.net.URI;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -21,9 +22,14 @@ import static org.junit.Assert.assertThat;
 @RunWith(Enclosed.class)
 public class RobotsUtilitiesTest {
 
+    private static ExpressionCompiler agentExpressionCompiler = new ExpressionCompilerBuilder()
+            .withCaseSensitivity(false)
+            .build();
+
     public static class GetAgentMatchLengthTest {
 
         private RobotsUtilities utilities;
+
 
         @Before
         public final void setup() {
@@ -32,74 +38,77 @@ public class RobotsUtilitiesTest {
 
         @Test(expected = NullPointerException.class)
         public void givenPatternIsNull_whenGetAgentMatchLength_thenThrowsNPE() {
-            String pattern = null;
+            AgentDirective directive = null;
             String agent = "googlebot";
-            utilities.getAgentMatchLength(pattern, agent);
+            utilities.getAgentMatchLength(directive, agent);
         }
 
         @Test(expected = NullPointerException.class)
         public void givenAgentIsNull_whenGetAgentMatchLength_thenThrowsNPE() {
-            String pattern = "*";
+            AgentDirective directive = newAgentDirective("*");
             String agent = null;
-            utilities.getAgentMatchLength(pattern, agent);
+            utilities.getAgentMatchLength(directive, agent);
         }
 
         @Test
         public void givenPatternIsWildcard_whenGetAgentMatchLength_thenReturnsZero() {
-            String pattern = "*";
+            AgentDirective directive = newAgentDirective("*");
             String agent = "googlebot";
-            int length = utilities.getAgentMatchLength(pattern, agent);
+            int length = utilities.getAgentMatchLength(directive, agent);
             assertThat(length, equalTo(0));
         }
 
         @Test
         public void givenPatternMatches_whenGetAgentMatchLength_thenReturnsPatternLength() {
-            String pattern = "google";
+            AgentDirective directive = newAgentDirective("google");
             String agent = "googlebot";
-            int length = utilities.getAgentMatchLength(pattern, agent);
-            assertThat(length, equalTo(pattern.length()));
+            int length = utilities.getAgentMatchLength(directive, agent);
+            assertThat(length, equalTo(directive.getValue().length()));
         }
 
         @Test
         public void givenPatternMatchesIgnoringCase_whenGetAgentMatchLength_thenReturnsPatternLength() {
-            String pattern = "gOoGlE";
+            AgentDirective directive = newAgentDirective("gOoGlE");
             String agent = "googlebot";
-            int length = utilities.getAgentMatchLength(pattern, agent);
-            assertThat(length, equalTo(pattern.length()));
+            int length = utilities.getAgentMatchLength(directive, agent);
+            assertThat(length, equalTo(directive.getValue().length()));
         }
 
         @Test
         public void givenPatternNotMatches_whenGetAgentMatchLength_thenReturnsMinusOne() {
-            String pattern = "yahoo";
+            AgentDirective directive = newAgentDirective("yahoo");
             String agent = "googlebot";
-            int length = utilities.getAgentMatchLength(pattern, agent);
+            int length = utilities.getAgentMatchLength(directive, agent);
             assertThat(length, equalTo(-1));
         }
 
         @Test
         public void givenPatternIsEmpty_whenGetAgentMatchLength_thenReturnsZero() {
-            String pattern = "";
+            AgentDirective directive = newAgentDirective("");
             String agent = "googlebot";
-            int length = utilities.getAgentMatchLength(pattern, agent);
+            int length = utilities.getAgentMatchLength(directive, agent);
             assertThat(length, equalTo(0));
         }
 
         @Test
         public void givenPatternAndAgentAreEmpty_whenGetAgentMatchLength_thenReturnsZero() {
-            String pattern = "";
+            AgentDirective directive = newAgentDirective("");
             String agent = "";
-            int length = utilities.getAgentMatchLength(pattern, agent);
+            int length = utilities.getAgentMatchLength(directive, agent);
             assertThat(length, equalTo(0));
         }
 
         @Test
         public void givenWildcardPattern_andAgentIsEmpty_whenGetAgentMatchLength_thenReturnsZero() {
-            String pattern = "*";
+            AgentDirective directive = newAgentDirective("*");
             String agent = "";
-            int length = utilities.getAgentMatchLength(pattern, agent);
+            int length = utilities.getAgentMatchLength(directive, agent);
             assertThat(length, equalTo(0));
         }
 
+        private AgentDirective newAgentDirective(String pattern) {
+            return new AgentDirective(pattern, agentExpressionCompiler.compile(pattern));
+        }
     }
 
     public static class GetLongestAgentMatchTest {
@@ -136,7 +145,9 @@ public class RobotsUtilitiesTest {
 
         @Test
         public void givenSingltonWildcardGroup_whenGetLongestAgentMatch_thenReturnsZero() {
-            Group group = new Group.Builder().withUserAgent("*").build();
+            Group group = new Group.Builder().withDirective(
+                    new AgentDirective("*", agentExpressionCompiler.compile("*"))
+            ).build();
             String agent = "googlebot";
             int longestMatch = utilities.getLongestAgentMatchLength(group, agent);
             assertThat(longestMatch, equalTo(0));
@@ -180,11 +191,17 @@ public class RobotsUtilitiesTest {
     public static class GetBestMatchingGroupDataTests {
 
         @Nonnull
-        private static final Group firstGroup = new Group.Builder().withUserAgent("googlebot-news").build();
+        private static final Group firstGroup = new Group.Builder()
+                .withDirective(new AgentDirective("googlebot-news", agentExpressionCompiler.compile("googlebot-news")))
+                .build();
         @Nonnull
-        private static final Group secondGroup = new Group.Builder().withUserAgent("*").build();
+        private static final Group secondGroup = new Group.Builder()
+                .withDirective(new AgentDirective("*", agentExpressionCompiler.compile("*")))
+                .build();
         @Nonnull
-        private static final Group thirdGroup = new Group.Builder().withUserAgent("googlebot").build();
+        private static final Group thirdGroup = new Group.Builder()
+                .withDirective(new AgentDirective("googlebot", agentExpressionCompiler.compile("googlebot")))
+                .build();
         private static final List<Group> groups = ImmutableList.<Group>builder()
                 .add(firstGroup).add(secondGroup).add(thirdGroup)
                 .build();
@@ -237,127 +254,4 @@ public class RobotsUtilitiesTest {
 
     }
 
-    /**
-     * Created by hamish on 07/10/14.
-     */
-    @RunWith(Parameterized.class)
-    public static class CompilePathExpressionDataTests {
-
-        private final String pathPattern;
-        @Nonnull
-        private final URI uri;
-        private final boolean expectedResult;
-
-        private RobotsUtilities utilities;
-
-        public CompilePathExpressionDataTests(String pathPattern, @Nonnull String path, boolean expectedResult) {
-            this.pathPattern = pathPattern;
-            this.uri = URI.create("http://www.example.com" + (path.startsWith("/") ? "" : "/") + path);
-            this.expectedResult = expectedResult;
-        }
-
-        @Parameterized.Parameters(name = "{index}: {0} {1} {2}")
-        public static Iterable<Object[]> data() {
-            return ImmutableList.<Object[]>builder()
-                    .add(new Object[]{"/*", "/path/to/index.html", true})
-                    .add(new Object[]{"/*", "/index.html", true})
-                    .add(new Object[]{"/*", "/?query", true})
-                    .add(new Object[]{"/*", "/#fragment", true})
-                    .add(new Object[]{"/*", "/", true})
-                    .add(new Object[]{"/*", "", true})
-                    .add(new Object[]{"*", "/path/to/index.html", true})
-                    .add(new Object[]{"*", "/index.html", true})
-                    .add(new Object[]{"*", "/?query", true})
-                    .add(new Object[]{"*", "/#fragment", true})
-                    .add(new Object[]{"*", "/", true})
-                    .add(new Object[]{"*", "", true})
-                    .add(new Object[]{"/index.html", "/index.html", true})
-                    .add(new Object[]{"index.html", "/index.html", true})
-                    .add(new Object[]{"index.html", "/path/to/index.html", false})
-                    .add(new Object[]{"/index.html", "/index.html?query=foo", true})
-                    .add(new Object[]{"/index.html", "/index.html#fragment", true})
-                    .add(new Object[]{"/index.html", "/index.html.php", true})
-                    .add(new Object[]{"/index.html$", "/index.html.php", false})
-                    .add(new Object[]{"/fish", "/fish", true})
-                    .add(new Object[]{"/fish", "/fish.html", true})
-                    .add(new Object[]{"/fish", "/fish.html", true})
-                    .add(new Object[]{"/fish", "/fish/salmon.html", true})
-                    .add(new Object[]{"/fish", "/fishheads", true})
-                    .add(new Object[]{"/fish", "/fishheads/yummy.html", true})
-                    .add(new Object[]{"/fish", "/fish.php?id=anything", true})
-                    .add(new Object[]{"/fish", "/Fish.asp", false})
-                    .add(new Object[]{"/fish", "/catfish", false})
-                    .add(new Object[]{"/fish", "/?id=fish", false})
-                    .add(new Object[]{"/fish*", "/fish", true})
-                    .add(new Object[]{"/fish*", "/fish.html", true})
-                    .add(new Object[]{"/fish*", "/fish.html", true})
-                    .add(new Object[]{"/fish*", "/fish/salmon.html", true})
-                    .add(new Object[]{"/fish*", "/fishheads", true})
-                    .add(new Object[]{"/fish*", "/fishheads/yummy.html", true})
-                    .add(new Object[]{"/fish*", "/fish.php?id=anything", true})
-                    .add(new Object[]{"/fish*", "/Fish.asp", false})
-                    .add(new Object[]{"/fish*", "/catfish", false})
-                    .add(new Object[]{"/fish*", "/?id=fish", false})
-                    .add(new Object[]{"/fish/", "/fish/?id=anything", true})
-                    .add(new Object[]{"/fish/", "/fish/", true})
-                    .add(new Object[]{"/fish/", "/fish/salmon.htm", true})
-                    .add(new Object[]{"/fish/", "/fish", false})
-                    .add(new Object[]{"/fish/", "/fish.html", false})
-                    .add(new Object[]{"/fish/", "/Fish/Salmon.asp", false})
-                    .add(new Object[]{"fish/", "/fish/?id=anything", true})
-                    .add(new Object[]{"fish/", "/fish/", true})
-                    .add(new Object[]{"fish/", "/fish/salmon.htm", true})
-                    .add(new Object[]{"fish/", "/fish", false})
-                    .add(new Object[]{"fish/", "/fish.html", false})
-                    .add(new Object[]{"fish/", "/Fish/Salmon.asp", false})
-                    .add(new Object[]{"/*.php", "/filename.php", true})
-                    .add(new Object[]{"/*.php", "/folder/filename.php", true})
-                    .add(new Object[]{"/*.php", "/folder/filename.php?parameters", true})
-                    .add(new Object[]{"/*.php", "/folder/any.php.file.html", true})
-                    .add(new Object[]{"/*.php", "/filename.php/", true})
-                    .add(new Object[]{"/*.php", "/", false})
-                    .add(new Object[]{"/*.php", "/windows.PHP", false})
-                    .add(new Object[]{"/fish*.php", "/fish.php", true})
-                    .add(new Object[]{"/fish*.php", "/fishheads/catfish.php?parameters", true})
-                    .add(new Object[]{"/fish*.php", "/Fish.PHP", false})
-                    .add(new Object[]{"/*/docs/*.html", "/a/docs/1.html", true})
-                    .add(new Object[]{"/*/docs/*.html", "/a/docs/2.html", true})
-                    .add(new Object[]{"/*/docs/*.html", "/b/docs/1.html", true})
-                    .add(new Object[]{"/*/docs/*.html", "/b/docs/2.html", true})
-                    .add(new Object[]{"/*/docs/*.html", "/b/docs/2.html.stuff", true})
-                    .add(new Object[]{"/*/docs/*.html", "/a/b/c/docs/1.html", true})
-                    .add(new Object[]{"/*/docs/*.html", "/docs/1.html", false})
-                    .add(new Object[]{"/*/docs/*.html", "/a/docs/1.php", false})
-                    .add(new Object[]{"/*/docs/*.html", "//docs/1.html", true})
-                    .add(new Object[]{"*/index.html$", "/index.html", true})
-                    .add(new Object[]{"/index.htm$", "/index.htm", true})
-                    .add(new Object[]{"/index.htm$", "/index.html", false})
-                    .add(new Object[]{"/p", "/page", true})
-                    .add(new Object[]{"/", "/page", true})
-                    .add(new Object[]{"/folder/", "/folder/page", true})
-                    .add(new Object[]{"/folder", "/folder/page", true})
-                    .add(new Object[]{"/page", "/page.htm", true})
-                    .add(new Object[]{"/*.htm", "/page.htm", true})
-                    .add(new Object[]{"/$", "/", true})
-                    .add(new Object[]{"/", "/", true})
-                    .add(new Object[]{"/$", "/page.htm", false})
-                    .add(new Object[]{"/", "/page.htm", true})
-                    .add(new Object[]{"/************************************", "/index.html", true})
-                    .add(new Object[]{"/*$", "/index.html", true})
-                    .build();
-        }
-
-        @Before
-        public final void setup() {
-            utilities = new RobotsUtilities();
-        }
-
-        @Test
-        public void whenIsPathPatternMatched_thenResultEqualsExpected() {
-            Pattern pattern = utilities.compilePathExpression(pathPattern);
-            boolean result = pattern.matcher(uri.getPath()).matches();
-            assertThat(result, equalTo(expectedResult));
-        }
-
-    }
 }

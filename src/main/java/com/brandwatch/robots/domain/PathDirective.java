@@ -1,6 +1,6 @@
 package com.brandwatch.robots.domain;
 
-import com.brandwatch.robots.Matcher;
+import com.brandwatch.robots.util.Matcher;
 import com.google.common.base.Objects;
 
 import javax.annotation.Nonnull;

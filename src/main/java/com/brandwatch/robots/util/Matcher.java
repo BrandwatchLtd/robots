@@ -1,4 +1,4 @@
-package com.brandwatch.robots;
+package com.brandwatch.robots.util;
 
 import javax.annotation.Nonnull;
 

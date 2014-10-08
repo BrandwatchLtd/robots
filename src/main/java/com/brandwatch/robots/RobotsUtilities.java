@@ -1,5 +1,6 @@
 package com.brandwatch.robots;
 
+import com.brandwatch.robots.domain.AgentDirective;
 import com.brandwatch.robots.domain.Group;
 import com.brandwatch.robots.net.RobotsURIBuilder;
 import com.google.common.base.Charsets;
@@ -12,12 +13,9 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.util.regex.Pattern.compile;
-import static java.util.regex.Pattern.quote;
 
 public class RobotsUtilities {
 
@@ -68,7 +66,7 @@ public class RobotsUtilities {
         checkNotNull(agentString, "agentString is null");
 
         int longestMatch = -1;
-        for (String agentPattern : group.getUserAgents()) {
+        for (AgentDirective agentPattern : group.getDirectives(AgentDirective.class)) {
             int length = getAgentMatchLength(agentPattern, agentString);
             if (longestMatch < length) {
                 longestMatch = length;
@@ -78,52 +76,17 @@ public class RobotsUtilities {
     }
 
 
-    public int getAgentMatchLength(@Nonnull String agentPattern, @Nonnull String agentString) {
-        checkNotNull(agentPattern, "agentPattern is null");
+    public int getAgentMatchLength(@Nonnull AgentDirective agentDirective, @Nonnull String agentString) {
+        checkNotNull(agentDirective, "agentPattern is null");
         checkNotNull(agentString, "agentString is null");
 
-        if (agentPattern.isEmpty() || agentPattern.equals("*")) {
+        if (agentDirective.getValue().isEmpty() || agentDirective.getValue().equals("*")) {
             return 0;
-        } else if (agentString.toLowerCase().contains(agentPattern.toLowerCase())) {
-            return agentPattern.length();
+        } else if (agentDirective.matches(agentString.toLowerCase())) {
+            return agentDirective.getValue().length();
         } else {
             return -1;
         }
-    }
-
-    @Nonnull
-    public Pattern compilePathExpression(@Nonnull String pathExpression) {
-        final StringBuilder regex = new StringBuilder().append("^");
-
-        if (pathExpression.isEmpty()) {
-            return Pattern.compile(".*?");
-        }
-
-        switch (pathExpression.charAt(0)) {
-            default:
-                regex.append('/');
-            case '/':
-            case '*':
-        }
-
-        final int len = pathExpression.length();
-        int start = 0;
-        int end;
-        while ((end = pathExpression.indexOf('*', start)) != -1) {
-            regex.append(quote(pathExpression.substring(start, end)))
-                    .append(".*?");
-            start = end + 1;
-        }
-
-        if (pathExpression.charAt(len - 1) == '$') {
-            regex.append(quote(pathExpression.substring(start, len - 1)))
-                    .append('$');
-        } else {
-            regex.append(quote(pathExpression.substring(start, len)))
-                    .append(".*?");
-        }
-
-        return compile(regex.toString());
     }
 
 }

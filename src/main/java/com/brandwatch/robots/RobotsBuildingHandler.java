@@ -2,7 +2,7 @@ package com.brandwatch.robots;
 
 import com.brandwatch.robots.domain.*;
 import com.brandwatch.robots.parser.RobotsTxtParserHandler;
-import com.google.common.base.Function;
+import com.brandwatch.robots.util.ExpressionCompiler;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 
@@ -12,15 +12,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 class RobotsBuildingHandler implements RobotsTxtParserHandler, Supplier<Robots> {
 
-    private final Function<String, Matcher<String>> expressionCompiler;
+    private final ExpressionCompiler pathExpressionCompiler;
+    private final ExpressionCompiler agentExpressionCompiler;
 
     @Nonnull
     private final Robots.Builder robots = new Robots.Builder();
     @Nonnull
     private Optional<Group.Builder> group = Optional.absent();
 
-    RobotsBuildingHandler(@Nonnull Function<String, Matcher<String>> expressionCompiler) {
-        this.expressionCompiler = checkNotNull(expressionCompiler, "expressionCompiler");
+    RobotsBuildingHandler(@Nonnull ExpressionCompiler pathExpressionCompiler,
+                          @Nonnull ExpressionCompiler agentExpressionCompiler) {
+        this.pathExpressionCompiler = checkNotNull(pathExpressionCompiler, "pathExpressionCompiler");
+        this.agentExpressionCompiler = checkNotNull(agentExpressionCompiler, "agentExpressionCompiler");
     }
 
     @Override
@@ -29,8 +32,9 @@ class RobotsBuildingHandler implements RobotsTxtParserHandler, Supplier<Robots> 
     }
 
     @Override
-    public void userAgent(@Nonnull String pattern) {
-        group.get().withUserAgent(pattern);
+    public void userAgent(@Nonnull String agentExpression) {
+        group.get().withDirective(new AgentDirective(agentExpression,
+                agentExpressionCompiler.compile(agentExpression)));
     }
 
     @Override
@@ -46,7 +50,7 @@ class RobotsBuildingHandler implements RobotsTxtParserHandler, Supplier<Robots> 
     private void addNewPathDirective(@Nonnull PathDirective.Field field,
                                      @Nonnull final String pathExpression) {
         group.get().withDirective(new PathDirective(field, pathExpression,
-                expressionCompiler.apply(pathExpression)));
+                pathExpressionCompiler.compile(pathExpression)));
     }
 
     @Override

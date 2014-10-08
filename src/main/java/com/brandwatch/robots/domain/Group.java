@@ -14,19 +14,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public final class Group {
 
     @Nonnull
-    private final List<String> userAgents;
-
-    @Nonnull
     private final List<Directive> directives;
 
     public Group(@Nonnull Builder builder) {
-        this.userAgents = builder.userAgents.build();
         this.directives = builder.directives.build();
-    }
-
-    @Nonnull
-    public List<String> getUserAgents() {
-        return userAgents;
     }
 
     @Nonnull
@@ -50,22 +41,18 @@ public final class Group {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Group group = (Group) o;
-        return directives.equals(group.directives)
-                && userAgents.equals(group.userAgents);
+        return directives.equals(group.directives);
     }
 
     @Override
     public int hashCode() {
-        int result = userAgents.hashCode();
-        result = 31 * result + directives.hashCode();
-        return result;
+        return directives.hashCode();
     }
 
     @Nonnull
     @Override
     public String toString() {
         return Objects.toStringHelper(this)
-                .add("userAgents", userAgents)
                 .add("directives", directives)
                 .toString();
     }
@@ -73,16 +60,7 @@ public final class Group {
     public static class Builder {
 
         @Nonnull
-        private final ImmutableList.Builder<String> userAgents = ImmutableList.builder();
-
-        @Nonnull
         private final ImmutableList.Builder<Directive> directives = ImmutableList.builder();
-
-        @Nonnull
-        public Builder withUserAgent(@Nonnull String userAgent) {
-            userAgents.add(checkNotNull(userAgent, "userAgent is null"));
-            return this;
-        }
 
         @Nonnull
         public Builder withDirective(@Nonnull Directive directive) {

@@ -1,6 +1,8 @@
 package com.brandwatch.robots;
 
 import com.brandwatch.robots.domain.Robots;
+import com.brandwatch.robots.util.ExpressionCompiler;
+import com.brandwatch.robots.util.ExpressionCompilerBuilder;
 import com.google.common.base.Function;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -9,22 +11,38 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
 public class RobotExclusionConfig {
+
     private static final Logger log = LoggerFactory.getLogger(RobotExclusionConfig.class);
 
-    private final RobotsUtilities robotsUtilities = new RobotsUtilities();
+    private static final Function<String, String> PATH_EXPRESSION_PREPROCESSOR = new Function<String, String>() {
+        @Nullable
+        @Override
+        public String apply(String input) {
+            if (!input.isEmpty()) {
+                switch (input.charAt(0)) {
+                    default:
+                        return '/' + input;
+                    case '/':
+                    case '*':
+                    case '^':
+                }
+            }
+            return input;
+        }
+    };
 
+    private final RobotsUtilities robotsUtilities = new RobotsUtilities();
     @Nonnegative
     private long cachedExpiresHours = 48;
-
     @Nonnegative
     private long cacheMaxSizeRecords = 10000;
-
     @Nonnegative
     private int maxFileSizeBytes = 192 * 1024;
 
@@ -58,7 +76,6 @@ public class RobotExclusionConfig {
         this.maxFileSizeBytes = maxFileSizeBytes;
     }
 
-
     @Nonnull
     RobotsUtilities getUtilities() {
         return robotsUtilities;
@@ -71,8 +88,17 @@ public class RobotExclusionConfig {
                 getCache());
     }
 
-    Function<String, Matcher<String>> getExpressionCompiler() {
-        return new ExpressionCompiler();
+    ExpressionCompiler getPathExpressionCompiler() {
+        return new ExpressionCompilerBuilder()
+                .withLeftBoundaryMatching(true)
+                .withExpressionPreprocessor(PATH_EXPRESSION_PREPROCESSOR)
+                .build();
+    }
+
+    ExpressionCompiler getAgentExpressionCompiler() {
+        return new ExpressionCompilerBuilder()
+                .withCaseSensitivity(false)
+                .build();
     }
 
     private Cache<URI, Robots> getCache() {
@@ -96,6 +122,8 @@ public class RobotExclusionConfig {
     }
 
     public RobotsBuildingHandler getRobotsBuildingHandler() {
-        return new RobotsBuildingHandler(getExpressionCompiler());
+        return new RobotsBuildingHandler(
+                getPathExpressionCompiler(),
+                getAgentExpressionCompiler());
     }
 }
