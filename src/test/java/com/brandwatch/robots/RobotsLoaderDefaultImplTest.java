@@ -1,6 +1,8 @@
 package com.brandwatch.robots;
 
 import com.brandwatch.robots.domain.Robots;
+import com.brandwatch.robots.net.SizeLimitExceededException;
+import com.google.common.base.Strings;
 import com.google.common.io.CharSource;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,10 +16,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.net.URI;
 
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -47,7 +47,7 @@ public class RobotsLoaderDefaultImplTest {
 
     @Test
     public void givenEmptySource_whenLoad_thenHandlerGetInvoked() throws IOException {
-        when(utilities.createCharSourceFor(any(URI.class)))
+        when(utilities.createCharSourceFor(any(URI.class), anyLong()))
                 .thenReturn(CharSource.empty());
         Robots result = instance.load(URI.create("http://example.com/robots.txt"));
         verify(handler).get();
@@ -55,7 +55,7 @@ public class RobotsLoaderDefaultImplTest {
 
     @Test(expected = IOException.class)
     public void givenSourceThrowsIOE_whenLoad_thenThrowsIOE() throws IOException {
-        when(utilities.createCharSourceFor(any(URI.class)))
+        when(utilities.createCharSourceFor(any(URI.class), anyLong()))
                 .thenReturn(new CharSource() {
                     @Nonnull
                     @Override
@@ -65,5 +65,4 @@ public class RobotsLoaderDefaultImplTest {
                 });
         instance.load(URI.create("http://example.com/robots.txt"));
     }
-
 }

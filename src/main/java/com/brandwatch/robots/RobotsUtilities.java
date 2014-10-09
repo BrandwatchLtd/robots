@@ -2,6 +2,7 @@ package com.brandwatch.robots;
 
 import com.brandwatch.robots.domain.AgentDirective;
 import com.brandwatch.robots.domain.Group;
+import com.brandwatch.robots.net.ByteLimitedInputStream;
 import com.brandwatch.robots.net.RobotsURIBuilder;
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
@@ -20,13 +21,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class RobotsUtilities {
 
     @Nonnull
-    public CharSource createCharSourceFor(final URI robotsResource) {
+    public CharSource createCharSourceFor(final URI robotsResource,
+                                          final long sizeLimitBytes) {
         checkNotNull(robotsResource, "robotsResource");
         return new CharSource() {
             @Override
             public Reader openStream() throws IOException {
                 return new InputStreamReader(
-                        robotsResource.toURL().openStream(),
+                        new ByteLimitedInputStream(
+                                robotsResource.toURL().openStream(),
+                                sizeLimitBytes
+                        ),
                         Charsets.UTF_8);
             }
         };

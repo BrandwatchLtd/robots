@@ -38,7 +38,7 @@ final class RobotsLoaderDefaultImpl implements RobotsLoader {
 
                 final Reader reader = closer.register(
                         config.getUtilities()
-                                .createCharSourceFor(robotsResource)
+                                .createCharSourceFor(robotsResource, config.getMaxFileSizeBytes())
                                 .openBufferedStream());
 
                 final RobotsParser parser = new RobotsParser(reader);

@@ -2,10 +2,13 @@ package com.brandwatch.robots;
 
 import com.brandwatch.robots.domain.AgentDirective;
 import com.brandwatch.robots.domain.Group;
+import com.brandwatch.robots.net.SizeLimitExceededException;
 import com.brandwatch.robots.util.ExpressionCompiler;
 import com.brandwatch.robots.util.ExpressionCompilerBuilder;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.CharSource;
+import com.google.common.io.Resources;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -13,6 +16,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
@@ -254,4 +261,50 @@ public class RobotsUtilitiesTest {
 
     }
 
+
+    public static class CreateCharSourceForTests {
+
+        private URI robotsUri;
+        private long robotsSize;
+        private RobotsUtilities utilities;
+
+        @Before
+        public final void setup() throws URISyntaxException, IOException {
+            URL resource = Resources.getResource(CreateCharSourceForTests.class, "bush_http_www.whitehouse.gov_robots.txt");
+            robotsUri = resource.toURI();
+            robotsSize = Resources.asByteSource(resource).size();
+            utilities = new RobotsUtilities();
+        }
+
+        @Test(expected = SizeLimitExceededException.class)
+        public void givenRobotsMuchLargerThanLimit_whenRead_thenThrowsSLEE() throws IOException {
+            CharSource source = utilities.createCharSourceFor(robotsUri, robotsSize / 2);
+            source.read();
+        }
+
+        @Test(expected = SizeLimitExceededException.class)
+        public void givenRobotsLargerThanLimit_whenRead_thenThrowsSLEE() throws IOException {
+            CharSource source = utilities.createCharSourceFor(robotsUri, robotsSize - 1);
+            source.read();
+        }
+
+        @Test
+        public void givenRobotsEqualToLimit_whenRead_thenNoExceptionThrow() throws IOException {
+            CharSource source = utilities.createCharSourceFor(robotsUri, robotsSize);
+            source.read();
+        }
+
+        @Test
+        public void givenRobotsSmallerThanLimit_whenRead_thenNoExceptionThrow() throws IOException {
+            CharSource source = utilities.createCharSourceFor(robotsUri, robotsSize + 1);
+            source.read();
+        }
+
+        @Test
+        public void givenRobotsMuchSmallerThanLimit_whenRead_thenNoExceptionThrow() throws IOException {
+            CharSource source = utilities.createCharSourceFor(robotsUri, robotsSize * 2);
+            source.read();
+        }
+
+    }
 }

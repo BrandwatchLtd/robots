@@ -1,6 +1,7 @@
 package com.brandwatch.robots;
 
 import com.google.common.base.Charsets;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,7 +26,7 @@ public class RobotsFunctionalTest {
 
         doReturn(asCharSource(getResource(RobotsFunctionalTest.class,
                 "http_www.brandwatch.com_robots.txt"), Charsets.UTF_8))
-                .when(utilities).createCharSourceFor(any(URI.class));
+                .when(utilities).createCharSourceFor(any(URI.class), anyLong());
 
         RobotsConfig config = spy(new RobotsConfig());
         when(config.getUtilities()).thenReturn(utilities);

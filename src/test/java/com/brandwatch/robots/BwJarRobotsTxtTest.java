@@ -87,7 +87,7 @@ public class BwJarRobotsTxtTest {
         doReturn(
                 asCharSource(getResource(BwJarRobotsTxtTest.class,
                         robotsResourceName), Charsets.UTF_8))
-                .when(utilities).createCharSourceFor(any(URI.class));
+                .when(utilities).createCharSourceFor(any(URI.class), anyLong());
     }
 
     private boolean isAllowed(String url) throws MalformedURLException {
