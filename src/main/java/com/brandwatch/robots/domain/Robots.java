@@ -38,14 +38,13 @@ public final class Robots {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Robots robots = (Robots) o;
-        return groups.equals(robots.groups) && nonGroupDirectives.equals(robots.nonGroupDirectives);
+        return Objects.equal(groups, robots.groups)
+                && Objects.equal(nonGroupDirectives, robots.nonGroupDirectives);
     }
 
     @Override
     public int hashCode() {
-        int result = groups.hashCode();
-        result = 31 * result + nonGroupDirectives.hashCode();
-        return result;
+        return Objects.hashCode(groups, nonGroupDirectives);
     }
 
     @Nonnull

@@ -25,6 +25,7 @@ public final class ByteLimitedInputStream extends FilterInputStream {
         int result = in.read();
         if (result != -1) {
             ++count;
+            checkLimit();
         }
         return result;
     }

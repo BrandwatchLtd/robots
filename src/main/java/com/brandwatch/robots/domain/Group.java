@@ -41,12 +41,12 @@ public final class Group {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Group group = (Group) o;
-        return directives.equals(group.directives);
+        return Objects.equal(directives, group.directives);
     }
 
     @Override
     public int hashCode() {
-        return directives.hashCode();
+        return Objects.hashCode(directives);
     }
 
     @Nonnull

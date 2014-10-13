@@ -44,40 +44,40 @@ constrain the maximum download size.
 
 #### Parsing
 
-Resources are parsed using a *fast* LL1 top-down parser, build in JavaCC. The process is relatively
+Resources are parsed using a *fast* LL1 top-down parser, built in JavaCC. The process is relatively
 forgiving, allowing undefined field names, though can still fail if something entirely unexpected
 happens.
 
 #### Caching
 
 For obvious reasons, we don't want to re-acquire the *robots.txt* file for every query, so we
-cache results for pre-defined period (currently 2 days.) The cache is also size limited so
+cache results for pre-defined period (currently 2 days). The cache is also size limited so
 memory usage is bounded.
 
 #### Compiling wildcard expressions
 
-The *robots.txt* file can contain user-agent and path expression, containing wild-cards and other
+The *robots.txt* file can contain user-agent and path expressions, containing wild-cards and other
 non-literal syntax. The module translates these expressions to efficient regular expressions.
 
 #### Agent group matching
 
-Robots file can contain multiple agent groups, defined by one or more user-agent directives. The module
+The robots file can contain multiple agent groups, defined by one or more user-agent directives. The module
 finds the group that best matches our crawlers user agent string. In the case that multiple groups match,
 we choose the most precise match (longest matching expression).
 
 #### Path directive matching
 
-Once we have a group, we then matching all it's path expressions to the queried resource URI. The matching
+Once we have a group, we then match all it's path expressions to the queried resource URI. The matching
 happens in the order presented in the file, and stops on the first match. If the first match is
 an *allow* directive, the queried resource is allowed, otherwise the resource is disallowed. If no
 path expressions match, then the resource is allowed.
 
 #### Extraction of other directives
 
-In addition to the standard exclusion rules, *robots;txt* sometimes contain non-standard directives.
+In addition to the standard exclusion rules, *robots.txt* sometimes contains non-standard directives.
 These include site-map URIs, and crawler delay instructions. The module parses these directives
  and holds them in the internal model, but does nothing more. If we wish to make use of these directives
- in the future, it will be trivial to extent the module functionality to do so.
+ in the future, it will be trivial to extend the module functionality to do so.
 
 # Prerequisites
 
@@ -107,11 +107,11 @@ mvn clean install
  
 Note that the library contains a JavaCC parser, which must be generated before
 normal compilation. Maven will handle this auto-magically, but your chosen IDE
-will most-likely flounder. Consult google.
+will most-likely flounder. Consult Google.
 
 # Usage
 
-Include the library dependency in you maven `pom.xml`:
+Include the library dependency in your maven `pom.xml`:
 
 ```xml
 <dependency>

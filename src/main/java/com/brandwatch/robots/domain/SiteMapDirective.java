@@ -35,12 +35,12 @@ public final class SiteMapDirective implements Directive {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SiteMapDirective that = (SiteMapDirective) o;
-        return value.equals(that.value);
+        return Objects.equal(value, that.value);
     }
 
     @Override
     public int hashCode() {
-        return value.hashCode();
+        return Objects.hashCode(value);
     }
 
     @Nonnull

@@ -11,8 +11,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 final class RobotsLoaderCachedImpl implements RobotsLoader {
 
-    @Nonnull private final RobotsLoader delegate;
-    @Nonnull private final Cache<URI, Robots> cache;
+    @Nonnull
+    private final RobotsLoader delegate;
+    @Nonnull
+    private final Cache<URI, Robots> cache;
 
     public RobotsLoaderCachedImpl(
             @Nonnull final RobotsLoader delegate,

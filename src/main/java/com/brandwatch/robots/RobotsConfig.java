@@ -26,12 +26,9 @@ public class RobotsConfig {
         @Override
         public String apply(String input) {
             if (!input.isEmpty()) {
-                switch (input.charAt(0)) {
-                    default:
-                        return '/' + input;
-                    case '/':
-                    case '*':
-                    case '^':
+                final char c = input.charAt(0);
+                if (c != '/' && c != '*' && c != '^') {
+                    return '/' + input;
                 }
             }
             return input;
@@ -40,20 +37,20 @@ public class RobotsConfig {
 
     private final RobotsUtilities robotsUtilities = new RobotsUtilities();
     @Nonnegative
-    private long cachedExpiresHours = 48;
+    private long cacheExpiresHours = 48;
     @Nonnegative
     private long cacheMaxSizeRecords = 10000;
     @Nonnegative
     private int maxFileSizeBytes = 192 * 1024;
 
     @Nonnegative
-    public long getCachedExpiresHours() {
-        return cachedExpiresHours;
+    public long getCacheExpiresHours() {
+        return cacheExpiresHours;
     }
 
-    public void setCachedExpiresHours(@Nonnegative long cachedExpiresHours) {
-        checkArgument(cachedExpiresHours >= 0, "cachedExpiresHours is negative");
-        this.cachedExpiresHours = cachedExpiresHours;
+    public void setCacheExpiresHours(@Nonnegative long cacheExpiresHours) {
+        checkArgument(cacheExpiresHours >= 0, "cacheExpiresHours is negative");
+        this.cacheExpiresHours = cacheExpiresHours;
     }
 
     @Nonnegative
@@ -104,11 +101,11 @@ public class RobotsConfig {
     private Cache<URI, Robots> getCache() {
 
         log.debug("Initializing cache (maxSize: {}, expires after: {} hours)",
-                getCacheMaxSizeRecords(), this.getCachedExpiresHours());
+                getCacheMaxSizeRecords(), this.getCacheExpiresHours());
 
         return CacheBuilder.newBuilder()
                 .maximumSize(getCacheMaxSizeRecords())
-                .expireAfterWrite(getCachedExpiresHours(), TimeUnit.HOURS)
+                .expireAfterWrite(getCacheExpiresHours(), TimeUnit.HOURS)
                 .recordStats()
                 .build();
     }

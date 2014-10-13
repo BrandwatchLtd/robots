@@ -53,14 +53,13 @@ public final class PathDirective implements Directive {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PathDirective that = (PathDirective) o;
-        return field == that.field && value.equals(that.value);
+        return Objects.equal(field, that.field)
+                && Objects.equal(value, that.value);
     }
 
     @Override
     public int hashCode() {
-        int result = field.hashCode();
-        result = 31 * result + value.hashCode();
-        return result;
+        return Objects.hashCode(field, value);
     }
 
     @Nonnull

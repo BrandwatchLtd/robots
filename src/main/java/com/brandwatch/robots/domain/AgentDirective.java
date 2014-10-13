@@ -44,12 +44,12 @@ public final class AgentDirective implements Directive {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AgentDirective that = (AgentDirective) o;
-        return agentPattern.equals(that.agentPattern);
+        return Objects.equal(agentPattern, that.agentPattern);
     }
 
     @Override
     public int hashCode() {
-        return agentPattern.hashCode();
+        return Objects.hashCode(agentPattern);
     }
 
     @Nonnull

@@ -34,7 +34,7 @@ final class RobotsLoaderDefaultImpl implements RobotsLoader {
 
         try {
             try {
-                log.debug("Downloading and parsing robot.txt: {}", robotsResource);
+                log.debug("Downloading and parsing robots.txt: {}", robotsResource);
 
                 final Reader reader = closer.register(
                         config.getUtilities()

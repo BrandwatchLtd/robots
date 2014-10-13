@@ -44,15 +44,9 @@ class RobotsServiceImpl extends AbstractIdleService implements RobotsService {
 
         log.debug("evaluating: {}", resourceUri);
 
-        final URI robotsUri;
-        log.debug("Resolving robot.txt URL for resource: {}", resourceUri);
-        try {
-            robotsUri = utilities.getRobotsURIForResource(resourceUri);
-            log.debug("Resolved robot URI for resource {} to: {}", resourceUri, robotsUri);
-        } catch (RuntimeException ex) {
-            log.error("Failed to resolve robots.txt URL for resource {}, due to exception: {}", resourceUri, ex);
-            throw ex;
-        }
+        log.debug("Resolving robots.txt URL for resource: {}", resourceUri);
+        final URI robotsUri = utilities.getRobotsURIForResource(resourceUri);
+        log.debug("Resolved robot URI for resource {} to: {}", resourceUri, robotsUri);
 
         final Robots robots;
         try {
