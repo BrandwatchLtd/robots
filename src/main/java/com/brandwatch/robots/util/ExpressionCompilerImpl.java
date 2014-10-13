@@ -15,6 +15,16 @@ class ExpressionCompilerImpl implements ExpressionCompiler {
     static final Matcher<String> ALL = new ConstantMatcher(true);
     static final Matcher<String> NONE = new ConstantMatcher(false);
 
+    private static final String RE_LITERAL_PREFIX = "(?>";
+    private static final String RE_LITERAL_SUFFIX = ")";
+    private static final String RE_MATCH_ONE_OR_MORE = ".*?";
+    private static final String RE_MATCH_START = "^";
+    private static final String RE_MATCH_END = "$";
+
+    private static final char EXP_MATCH_START = '^';
+    private static final char EXP_MATCH_END = '$';
+    private static final char EXP_MATCH_ONE_OR_MORE = '*';
+
     private final boolean caseSensitivity;
     private final boolean leftBoundaryMatching;
     private final Optional<Function<String, String>> expressionPreprocessor;
@@ -43,33 +53,39 @@ class ExpressionCompilerImpl implements ExpressionCompiler {
 
     @Nonnull
     private Pattern compileWildcardExpressionToRegex(@Nonnull String expression) {
-        final StringBuilder regex = new StringBuilder().append("^");
+        final StringBuilder regex = new StringBuilder();
 
         final int len = expression.length();
         int start = 0;
         int end;
 
-        if (len > 0 && expression.charAt(0) == '^') {
-            regex.append('^');
+        if (len > 0 && expression.charAt(0) == EXP_MATCH_START) {
+            regex.append(RE_MATCH_START);
             start++;
         } else if (leftBoundaryMatching) {
-            regex.append('^');
+            regex.append(RE_MATCH_START);
         } else {
-            regex.append(".*?");
+            regex.append(RE_MATCH_ONE_OR_MORE);
         }
 
-        while ((end = expression.indexOf('*', start)) != -1) {
-            regex.append(quote(expression.substring(start, end)))
-                    .append(".*?");
+        while ((end = expression.indexOf(EXP_MATCH_ONE_OR_MORE, start)) != -1) {
+            regex.append(RE_LITERAL_PREFIX)
+                    .append(quote(expression.substring(start, end)))
+                    .append(RE_LITERAL_SUFFIX)
+                    .append(RE_MATCH_ONE_OR_MORE);
             start = end + 1;
         }
 
-        if (len > 0 && expression.charAt(len - 1) == '$') {
-            regex.append(quote(expression.substring(start, len - 1)))
-                    .append('$');
+        if (len > 0 && expression.charAt(len - 1) == EXP_MATCH_END) {
+            regex.append(RE_LITERAL_PREFIX)
+                    .append(quote(expression.substring(start, len - 1)))
+                    .append(RE_LITERAL_SUFFIX)
+                    .append(RE_MATCH_END);
         } else {
-            regex.append(quote(expression.substring(start, len)));
-            regex.append(".*?");
+            regex.append(RE_LITERAL_PREFIX)
+                    .append(quote(expression.substring(start, len)))
+                    .append(RE_LITERAL_SUFFIX)
+                    .append(RE_MATCH_ONE_OR_MORE);
         }
 
         int flags = 0;
