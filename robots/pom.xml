@@ -13,7 +13,7 @@
     <artifactId>robots</artifactId>
     <packaging>jar</packaging>
 
-    <name>Brandwatch Robots.txt parsing</name>
+    <name>robots</name>
     <description>
         Support for Robots Exclusion Protocol, including parsing
         and matching against robot.txt directives.
@@ -54,16 +54,6 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-integration</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-client</artifactId>
             <scope>test</scope>
         </dependency>
 
