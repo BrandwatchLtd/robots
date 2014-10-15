@@ -2,16 +2,10 @@ package com.brandwatch.robots;
 
 import com.brandwatch.robots.domain.AgentDirective;
 import com.brandwatch.robots.domain.Group;
-import com.brandwatch.robots.net.ByteLimitedInputStream;
 import com.brandwatch.robots.net.RobotsURIBuilder;
-import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
-import com.google.common.io.CharSource;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.URI;
 import java.util.List;
 
@@ -19,23 +13,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class RobotsUtilities {
-
-    @Nonnull
-    public CharSource createCharSourceFor(final URI robotsResource,
-                                          final long sizeLimitBytes) {
-        checkNotNull(robotsResource, "robotsResource");
-        return new CharSource() {
-            @Override
-            public Reader openStream() throws IOException {
-                return new InputStreamReader(
-                        new ByteLimitedInputStream(
-                                robotsResource.toURL().openStream(),
-                                sizeLimitBytes
-                        ),
-                        Charsets.UTF_8);
-            }
-        };
-    }
 
     @Nonnull
     public URI getRobotsURIForResource(@Nonnull final URI resourceUri) {

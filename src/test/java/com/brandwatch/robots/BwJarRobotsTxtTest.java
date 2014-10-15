@@ -1,8 +1,14 @@
 package com.brandwatch.robots;
 
+import com.brandwatch.robots.net.CharSourceSupplier;
 import com.google.common.base.Charsets;
+import com.google.common.io.CharSource;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -13,22 +19,30 @@ import static com.google.common.io.Resources.getResource;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
+/**
+ * These tests are copied from the old robots manager. They aren't great,
+ * but we include them verbatim (as much as possible) to find regressions.
+ */
+@RunWith(MockitoJUnitRunner.class)
 public class BwJarRobotsTxtTest {
 
+    @Spy
     private RobotsUtilities utilities;
+    @Mock
+    private CharSourceSupplier charSourceSupplier;
+
     private RobotsService service;
     private String agent = "magpie-crawler";
 
     @Before
     public void setup() {
 
-        // mock sourceFactory so we don't cause network IO
-        utilities = spy(new RobotsUtilities());
-
         RobotsConfig config = spy(new RobotsConfig());
         when(config.getUtilities()).thenReturn(utilities);
+        when(config.getCharSourceSupplier()).thenReturn(charSourceSupplier);
 
         service = config.getService();
     }
@@ -84,10 +98,10 @@ public class BwJarRobotsTxtTest {
     }
 
     private void parse(String robotsResourceName) throws IOException {
-        doReturn(
-                asCharSource(getResource(BwJarRobotsTxtTest.class,
-                        robotsResourceName), Charsets.UTF_8))
-                .when(utilities).createCharSourceFor(any(URI.class), anyLong());
+        final CharSource fakeSource = asCharSource(
+                getResource(getClass(), robotsResourceName),
+                Charsets.UTF_8);
+        when(charSourceSupplier.get(any(URI.class))).thenReturn(fakeSource);
     }
 
     private boolean isAllowed(String url) throws MalformedURLException {
