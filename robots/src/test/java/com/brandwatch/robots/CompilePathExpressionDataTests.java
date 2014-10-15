@@ -22,7 +22,7 @@ public class CompilePathExpressionDataTests {
     private final boolean expectedResult;
 
     private final ExpressionCompiler pathExpressionCompiler
-            = new RobotsConfig().getPathExpressionCompiler();
+            = new RobotsFactory(new RobotsConfig()).createPathExpressionCompiler();
 
     public CompilePathExpressionDataTests(String pathPattern, @Nonnull String path, boolean expectedResult) {
         this.pathPattern = pathPattern;

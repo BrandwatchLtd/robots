@@ -40,11 +40,12 @@ public class BwJarRobotsTxtTest {
     @Before
     public void setup() {
 
-        RobotsConfig config = spy(new RobotsConfig());
-        when(config.getUtilities()).thenReturn(utilities);
-        when(config.getCharSourceSupplier()).thenReturn(charSourceSupplier);
+        RobotsConfig config = new RobotsConfig();
+        RobotsFactory factory = spy(new RobotsFactory(config));
+        when(factory.getUtilities()).thenReturn(utilities);
+        when(factory.createCharSourceSupplier()).thenReturn(charSourceSupplier);
 
-        service = config.getService();
+        service = factory.createService();
     }
 
     @Test

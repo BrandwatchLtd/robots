@@ -22,16 +22,13 @@ final class RobotsLoaderImpl implements RobotsLoader {
 
     private static final Logger log = LoggerFactory.getLogger(RobotsLoaderImpl.class);
     @Nonnull
-    private final RobotsConfig config;
-    @Nonnull
     private final RobotsFactory factory;
     @Nonnull
-    private final CharSourceSupplier charSourceFactory;
+    private final CharSourceSupplier charSourceSupplier;
 
-    public RobotsLoaderImpl(@Nonnull RobotsConfig config, @Nonnull RobotsFactory factory,
-                            @Nonnull CharSourceSupplier charSourceFactory) {
-        this.charSourceFactory = charSourceFactory;
-        this.config = checkNotNull(config, "config is null");
+    public RobotsLoaderImpl(@Nonnull RobotsFactory factory,
+                            @Nonnull CharSourceSupplier charSourceSupplier) {
+        this.charSourceSupplier = charSourceSupplier;
         this.factory = checkNotNull(factory, "factory is null");
     }
 
@@ -40,7 +37,7 @@ final class RobotsLoaderImpl implements RobotsLoader {
     public Robots load(@Nonnull URI robotsResource) {
         checkNotNull(robotsResource, "robotsResource");
         log.debug("Loading robots.txt: {}", robotsResource);
-        return conditionalAllow(robotsResource, charSourceFactory.get(robotsResource));
+        return conditionalAllow(robotsResource, charSourceSupplier.get(robotsResource));
     }
 
     @Nonnull
@@ -78,7 +75,7 @@ final class RobotsLoaderImpl implements RobotsLoader {
 
         final Reader reader = new LoggingReader(robotsData);
         final RobotsParser parser = new RobotsParser(reader);
-        final RobotsBuildingParseHandler handler = config.getRobotsBuildingHandler();
+        final RobotsBuildingParseHandler handler = factory.createRobotsBuildingHandler();
 
         try {
             parser.parse(handler);

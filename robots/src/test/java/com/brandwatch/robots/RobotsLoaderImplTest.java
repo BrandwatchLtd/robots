@@ -43,8 +43,8 @@ public class RobotsLoaderImplTest {
 
     @Before
     public void setup() {
-        when(config.getUtilities()).thenReturn(utilities);
-        when(config.getRobotsBuildingHandler()).thenReturn(handler);
+        when(factory.getUtilities()).thenReturn(utilities);
+        when(factory.createRobotsBuildingHandler()).thenReturn(handler);
 
         when(factory.createAllowAllRobots()).thenReturn(ALLOW_ALL);
         when(factory.createDisallowAllRobots()).thenReturn(DISALLOW_ALL);

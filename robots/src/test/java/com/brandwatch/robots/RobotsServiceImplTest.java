@@ -5,6 +5,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -25,20 +26,12 @@ public class RobotsServiceImplTest {
     @Mock
     private RobotsUtilities utilities;
 
-    @Mock
-    private RobotsConfig config;
-
+    @InjectMocks
     private RobotsServiceImpl instance;
 
     @Before
     public final void startUp() throws Exception {
-
-        when(config.getService()).thenReturn(instance);
-        when(config.getLoader()).thenReturn(loader);
-        when(config.getUtilities()).thenReturn(utilities);
-
         when(loader.load(any(URI.class))).thenReturn(new Robots.Builder().build());
-        instance = new RobotsServiceImpl(config);
         instance.startAsync();
         instance.awaitRunning();
     }

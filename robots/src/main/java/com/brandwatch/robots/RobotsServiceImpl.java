@@ -17,14 +17,12 @@ class RobotsServiceImpl extends AbstractIdleService implements RobotsService {
 
     private static final Logger log = LoggerFactory.getLogger(RobotsServiceImpl.class);
 
-    private final RobotsConfig config;
     private final RobotsLoader loader;
     private final RobotsUtilities utilities;
 
-    public RobotsServiceImpl(@Nonnull RobotsConfig robotsConfig) {
-        this.config = checkNotNull(robotsConfig, "robotExclusionConfig");
-        this.loader = checkNotNull(robotsConfig.getLoader(), "loader");
-        this.utilities = checkNotNull(robotsConfig.getUtilities(), "utilities");
+    public RobotsServiceImpl(@Nonnull RobotsLoader loader, @Nonnull RobotsUtilities utilities) {
+        this.loader = checkNotNull(loader, "loader");
+        this.utilities = checkNotNull(utilities, "utilities");
     }
 
     @Override

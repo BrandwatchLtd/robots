@@ -20,8 +20,9 @@ import static org.junit.Assert.assertThat;
 public class RobotsBuildingParseHandlerFunctionalTest {
 
     RobotsConfig config = new RobotsConfig();
-    ExpressionCompiler agentExpressionCompiler = config.getAgentExpressionCompiler();
-    ExpressionCompiler pathExpressionCompiler = config.getPathExpressionCompiler();
+    RobotsFactory factory = new RobotsFactory(config);
+    ExpressionCompiler agentExpressionCompiler = factory.createAgentExpressionCompiler();
+    ExpressionCompiler pathExpressionCompiler = factory.createPathExpressionCompiler();
     Matcher<String> ALL = pathExpressionCompiler.compile("*");
 
     @Test
@@ -63,7 +64,7 @@ public class RobotsBuildingParseHandlerFunctionalTest {
                         .withDirective(new PathDirective(PathDirective.Field.allow, "/", ALL))
                         .build())
                 .withGroup(new Group.Builder()
-                        .withDirective(new AgentDirective("*", config.getAgentExpressionCompiler().compile("*")))
+                        .withDirective(new AgentDirective("*", factory.createAgentExpressionCompiler().compile("*")))
                         .withDirective(new PathDirective(PathDirective.Field.disallow, "/wp-admin/", ALL))
                         .withDirective(new PathDirective(PathDirective.Field.disallow, "/wp-includes/", ALL))
                         .build())
