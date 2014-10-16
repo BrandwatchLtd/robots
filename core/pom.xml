@@ -10,10 +10,9 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>robots</artifactId>
+    <artifactId>robots-core</artifactId>
     <packaging>jar</packaging>
 
-    <name>robots</name>
     <description>
         Support for Robots Exclusion Protocol, including parsing
         and matching against robot.txt directives.

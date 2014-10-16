@@ -118,7 +118,7 @@ Include the library dependency in your maven `pom.xml`:
 ```xml
 <dependency>
     <groupId>com.brandwatch</groupId>
-    <artifactId>robots</artifactId>
+    <artifactId>robots-core</artifactId>
     <version>1.0-SNAPSHOT</version>
 </dependency>
 ```

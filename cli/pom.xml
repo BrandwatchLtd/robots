@@ -16,7 +16,7 @@
 
         <dependency>
             <groupId>com.brandwatch</groupId>
-            <artifactId>robots</artifactId>
+            <artifactId>robots-core</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 
