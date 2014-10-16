@@ -134,7 +134,9 @@ config.setCachedExpiresHours(48);
 config.setCacheMaxSizeRecords(10000);
 config.setMaxFileSizeBytes(192 * 1024);
 
-RobotsService service = config.getService();
+RobotsFactory factory = new RobotsFactory(config)
+
+RobotsService service = factory.createService();
 String crawlerAgent = "magpie-crawler/1.1 (U; Linux x86_64; en-GB; +http://www.brandwatch.net)";
 
 ...
