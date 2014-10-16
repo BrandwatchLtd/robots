@@ -20,6 +20,11 @@
             <artifactId>robots</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.brandwatch</groupId>
+            <artifactId>robots-cli</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>

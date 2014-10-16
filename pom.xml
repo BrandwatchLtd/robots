@@ -18,6 +18,7 @@
     <modules>
         <module>robots</module>
         <module>integration-tests</module>
+        <module>cli</module>
     </modules>
 
     <dependencyManagement>

@@ -111,6 +111,8 @@ will most-likely flounder. Consult Google.
 
 # Usage
 
+## Java API
+
 Include the library dependency in your maven `pom.xml`:
 
 ```xml
@@ -143,3 +145,71 @@ if(service.isAllowed(crawlerAgent, resource)) {
 }
 ```
 
+## Command Line
+
+The codebase includes a command-line interface to query exclusions of resources. The CLI
+is in a separate module (robots-cli), which is not part of the core library.
+
+### Building the CLI package
+
+Currently there is no CLI distribution at all, so you'll need to build it from source all by yourself.
+
+```sh
+git clone git@gite.brandwatch.com:Brandwatch/robots.git
+cd robots
+mvn clean package
+cd cli/target
+tar xvfz robots-cli-[version]-bin-with-deps.tar.gz
+cd robots-cli-[version]
+```
+
+### Running CLI
+
+From the extracted directory, simply run the robots scripts followed by a resource URI:
+
+```sh
+./robots http://last.fm/harming/humans
+http://last.fm/harming/humans: disallowed
+```
+
+You can query multiple resources at once:
+
+```sh
+./robots http://www.brandwatch.com/index.html  https://app.brandwatch.com/index.html http://www.brandwatch.com/wp-admin/
+http://www.brandwatch.com/index.html: allowed
+https://app.brandwatch.com/index.html: disallowed
+http://www.brandwatch.com/wp-admin/: disallowed
+```
+
+There are also a bunch of parameters you can twiddle with:
+
+
+```sh
+./robots --agent "iisbot/1.0 (+http://www.iis.net/iisbot.html)" http://www.brandwatch.com/wp-admin/
+http://www.brandwatch.com/wp-admin/: allowed
+```
+
+For a full list of parameters see the helpful help:
+
+```
+$ ./robots --help
+Usage: robots [options] RESOURCES
+  Options:
+    --agent, -a
+       User agent identifier. Sent to the host on retrieval of robots.txt, and
+       also used for directive group matching.
+       Default: <unnamed-agent>
+    --defaultCharset, --charset, -c
+       Preferred character encoding for reading robots.txt. Used when server
+       doesn't specify encoding.
+       Default: UTF-8
+    --help, -h
+       Display this helpful message.
+       Default: false
+    --maxFileSizeBytes, -s
+       Download size limit. robots.txt retrieval will give up beyond this point.
+       Default: 196608
+    --maxRedirectHops, -r
+       Number of HTTP 3XX (redirection) responses to follow before giving up.
+       Default: 5
+```
