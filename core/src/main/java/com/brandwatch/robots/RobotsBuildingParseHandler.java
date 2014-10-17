@@ -1,8 +1,8 @@
 package com.brandwatch.robots;
 
 import com.brandwatch.robots.domain.*;
+import com.brandwatch.robots.matching.ExpressionCompiler;
 import com.brandwatch.robots.parser.RobotsParseHandler;
-import com.brandwatch.robots.util.ExpressionCompiler;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 

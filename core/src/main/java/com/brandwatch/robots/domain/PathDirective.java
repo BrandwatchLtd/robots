@@ -1,17 +1,17 @@
 package com.brandwatch.robots.domain;
 
-import com.brandwatch.robots.util.Matcher;
+import com.brandwatch.robots.matching.Matchable;
+import com.brandwatch.robots.matching.Matcher;
 import com.google.common.base.Objects;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
-import java.net.URI;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Immutable
-public final class PathDirective implements Directive {
+public final class PathDirective implements Directive, Matchable<String> {
 
     @Nonnull
     private final Field field;
@@ -40,8 +40,10 @@ public final class PathDirective implements Directive {
         return value;
     }
 
-    public boolean matches(@Nonnull URI uri) {
-        return pathMatcher.matches(uri.getPath());
+
+    @Override
+    public Matcher<String> getMatcher() {
+        return pathMatcher;
     }
 
     public boolean isAllowed() {
@@ -70,6 +72,7 @@ public final class PathDirective implements Directive {
                 .add("value", value)
                 .toString();
     }
+
 
     public enum Field {
         allow {

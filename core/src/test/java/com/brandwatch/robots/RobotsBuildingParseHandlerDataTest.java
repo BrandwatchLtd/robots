@@ -1,8 +1,8 @@
 package com.brandwatch.robots;
 
+import com.brandwatch.robots.matching.ExpressionCompiler;
+import com.brandwatch.robots.matching.ExpressionCompilerBuilder;
 import com.brandwatch.robots.parser.ParseException;
-import com.brandwatch.robots.util.ExpressionCompiler;
-import com.brandwatch.robots.util.ExpressionCompilerBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

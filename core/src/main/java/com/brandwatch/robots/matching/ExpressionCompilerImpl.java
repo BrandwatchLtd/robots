@@ -1,4 +1,4 @@
-package com.brandwatch.robots.util;
+package com.brandwatch.robots.matching;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
@@ -42,10 +42,21 @@ class ExpressionCompilerImpl implements ExpressionCompiler {
         }
 
         if (expression.isEmpty()) {
-            return Matchers.all();
+            return new EverythingMatcher<String>();
         } else {
-            return Matchers.fromPattern(compileWildcardExpressionToRegex(expression));
+            return new ExpressionMatcher(compileWildcardExpressionToRegex(expression), getSpecificity(expression));
         }
+    }
+
+    private double getSpecificity(String expression) {
+        double specificity = 0;
+        for (int i = 0; i < expression.length(); i++) {
+            final char c = expression.charAt(i);
+            if (!(c == '*' || c == '^' || c == '$')) {
+                ++specificity;
+            }
+        }
+        return specificity;
     }
 
     @Nonnull

@@ -6,12 +6,13 @@ import com.google.common.collect.ImmutableList;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
+import java.util.Iterator;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Immutable
-public final class Group {
+public final class Group implements Iterable<AgentDirective> {
 
     @Nonnull
     private final List<Directive> directives;
@@ -55,6 +56,12 @@ public final class Group {
         return Objects.toStringHelper(this)
                 .add("directives", directives)
                 .toString();
+    }
+
+    @Override
+    public Iterator<AgentDirective> iterator() {
+        List<AgentDirective> agentDirectives = getDirectives(AgentDirective.class);
+        return agentDirectives.iterator();
     }
 
     public static class Builder {

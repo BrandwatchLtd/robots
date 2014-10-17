@@ -1,10 +1,10 @@
 package com.brandwatch.robots;
 
 import com.brandwatch.robots.domain.*;
+import com.brandwatch.robots.matching.ExpressionCompiler;
+import com.brandwatch.robots.matching.Matcher;
 import com.brandwatch.robots.parser.ParseException;
 import com.brandwatch.robots.parser.RobotsParser;
-import com.brandwatch.robots.util.ExpressionCompiler;
-import com.brandwatch.robots.util.Matcher;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;

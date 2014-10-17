@@ -3,6 +3,7 @@ package com.brandwatch.robots;
 import com.brandwatch.robots.domain.Group;
 import com.brandwatch.robots.domain.PathDirective;
 import com.brandwatch.robots.domain.Robots;
+import com.brandwatch.robots.matching.MatcherUtils;
 import com.google.common.base.Optional;
 import com.google.common.util.concurrent.AbstractIdleService;
 import org.slf4j.Logger;
@@ -19,8 +20,10 @@ class RobotsServiceImpl extends AbstractIdleService implements RobotsService {
 
     private final RobotsLoader loader;
     private final RobotsUtilities utilities;
+    private final MatcherUtils matcherUtils;
 
-    public RobotsServiceImpl(@Nonnull RobotsLoader loader, @Nonnull RobotsUtilities utilities) {
+    public RobotsServiceImpl(@Nonnull RobotsLoader loader, @Nonnull RobotsUtilities utilities, MatcherUtils matcherUtils) {
+        this.matcherUtils = matcherUtils;
         this.loader = checkNotNull(loader, "loader");
         this.utilities = checkNotNull(utilities, "utilities");
     }
@@ -59,24 +62,26 @@ class RobotsServiceImpl extends AbstractIdleService implements RobotsService {
             return true;
         }
 
-        final Optional<Group> group = utilities.getBestMatchingGroup(
-                robots.getGroups(), crawlerAgentString);
+        final Optional<Group> group = matcherUtils.getMostSpecificMatchingGroup(robots.getGroups(), crawlerAgentString);
 
         if (!group.isPresent()) {
             log.debug("No matching groups; allowing: {}", resourceUri);
             return true;
         }
 
-        for (PathDirective pathDirective : group.get().getDirectives(PathDirective.class)) {
-            if (pathDirective.matches(resourceUri)) {
-                log.debug("Path directive {} matches; {}: {}", pathDirective.getValue(),
-                        pathDirective.isAllowed() ? "allowing" : "disallowing", resourceUri);
-                return pathDirective.isAllowed();
-            }
-        }
+        final Optional<PathDirective> bestMatch = matcherUtils.getMostSpecificMatch(
+                group.get().getDirectives(PathDirective.class),
+                resourceUri.getPath());
 
-        log.debug("No matching path directive; allowing: {}", resourceUri);
-        return true;
+        if (!bestMatch.isPresent()) {
+            log.debug("No matching path directive; allowing: {}", resourceUri);
+            return true;
+        } else {
+            final PathDirective directive = bestMatch.get();
+            log.debug("Path directive {} matches; {}: {}", directive.getValue(),
+                    directive.isAllowed() ? "allowing" : "disallowing", resourceUri);
+            return directive.isAllowed();
+        }
     }
 
 

@@ -1,6 +1,7 @@
 package com.brandwatch.robots.domain;
 
-import com.brandwatch.robots.util.Matcher;
+import com.brandwatch.robots.matching.Matchable;
+import com.brandwatch.robots.matching.Matcher;
 import com.google.common.base.Objects;
 
 import javax.annotation.Nonnull;
@@ -10,7 +11,7 @@ import javax.annotation.concurrent.Immutable;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Immutable
-public final class AgentDirective implements Directive {
+public final class AgentDirective implements Directive, Matchable<String> {
 
     @Nonnull
     private final String agentPattern;
@@ -35,8 +36,9 @@ public final class AgentDirective implements Directive {
         return agentPattern;
     }
 
-    public boolean matches(@Nonnull String userAgent) {
-        return agentMatcher.matches(userAgent);
+    @Override
+    public Matcher<String> getMatcher() {
+        return agentMatcher;
     }
 
     @Override

@@ -1,7 +1,7 @@
-package com.brandwatch.robots;
+package com.brandwatch.robots.matching;
 
-import com.brandwatch.robots.util.ExpressionCompiler;
-import com.brandwatch.robots.util.Matcher;
+import com.brandwatch.robots.RobotsConfig;
+import com.brandwatch.robots.RobotsFactory;
 import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 import org.junit.runner.RunWith;

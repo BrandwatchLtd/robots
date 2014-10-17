@@ -4,12 +4,10 @@ import com.brandwatch.robots.domain.AgentDirective;
 import com.brandwatch.robots.domain.Group;
 import com.brandwatch.robots.domain.PathDirective;
 import com.brandwatch.robots.domain.Robots;
+import com.brandwatch.robots.matching.*;
 import com.brandwatch.robots.net.CharSourceSupplier;
 import com.brandwatch.robots.net.CharSourceSupplierHttpClientImpl;
 import com.brandwatch.robots.net.LoggingClientFilter;
-import com.brandwatch.robots.util.ExpressionCompiler;
-import com.brandwatch.robots.util.ExpressionCompilerBuilder;
-import com.brandwatch.robots.util.Matchers;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.slf4j.Logger;
@@ -28,6 +26,7 @@ public class RobotsFactory {
     private static final Logger log = LoggerFactory.getLogger(RobotsFactory.class);
 
     private final RobotsUtilities utilities = new RobotsUtilities();
+    private final MatcherUtils matcherUtils = new MatcherUtilsImpl();
 
     @Nonnull
     private final RobotsConfig config;
@@ -51,8 +50,8 @@ public class RobotsFactory {
         checkNotNull(permission, "permission");
         return new Robots.Builder()
                 .withGroup(new Group.Builder()
-                        .withDirective(new AgentDirective("*", Matchers.<String>all()))
-                        .withDirective(new PathDirective(permission, "/*", Matchers.<String>all()))
+                        .withDirective(new AgentDirective("*", new EverythingMatcher<String>()))
+                        .withDirective(new PathDirective(permission, "/*", new EverythingMatcher<String>()))
                         .build())
                 .build();
     }
@@ -61,7 +60,6 @@ public class RobotsFactory {
     public Robots createEmptyRobots() {
         return new Robots.Builder().build();
     }
-
 
     @Nonnull
     public RobotsUtilities getUtilities() {
@@ -115,7 +113,8 @@ public class RobotsFactory {
 
     @Nonnull
     public RobotsService createService() {
-        RobotsServiceImpl service = new RobotsServiceImpl(createLoader(), getUtilities());
+        RobotsServiceImpl service = new RobotsServiceImpl(
+                createLoader(), getUtilities(), getMatcherUtils());
         service.startAsync();
         service.awaitRunning();
         return service;
@@ -133,5 +132,10 @@ public class RobotsFactory {
         return ClientBuilder.newBuilder()
                 .register(new LoggingClientFilter(this.getClass()))
                 .build();
+    }
+
+    @Nonnull
+    public MatcherUtils getMatcherUtils() {
+        return matcherUtils;
     }
 }

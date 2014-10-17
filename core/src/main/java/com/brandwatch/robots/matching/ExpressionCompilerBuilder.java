@@ -1,4 +1,4 @@
-package com.brandwatch.robots.util;
+package com.brandwatch.robots.matching;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
