@@ -1,6 +1,10 @@
 package com.brandwatch.robots;
 
+import com.brandwatch.robots.domain.AgentDirective;
+import com.brandwatch.robots.domain.Group;
+import com.brandwatch.robots.domain.PathDirective;
 import com.brandwatch.robots.domain.Robots;
+import com.brandwatch.robots.matching.EverythingMatcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

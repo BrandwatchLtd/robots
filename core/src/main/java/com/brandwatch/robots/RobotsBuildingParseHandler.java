@@ -1,6 +1,11 @@
 package com.brandwatch.robots;
 
-import com.brandwatch.robots.domain.*;
+import com.brandwatch.robots.domain.AgentDirective;
+import com.brandwatch.robots.domain.Group;
+import com.brandwatch.robots.domain.OtherDirective;
+import com.brandwatch.robots.domain.PathDirective;
+import com.brandwatch.robots.domain.Robots;
+import com.brandwatch.robots.domain.SiteMapDirective;
 import com.brandwatch.robots.matching.ExpressionCompiler;
 import com.brandwatch.robots.parser.RobotsParseHandler;
 import com.google.common.base.Optional;
@@ -49,8 +54,10 @@ class RobotsBuildingParseHandler implements RobotsParseHandler, Supplier<Robots>
 
     private void addNewPathDirective(@Nonnull PathDirective.Field field,
                                      @Nonnull final String pathExpression) {
-        group.get().withDirective(new PathDirective(field, pathExpression,
-                pathExpressionCompiler.compile(pathExpression)));
+        if (!pathExpression.trim().isEmpty()) {
+            group.get().withDirective(new PathDirective(field, pathExpression,
+                    pathExpressionCompiler.compile(pathExpression)));
+        }
     }
 
     @Override
