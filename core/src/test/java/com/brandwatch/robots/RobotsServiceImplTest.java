@@ -32,14 +32,6 @@ public class RobotsServiceImplTest {
     @Before
     public final void startUp() throws Exception {
         when(loader.load(any(URI.class))).thenReturn(new Robots.Builder().build());
-        instance.startAsync();
-        instance.awaitRunning();
-    }
-
-    @After
-    public final void shutDown() throws Exception {
-        instance.stopAsync();
-        instance.awaitTerminated();
     }
 
     @Test(expected = NullPointerException.class)

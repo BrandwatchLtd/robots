@@ -10,6 +10,8 @@ import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.client.ClientResponseContext;
 import javax.ws.rs.client.ClientResponseFilter;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -39,11 +41,18 @@ public class LoggingClientFilter implements ClientRequestFilter, ClientResponseF
 
     @Override
     public void filter(ClientRequestContext requestContext) throws IOException {
-        level.log(logger, "Request: {}", requestContext);
+        level.log(logger, "Request: {} {} {}",
+                requestContext.getMethod(),
+                requestContext.getUri(),
+                requestContext.getHeaders());
     }
 
     @Override
     public void filter(ClientRequestContext requestContext, ClientResponseContext responseContext) throws IOException {
-        level.log(logger, "Response: {}", responseContext);
+        level.log(logger, "Response: [{} {}] {} {}",
+                requestContext.getMethod(),
+                requestContext.getUri(),
+                responseContext.getStatusInfo(),
+                responseContext.getHeaders());
     }
 }

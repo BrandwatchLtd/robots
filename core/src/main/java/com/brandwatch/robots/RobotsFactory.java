@@ -8,6 +8,7 @@ import com.brandwatch.robots.matching.*;
 import com.brandwatch.robots.net.CharSourceSupplier;
 import com.brandwatch.robots.net.CharSourceSupplierHttpClientImpl;
 import com.brandwatch.robots.net.LoggingClientFilter;
+import com.brandwatch.robots.util.LogLevel;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.slf4j.Logger;
@@ -33,6 +34,7 @@ public class RobotsFactory {
 
     public RobotsFactory(@Nonnull RobotsConfig config) {
         this.config = checkNotNull(config, "config is null");
+        log.debug("Initializing factory with config: {}", config);
     }
 
     @Nonnull
@@ -57,24 +59,14 @@ public class RobotsFactory {
     }
 
     @Nonnull
-    public Robots createEmptyRobots() {
-        return new Robots.Builder().build();
-    }
-
-    @Nonnull
     public RobotsUtilities getUtilities() {
         return utilities;
     }
 
     @Nonnull
-    public RobotsFactory createFactory() {
-        return new RobotsFactory(config);
-    }
-
-    @Nonnull
     public RobotsLoader createLoader() {
         return new RobotsLoaderCachedImpl(
-                new RobotsLoaderImpl(createFactory(), createCharSourceSupplier()),
+                new RobotsLoaderImpl(this, createCharSourceSupplier()),
                 createCache());
     }
 
@@ -115,8 +107,6 @@ public class RobotsFactory {
     public RobotsService createService() {
         RobotsServiceImpl service = new RobotsServiceImpl(
                 createLoader(), getUtilities(), getMatcherUtils());
-        service.startAsync();
-        service.awaitRunning();
         return service;
     }
 
@@ -130,7 +120,7 @@ public class RobotsFactory {
     @Nonnull
     public Client createClient() {
         return ClientBuilder.newBuilder()
-                .register(new LoggingClientFilter(this.getClass()))
+                .register(new LoggingClientFilter(this.getClass(), LogLevel.TRACE))
                 .build();
     }
 

@@ -2,6 +2,7 @@ package com.brandwatch.robots;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
+import com.google.common.base.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +16,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class RobotsConfig {
 
     @Nonnegative
-    private long cacheExpiresHours = 48;
+    private long cacheExpiresHours = 24;
 
     @Nonnegative
     private long cacheMaxSizeRecords = 10000;
@@ -104,4 +105,16 @@ public class RobotsConfig {
     }
 
 
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("cacheExpiresHours", cacheExpiresHours)
+                .add("cacheMaxSizeRecords", cacheMaxSizeRecords)
+                .add("maxFileSizeBytes", maxFileSizeBytes)
+                .add("maxRedirectHops", maxRedirectHops)
+                .add("defaultCharset", defaultCharset)
+                .add("userAgent", userAgent)
+                .add("requestTimeoutMillis", requestTimeoutMillis)
+                .toString();
+    }
 }

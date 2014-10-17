@@ -26,7 +26,7 @@ public class LoggingReader extends FilterReader {
     }
 
     public LoggingReader(@Nonnull Reader reader, @Nonnull LogLevel level) {
-        this(reader, LoggingClientFilter.class, level);
+        this(reader, LoggingReader.class, level);
     }
 
     public LoggingReader(@Nonnull Reader reader, @Nonnull Class<?> context) {
@@ -34,7 +34,7 @@ public class LoggingReader extends FilterReader {
     }
 
     public LoggingReader(@Nonnull Reader reader) {
-        this(reader, LoggingClientFilter.class, LogLevel.DEBUG);
+        this(reader, LoggingReader.class, LogLevel.DEBUG);
     }
 
     @Override

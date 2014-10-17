@@ -5,6 +5,7 @@ import com.brandwatch.robots.net.CharSourceSupplier;
 import com.brandwatch.robots.net.LoggingReader;
 import com.brandwatch.robots.parser.ParseException;
 import com.brandwatch.robots.parser.RobotsParser;
+import com.brandwatch.robots.util.LogLevel;
 import com.google.common.io.CharSource;
 import com.google.common.io.Closer;
 import org.slf4j.Logger;
@@ -14,6 +15,8 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.concurrent.TimeoutException;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.text.MessageFormat.format;
@@ -36,13 +39,12 @@ final class RobotsLoaderImpl implements RobotsLoader {
     @Override
     public Robots load(@Nonnull URI robotsResource) {
         checkNotNull(robotsResource, "robotsResource");
-        log.debug("Loading robots.txt: {}", robotsResource);
-        return conditionalAllow(robotsResource, charSourceSupplier.get(robotsResource));
+        log.debug("Loading: {}", robotsResource);
+        return load(robotsResource, charSourceSupplier.get(robotsResource));
     }
 
     @Nonnull
-    private Robots conditionalAllow(@Nonnull URI robotsResource, @Nonnull CharSource robotsData) {
-        log.debug("Conditional allow; parsing contents of {}", robotsResource);
+    private Robots load(@Nonnull URI robotsResource, @Nonnull CharSource robotsData) {
         try {
             final Closer closer = Closer.create();
             try {
@@ -55,7 +57,6 @@ final class RobotsLoaderImpl implements RobotsLoader {
                 } catch (TemporaryDisallow e) {
                     return fullDisallow(robotsResource, e.getMessage());
                 }
-
                 return conditionalAllow(robotsResource, reader);
             } catch (Throwable t) {
                 throw closer.rethrow(t);
@@ -63,8 +64,12 @@ final class RobotsLoaderImpl implements RobotsLoader {
                 closer.close();
             }
         } catch (IOException e) {
-            log.debug("Caught IO exception", e);
-            return fullAllow(robotsResource, format("IO exception: \"{0}\"", e.getMessage()));
+            if(e.getCause() instanceof TimeoutException) {
+                return fullAllow(robotsResource, format("Timeout waiting for response."));
+            } else {
+                log.debug("Caught IO exception", e);
+                return fullAllow(robotsResource, format("IO exception: \"{0}\"", e.getMessage()));
+            }
         }
     }
 
@@ -73,7 +78,7 @@ final class RobotsLoaderImpl implements RobotsLoader {
             throws IOException {
         log.debug("Conditional allow; parsing contents of {}", robotsResource);
 
-        final Reader reader = new LoggingReader(robotsData);
+        final Reader reader = new LoggingReader(robotsData, this.getClass(), LogLevel.TRACE);
         final RobotsParser parser = new RobotsParser(reader);
         final RobotsBuildingParseHandler handler = factory.createRobotsBuildingHandler();
 
@@ -87,14 +92,23 @@ final class RobotsLoaderImpl implements RobotsLoader {
 
     @Nonnull
     private Robots fullAllow(@Nonnull URI robotsResource, @Nonnull String reason, @Nonnull Object... args) {
-        log.info("Allowing entire site {}; {}", robotsResource, format(reason, args));
+        log.info("Allowing entire site {}; {}", site(robotsResource), format(reason, args));
         return factory.createAllowAllRobots();
     }
 
     @Nonnull
     private Robots fullDisallow(@Nonnull URI robotsResource, @Nonnull String reason, @Nonnull Object... args) {
-        log.info("Disallowing entire site {}; {}", robotsResource, format(reason, args));
+        log.info("Disallowing entire site {}; {}", site(robotsResource), format(reason, args));
         return factory.createDisallowAllRobots();
+    }
+
+    static URI site(URI resource) {
+        try {
+            return new URI(resource.getScheme(), resource.getUserInfo(), resource.getHost(),
+                    resource.getPort(), null, null, null);
+        } catch (URISyntaxException e) {
+            throw new AssertionError(e);
+        }
     }
 
 }
