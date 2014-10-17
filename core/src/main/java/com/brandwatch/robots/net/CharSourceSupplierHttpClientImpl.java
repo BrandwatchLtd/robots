@@ -20,6 +20,10 @@ import javax.ws.rs.core.Response.StatusType;
 import java.io.*;
 import java.net.URI;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static com.google.common.base.Optional.*;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -44,13 +48,22 @@ public class CharSourceSupplierHttpClientImpl implements CharSourceSupplier {
         return new CharSource() {
             @Override
             public Reader openStream() throws IOException {
-                return handleResponse(getResponseFollowingRedirects(resource));
+                final Response response;
+                try {
+                    response = getResponseFollowingRedirects(resource);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                } catch (TimeoutException e) {
+                    throw new IOException(e);
+                }
+
+                return handleResponse(response);
             }
         };
     }
 
     @Nonnull
-    private Response getResponseFollowingRedirects(@Nonnull final URI resource) {
+    private Response getResponseFollowingRedirects(@Nonnull final URI resource) throws InterruptedException, TimeoutException {
         final List<URI> visited = newArrayListWithCapacity(config.getMaxRedirectHops() + 1);
         URI location = resource;
 
@@ -83,14 +96,21 @@ public class CharSourceSupplierHttpClientImpl implements CharSourceSupplier {
     }
 
     @Nonnull
-    private Response getResponse(@Nonnull final URI resource) {
+    private Response getResponse(@Nonnull final URI resource) throws InterruptedException, TimeoutException {
         checkNotNull(resource, "resource");
-        return client.target(resource)
+        Future<Response> future = client.target(resource)
                 .request()
                 .accept(MediaType.TEXT_PLAIN_TYPE.withCharset(config.getDefaultCharset().displayName()))
                 .header(HttpHeaders.USER_AGENT, config.getUserAgent())
                 .buildGet()
-                .invoke();
+                .submit();
+        try {
+            return future.get(config.getRequestTimeoutMillis(), TimeUnit.MILLISECONDS);
+        } catch (ExecutionException e) {
+            throw e.getCause() instanceof RuntimeException
+                    ? (RuntimeException) e.getCause()
+                    : new RuntimeException(e.getCause());
+        }
     }
 
     @Nonnull

@@ -32,6 +32,17 @@ public class RobotsConfig {
     @Nonnull
     private String userAgent = "robots";
 
+    @Nonnegative
+    private long requestTimeoutMillis = 10000;
+
+    public long getRequestTimeoutMillis() {
+        return requestTimeoutMillis;
+    }
+
+    public void setRequestTimeoutMillis(long requestTimeoutMillis) {
+        this.requestTimeoutMillis = requestTimeoutMillis;
+    }
+
     @Nonnull
     public String getUserAgent() {
         return userAgent;

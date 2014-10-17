@@ -22,10 +22,18 @@ import javax.ws.rs.core.Response.Status.Family;
 import javax.ws.rs.core.Response.StatusType;
 import java.io.IOException;
 import java.net.URI;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyLong;
+import static org.mockito.Mockito.anyObject;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CharSourceSupplierHttpClientImplTest {
@@ -51,13 +59,14 @@ public class CharSourceSupplierHttpClientImplTest {
     }
 
     @Before
-    public void setupClient() throws IOException {
+    public void setupClient() throws IOException, ExecutionException, InterruptedException, TimeoutException {
         when(client.target(any(URI.class))
                         .request()
                         .accept(Matchers.<MediaType>anyVararg())
                         .header(anyString(), anyObject())
                         .buildGet()
-                        .invoke()
+                        .submit()
+                        .get(anyLong(), any(TimeUnit.class))
         ).thenReturn(response);
 
         when(response.getStatusInfo()).thenReturn(statusInfo);

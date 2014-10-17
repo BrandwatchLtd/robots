@@ -10,17 +10,12 @@ import static org.junit.Assert.assertThat;
 
 public class RobotsFunctionalTest {
 
-    private RobotsService service;
-
-    @Before
-    public void setup() {
-        RobotsConfig config = new RobotsConfig();
-        RobotsFactory factory = new RobotsFactory(config);
-        service = factory.createService();
-    }
-
     @Test
     public void standardUseCase() throws Exception {
+        RobotsConfig config = new RobotsConfig();
+        RobotsFactory factory = new RobotsFactory(config);
+        RobotsService service = factory.createService();
+
         URI uri = URI.create("http://www.brandwatch.com/the-team/");
         boolean allowed = service.isAllowed("magpie", uri);
         assertThat(allowed, is(true));
@@ -28,9 +23,26 @@ public class RobotsFunctionalTest {
 
     @Test
     public void standardDisallow() throws Exception {
+        RobotsConfig config = new RobotsConfig();
+        RobotsFactory factory = new RobotsFactory(config);
+        RobotsService service = factory.createService();
+
         URI uri = URI.create("http://www.brandwatch.com/wp-admin/");
         boolean allowed = service.isAllowed("magpie", uri);
         assertThat(allowed, is(false));
+    }
+
+
+    @Test
+    public void timeout() throws Exception {
+        RobotsConfig config = new RobotsConfig();
+        config.setRequestTimeoutMillis(1);
+        RobotsFactory factory = new RobotsFactory(config);
+        RobotsService service = factory.createService();
+
+        URI uri = URI.create("http://www.brandwatch.com/wp-admin/");
+        boolean allowed = service.isAllowed("magpie", uri);
+        assertThat(allowed, is(true));
     }
 
 }
