@@ -12,9 +12,6 @@ import static java.util.regex.Pattern.quote;
 
 class ExpressionCompilerImpl implements ExpressionCompiler {
 
-    static final Matcher<String> ALL = new ConstantMatcher(true);
-    static final Matcher<String> NONE = new ConstantMatcher(false);
-
     private static final String RE_LITERAL_PREFIX = "(?>";
     private static final String RE_LITERAL_SUFFIX = ")";
     private static final String RE_MATCH_ONE_OR_MORE = ".*?";
@@ -45,9 +42,9 @@ class ExpressionCompilerImpl implements ExpressionCompiler {
         }
 
         if (expression.isEmpty()) {
-            return ALL;
+            return Matchers.all();
         } else {
-            return new PatternMatcher(compileWildcardExpressionToRegex(expression));
+            return Matchers.fromPattern(compileWildcardExpressionToRegex(expression));
         }
     }
 
@@ -97,34 +94,5 @@ class ExpressionCompilerImpl implements ExpressionCompiler {
     }
 
 
-    private static final class ConstantMatcher implements Matcher<String> {
-
-        private final boolean result;
-
-        private ConstantMatcher(boolean result) {
-            this.result = result;
-        }
-
-        @Override
-        public boolean matches(@Nonnull String value) {
-            return result;
-        }
-    }
-
-    private static final class PatternMatcher implements Matcher<String> {
-
-        @Nonnull
-        private final Pattern pattern;
-
-        public PatternMatcher(@Nonnull Pattern pattern) {
-            checkNotNull(pattern, "pattern");
-            this.pattern = pattern;
-        }
-
-        @Override
-        public boolean matches(@Nonnull String value) {
-            return pattern.matcher(value).matches();
-        }
-    }
 
 }
