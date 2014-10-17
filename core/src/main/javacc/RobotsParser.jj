@@ -37,6 +37,11 @@ SKIP :
     " " | "\t" | "\f"
 }
 
+SKIP :
+{
+  < "#" (~["\n", "\r"])* >
+}
+
 TOKEN : {
     < EOL: ( "\n\r" | "\n" | "\r") >
 }
@@ -57,28 +62,11 @@ TOKEN :
     < DELIMITER: [":"] (" "  | "\t" | "\f")* > : IN_TEXT_VALUE
 }
 
-<DEFAULT, IN_TEXT_VALUE>
-MORE :
-{
-	"#" : IN_COMMENT
-}
-
-<IN_COMMENT>
-SPECIAL_TOKEN :
-{
-    <COMMENT: <EOL> > : DEFAULT
-}
-
-<IN_COMMENT>
-MORE :
-{
-	< ~[] >
-}
 
 <IN_TEXT_VALUE>
 TOKEN:
 {
-  <TEXT_VALUE: ( ~["\n","\r", "#"] )* > : DEFAULT
+  <TEXT_VALUE: ( ~["\n", "\r", "#"] )* > : DEFAULT
 }
 
 void parse(RobotsParseHandler handler) : {}
@@ -140,10 +128,17 @@ String textValue() : {
     Token token;
 }
 {
-    token = <TEXT_VALUE>
-    {
-        return token.image.trim();
-    }
+    (
+        token = <TEXT_VALUE>
+        {
+            return token.image.trim();
+        }
+    |
+        <EOF>
+        {
+            return "";
+        }
+    )
 }
 
 void eol() : {}
