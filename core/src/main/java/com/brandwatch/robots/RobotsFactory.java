@@ -4,7 +4,11 @@ import com.brandwatch.robots.domain.AgentDirective;
 import com.brandwatch.robots.domain.Group;
 import com.brandwatch.robots.domain.PathDirective;
 import com.brandwatch.robots.domain.Robots;
-import com.brandwatch.robots.matching.*;
+import com.brandwatch.robots.matching.EverythingMatcher;
+import com.brandwatch.robots.matching.ExpressionCompiler;
+import com.brandwatch.robots.matching.ExpressionCompilerBuilder;
+import com.brandwatch.robots.matching.MatcherUtils;
+import com.brandwatch.robots.matching.MatcherUtilsImpl;
 import com.brandwatch.robots.net.CharSourceSupplier;
 import com.brandwatch.robots.net.CharSourceSupplierHttpClientImpl;
 import com.brandwatch.robots.net.LoggingClientFilter;
@@ -66,7 +70,7 @@ public class RobotsFactory {
     @Nonnull
     public RobotsLoader createLoader() {
         return new RobotsLoaderCachedImpl(
-                new RobotsLoaderImpl(this, createCharSourceSupplier()),
+                new RobotsLoaderImpl(this),
                 createCache());
     }
 

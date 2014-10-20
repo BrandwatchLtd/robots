@@ -68,6 +68,11 @@ public class CharSourceSupplierHttpClientImpl implements CharSourceSupplier {
         };
     }
 
+    @Override
+    public void close() throws IOException {
+        client.close();
+    }
+
     @Nonnull
     private Response getResponseFollowingRedirects(@Nonnull final URI resource) throws InterruptedException, TimeoutException {
         final List<URI> visited = newArrayListWithCapacity(config.getMaxRedirectHops() + 1);

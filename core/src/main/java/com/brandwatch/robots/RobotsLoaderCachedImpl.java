@@ -4,6 +4,7 @@ import com.brandwatch.robots.domain.Robots;
 import com.google.common.cache.Cache;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.Callable;
 
@@ -33,5 +34,10 @@ final class RobotsLoaderCachedImpl implements RobotsLoader {
                 return delegate.load(robotsResource);
             }
         });
+    }
+
+    @Override
+    public void close() throws IOException {
+        delegate.close();
     }
 }

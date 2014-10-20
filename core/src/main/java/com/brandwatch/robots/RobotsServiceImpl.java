@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.net.URI;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -85,4 +86,8 @@ class RobotsServiceImpl implements RobotsService {
         return false;
     }
 
+    @Override
+    public void close() throws IOException {
+        loader.close();
+    }
 }

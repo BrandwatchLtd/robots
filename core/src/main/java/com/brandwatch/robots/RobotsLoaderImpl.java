@@ -29,10 +29,9 @@ final class RobotsLoaderImpl implements RobotsLoader {
     @Nonnull
     private final CharSourceSupplier charSourceSupplier;
 
-    public RobotsLoaderImpl(@Nonnull RobotsFactory factory,
-                            @Nonnull CharSourceSupplier charSourceSupplier) {
-        this.charSourceSupplier = charSourceSupplier;
+    public RobotsLoaderImpl(@Nonnull RobotsFactory factory) {
         this.factory = checkNotNull(factory, "factory is null");
+        this.charSourceSupplier = checkNotNull(factory.createCharSourceSupplier());
     }
 
     @Nonnull
@@ -41,6 +40,10 @@ final class RobotsLoaderImpl implements RobotsLoader {
         checkNotNull(robotsResource, "robotsResource");
         log.debug("Loading: {}", robotsResource);
         return load(robotsResource, charSourceSupplier.get(robotsResource));
+    }
+
+    public void close() throws IOException {
+        charSourceSupplier.close();
     }
 
     @Nonnull

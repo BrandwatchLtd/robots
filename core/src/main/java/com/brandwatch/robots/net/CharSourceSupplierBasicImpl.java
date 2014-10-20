@@ -38,4 +38,9 @@ public final class CharSourceSupplierBasicImpl implements CharSourceSupplier {
             }
         };
     }
+
+    @Override
+    public void close() throws IOException {
+    }
+
 }

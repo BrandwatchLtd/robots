@@ -38,7 +38,6 @@ public class RobotsLoaderImplTest {
     @Mock
     private CharSourceSupplier charSourceSupplier;
 
-    @InjectMocks
     private RobotsLoaderImpl instance;
 
     @Before
@@ -48,6 +47,9 @@ public class RobotsLoaderImplTest {
 
         when(factory.createAllowAllRobots()).thenReturn(ALLOW_ALL);
         when(factory.createDisallowAllRobots()).thenReturn(DISALLOW_ALL);
+        when(factory.createCharSourceSupplier()).thenReturn(charSourceSupplier);
+
+        instance = new RobotsLoaderImpl(factory);
     }
 
     @Test(expected = NullPointerException.class)

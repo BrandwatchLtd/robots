@@ -3,14 +3,14 @@ package com.brandwatch.robots.cli;
 import com.brandwatch.robots.RobotsConfig;
 import com.brandwatch.robots.RobotsFactory;
 import com.brandwatch.robots.RobotsService;
-import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Lists.transform;
 
 public class Command {
 
@@ -31,13 +31,19 @@ public class Command {
         final RobotsFactory factory = new RobotsFactory(config);
 
         final RobotsService service = factory.createService();
-
-        return transform(arguments.getResources(), new Function<URI, Result>() {
-            @Override
-            public Result apply(URI input) {
-                return new Result(input, service.isAllowed(arguments.getAgent(), input));
+        try {
+            ImmutableList.Builder<Result> results = ImmutableList.builder();
+            for (URI resource : arguments.getResources()) {
+                results.add(new Result(resource, service.isAllowed(arguments.getAgent(), resource)));
             }
-        });
+            return results.build();
+        } finally {
+            try {
+                service.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
 }
