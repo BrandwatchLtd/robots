@@ -17,7 +17,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.Response.Status.Family;
 import javax.ws.rs.core.Response.StatusType;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URI;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -25,7 +29,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static com.google.common.base.Optional.*;
+import static com.google.common.base.Optional.absent;
+import static com.google.common.base.Optional.fromNullable;
+import static com.google.common.base.Optional.of;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayListWithCapacity;
 import static java.text.MessageFormat.format;
@@ -123,7 +129,7 @@ public class CharSourceSupplierHttpClientImpl implements CharSourceSupplier {
                 case UNAUTHORIZED:
                 case FORBIDDEN:
                 case PAYMENT_REQUIRED:
-                    return fullDisallow("Response status {0}", info);
+                    return fullDisallow(statusMessage(info));
             }
         }
 
@@ -134,9 +140,9 @@ public class CharSourceSupplierHttpClientImpl implements CharSourceSupplier {
             case REDIRECTION:
             case CLIENT_ERROR:
             case OTHER:
-                return fullAllow("Response status {0}", info);
+                return fullAllow(statusMessage(info));
             case SERVER_ERROR:
-                return fullDisallow("Response status {0}", info);
+                return fullDisallow(statusMessage(info));
         }
 
         throw new AssertionError("Unknown status family: " + info.getFamily());
@@ -159,6 +165,12 @@ public class CharSourceSupplierHttpClientImpl implements CharSourceSupplier {
     @Nonnull
     private Reader fullDisallow(@Nonnull String reason, @Nonnull Object... args) throws TemporaryDisallow {
         throw new TemporaryDisallow(format(reason, args));
+    }
+
+    private static String statusMessage(StatusType info) {
+        return (info.getReasonPhrase() != null)
+                ? format("response status: {0} \"{1}\"", info.getStatusCode(), info.getReasonPhrase())
+                : format("response status: {0}", info.getStatusCode());
     }
 
 }
