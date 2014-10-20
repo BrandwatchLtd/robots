@@ -63,7 +63,7 @@ class RobotsServiceImpl implements RobotsService {
 
         final Optional<PathDirective> bestMatch = matcherUtils.getMostSpecificMatch(
                 group.get().getDirectives(PathDirective.class),
-                resourceUri.getPath());
+                utilities.getResourceLocalComponents(resourceUri));
 
         if (!bestMatch.isPresent()) {
             log.debug("No matching path directive");

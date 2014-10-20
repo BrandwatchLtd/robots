@@ -17,4 +17,19 @@ public class RobotsUtilities {
                 .build();
     }
 
+
+    @Nonnull
+    public String getResourceLocalComponents(@Nonnull URI resourceUri) {
+        checkNotNull(resourceUri, "resourceUri");
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(resourceUri.getPath());
+        if (resourceUri.getQuery() != null) {
+            builder.append('?').append(resourceUri.getQuery());
+        }
+        if (resourceUri.getFragment() != null) {
+            builder.append('#').append(resourceUri.getFragment());
+        }
+        return builder.toString();
+    }
 }
