@@ -1,0 +1,7 @@
+Sitemap: http://www.manutd.com/sitemap.xml
+
+
+User-agent: *
+Disallow: /Live-Webchat/Endava-Test.aspx
+Disallow: /VideoMessages/AON.aspx
+Disallow: /Supporters-Club-Back-End/Login.aspx

@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: *.js
+Disallow: /search.php*
+Disallow: /includes/
+Disallow: /install/
+Disallow: /customavatars/

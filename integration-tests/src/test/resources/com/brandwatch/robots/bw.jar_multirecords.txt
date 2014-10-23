@@ -1,0 +1,5 @@
+User-agent: magpie-crawler
+Disallow: /magpie-crawler.html
+
+User-agent: unhipbot
+Disallow: /unhipbot.html

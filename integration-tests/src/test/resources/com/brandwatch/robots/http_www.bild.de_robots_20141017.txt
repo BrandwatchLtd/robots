@@ -1,0 +1,76 @@
+# Weil sich zu viele Bots auf der Seite tummeln, sperren wir BILD JETZT fuer alle Bots, die wir nicht kennen
+
+User-agent: *
+Disallow: /
+Allow: /rssfeeds/
+
+# Wenn du Interesse hast auf unserer White-List der freundlichen Bots, hier in dieser Datei zu landen melde dich doch einfach unter 030/259179232 bei Maximilian Muhr (Head of SEO bei BILD), dann ergÃ¤nzen wir gerne die Liste der Useragents die auf unserer Seite crawlen duerfen :-)
+
+User-agent: Googlebot
+Disallow: /community/
+
+User-agent: GoogleBot
+Disallow: /community/
+
+User-agent: Googlebot-News
+Disallow: /partner/
+
+User-agent: Googlebot-Video
+Disallow: /ka/
+
+User-agent: Googlebot-Image
+Disallow:
+
+User-agent: Mediapartners-Google
+Disallow:
+
+User-agent: AdsBot-Google
+Disallow:
+
+User-agent:  Googlebot-Mobile
+Disallow:
+
+
+User-agent:  Bingbot
+Disallow:
+
+User-agent:  Adidxbot
+Disallow:
+
+User-agent:  MSNBot
+Disallow:
+
+User-agent:  BingPreview
+Disallow:
+
+
+User-agent: strucr
+Disallow:
+
+User-agent: strucr-phone
+Disallow:
+
+User-agent: strucr-tablet
+Disallow:
+
+
+User-agent: SearchmetricsBot
+Disallow:
+
+
+User-agent: sistrix
+Disallow:
+
+
+
+
+User-agent: Slurp
+Disallow:
+
+
+User-agent: qwant
+Disallow:
+
+
+
+Sitemap: http://www.bild.de/rssfeeds/vw-neu/vw-neu-32001674,view=rss2.bild.xml
