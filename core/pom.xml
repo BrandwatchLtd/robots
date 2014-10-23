@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.brandwatch</groupId>
         <artifactId>robots-parent</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>robots-core</artifactId>
