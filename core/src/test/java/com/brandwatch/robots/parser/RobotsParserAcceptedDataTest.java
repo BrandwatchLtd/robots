@@ -26,25 +26,25 @@ public class RobotsParserAcceptedDataTest {
     @Parameterized.Parameters(name = "{index}: {0}")
     public static Iterable<Object[]> data() {
         return ImmutableList.<Object[]>builder()
-                .add($(""))
-                .add($("#"))
-                .add($("#\n#\r#\r\n#\n\r#"))
-                .add($("User-agent: *\nAllow: /"))
-                .add($("User-agent: *\rAllow: /"))
-                .add($("User-agent: *\n\rAllow: /"))
-                .add($("User-agent: *\nAllow: /\n"))
-                .add($("User-agent: *\nAllow: \n"))
-                .add($("User-agent: *\nAllow:#\n"))
-                .add($("User-agent: *\nAllow:\n"))
-                .add($("User-agent: *\nAllow:"))
-                .add($("User-agent: *\nAllow: "))
-                .add($("User-agent: *\nAllow:#"))
-                .add($("User-agent:\nAllow:"))
-                .add($("Things:\nStuff:"))
+                .add(array(""))
+                .add(array("#"))
+                .add(array("#\n#\r#\r\n#\n\r#"))
+                .add(array("User-agent: *\nAllow: /"))
+                .add(array("User-agent: *\rAllow: /"))
+                .add(array("User-agent: *\n\rAllow: /"))
+                .add(array("User-agent: *\nAllow: /\n"))
+                .add(array("User-agent: *\nAllow: \n"))
+                .add(array("User-agent: *\nAllow:#\n"))
+                .add(array("User-agent: *\nAllow:\n"))
+                .add(array("User-agent: *\nAllow:"))
+                .add(array("User-agent: *\nAllow: "))
+                .add(array("User-agent: *\nAllow:#"))
+                .add(array("User-agent:\nAllow:"))
+                .add(array("Things:\nStuff:"))
                 .build();
     }
 
-    private static Object[] $(String str) {
+    private static Object[] array(String str) {
         return new Object[]{str};
     }
 

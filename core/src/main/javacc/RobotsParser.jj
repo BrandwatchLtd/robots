@@ -43,7 +43,8 @@ SKIP :
 }
 
 TOKEN : {
-    < EOL: ( "\n\r" | "\n" | "\r") >
+    < EOL: ( "\r\n" | "\n" | "\r") >
+    | < NUL: "\0" >
 }
 
 <DEFAULT>
@@ -53,7 +54,7 @@ TOKEN [IGNORE_CASE] :
     | < ALLOW: "allow" >
     | < DISALLOW: "disallow" >
     | < SITE_MAP: "sitemap" >
-    | < OTHER_FIELD: ( ~[":", "\n", "\r", "#"] )+ >
+    | < OTHER_FIELD: ( ~[":", "\n", "\r", "#", "\0"] )+ >
 }
 
 <DEFAULT>
@@ -66,7 +67,7 @@ TOKEN :
 <IN_TEXT_VALUE>
 TOKEN:
 {
-  <TEXT_VALUE: ( ~["\n", "\r", "#"] )* > : DEFAULT
+  <TEXT_VALUE: ( ~["\n", "\r", "#", "\0"] )* > : DEFAULT
 }
 
 void parse(RobotsParseHandler handler) : {}

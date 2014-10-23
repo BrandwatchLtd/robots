@@ -44,33 +44,33 @@ public class MainIntegrationTest {
 
     @Test
     public void givenHelpRequested_whenRun_thenOutContainsUsage() {
-        main.configure($("--help"));
+        main.configure(array("--help"));
         main.run();
         assertThat(out.toString(), containsString("Usage: "));
     }
 
     @Test
     public void givenHelpRequested_whenRun_thenErrIsEmpty() {
-        main.configure($("--help"));
+        main.configure(array("--help"));
         main.run();
         assertThat(err.toString(), isEmptyString());
     }
 
     @Test
     public void givenBrandwatchDisallowed_whenRun_thenResourceIsDisallowed() {
-        main.configure($("http://www.brandwatch.com/wp-admin/"));
+        main.configure(array("http://www.brandwatch.com/wp-admin/"));
         main.run();
         assertThat(out.toString(), containsString("http://www.brandwatch.com/wp-admin/: disallowed"));
     }
 
     @Test
     public void givenBrandwatchAllowed_whenRun_thenResourceIsAllowed() {
-        main.configure($("http://www.brandwatch.com/the-team/"));
+        main.configure(array("http://www.brandwatch.com/the-team/"));
         main.run();
         assertThat(out.toString(), containsString("http://www.brandwatch.com/the-team/: allowed"));
     }
 
-    public static <T> T[] $(T... args) {
+    public static <T> T[] array(T... args) {
         return args;
     }
 

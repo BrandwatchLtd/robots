@@ -26,24 +26,24 @@ public class RobotsParserRejectedDataTest {
     @Parameterized.Parameters(name = "{index}: {0}")
     public static Iterable<Object[]> data() {
         ImmutableList.Builder<Object[]> builder = ImmutableList.<Object[]>builder()
-                .add($("x"));
+                .add(array("x"));
 
         // add iso control characters
         for(char i = 0x0; i <= 0x8; i++) {
-            builder.add($("" + i));
+            builder.add(array("" + i));
         }
-        builder.add($("" + (char)0xb));
+        builder.add(array("" + (char) 0xb));
         for(char i = 0x10; i <= 0x1f; i++) {
-            builder.add($("" + i));
+            builder.add(array("" + i));
         }
         for(char i = 0x7F; i <= 0x9F; i++) {
-            builder.add($("" + i));
+            builder.add(array("" + i));
         }
 
         return builder.build();
     }
 
-    private static Object[] $(String str) {
+    private static Object[] array(String str) {
         return new Object[]{str};
     }
 

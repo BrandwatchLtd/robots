@@ -1,5 +1,6 @@
 package com.brandwatch.robots.parser;
 
+import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
 import org.junit.Test;
@@ -10,9 +11,16 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.nio.charset.Charset;
+import java.util.Arrays;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assume.assumeThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.withSettings;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RobotsParserTest {
@@ -226,6 +234,77 @@ public class RobotsParserTest {
     public void givenCommentMissingEOL_whenParse_thenNoExceptionThrown() throws IOException, ParseException {
         Reader reader = CharSource.wrap("#").openStream();
         RobotsParser robotsTxtParser = new RobotsParser(reader);
+        robotsTxtParser.parse(handler);
+    }
+
+    @Test(expected = ParseException.class)
+    public void givenInputIsHtml_whenParse_thenThrowsParseException() throws IOException, ParseException {
+        Reader reader = CharSource.wrap(
+                "<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "<head>\n</head>\n" +
+                "<body>\n" +
+                "<h1>Some text</h1>\n" +
+                "</body>\n" +
+                "</html>").openStream();
+        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        robotsTxtParser.parse(handler);
+    }
+
+    @Test
+    public void givenUtf8EncodingInputStream_whenParser_thenNoExceptionThrown() throws IOException, ParseException {
+        givenWrongEncodingInputStream_whenParser_thenThrowsParseException(Charsets.UTF_8);
+    }
+
+    @Test(expected = ParseException.class)
+    public void givenUtf16EncodingInputStream_whenParser_thenThrowsParseException() throws IOException, ParseException {
+        givenWrongEncodingInputStream_whenParser_thenThrowsParseException(Charsets.UTF_16);
+    }
+
+    @Test(expected = ParseException.class)
+    public void givenUtf16BEEncodingInputStream_whenParser_thenThrowsParseException() throws IOException, ParseException {
+        givenWrongEncodingInputStream_whenParser_thenThrowsParseException(Charsets.UTF_16BE);
+    }
+
+    @Test(expected = ParseException.class)
+    public void givenUtf16LEEncodingInputStream_whenParser_thenThrowsParseException() throws IOException, ParseException {
+        givenWrongEncodingInputStream_whenParser_thenThrowsParseException(Charsets.UTF_16LE);
+    }
+
+    @Test
+    public void givenLatin1LEEncodingInputStream_whenParser_thenNoExceptionThrown() throws IOException, ParseException {
+        givenWrongEncodingInputStream_whenParser_thenThrowsParseException(Charsets.ISO_8859_1);
+    }
+
+    @Test
+    public void givenAsciiLEEncodingInputStream_whenParser_thenNoExceptionThrown() throws IOException, ParseException {
+        givenWrongEncodingInputStream_whenParser_thenThrowsParseException(Charsets.US_ASCII);
+    }
+
+    @Test(expected = ParseException.class)
+    public void givenUtf32EncodingInputStream_whenParser_thenThrowsParseException() throws IOException, ParseException {
+        givenWrongEncodingInputStream_whenParser_thenThrowsParseException(Charset.forName("UTF-32"));
+    }
+
+    @Test(expected = ParseException.class)
+    public void givenUtf32BEEncodingInputStream_whenParser_thenThrowsParseException() throws IOException, ParseException {
+        givenWrongEncodingInputStream_whenParser_thenThrowsParseException(Charset.forName("UTF-32BE"));
+    }
+
+    @Test(expected = ParseException.class)
+    public void givenUtf32LEEncodingInputStream_whenParser_thenThrowsParseException() throws IOException, ParseException {
+        givenWrongEncodingInputStream_whenParser_thenThrowsParseException(Charset.forName("UTF-32LE"));
+    }
+
+    private void givenWrongEncodingInputStream_whenParser_thenThrowsParseException(Charset actualEncoding) throws IOException, ParseException {
+        handler = mock(RobotsParseHandler.class, withSettings().verboseLogging());
+        String input = "user-agent: example-bot\nallow: /\n";
+        byte[] inputBytes = input.getBytes(actualEncoding);
+        System.out.println(Arrays.toString(inputBytes));
+
+        final InputStream inputStream = ByteSource.wrap(inputBytes).openStream();
+        RobotsParser robotsTxtParser = new RobotsParser(inputStream);
+
         robotsTxtParser.parse(handler);
     }
 
