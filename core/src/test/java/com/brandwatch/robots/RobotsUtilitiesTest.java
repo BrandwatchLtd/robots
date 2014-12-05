@@ -65,5 +65,15 @@ public class RobotsUtilitiesTest {
         assertThat(result, equalTo("/path?query#fragment"));
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void givenMalformedResourceURI_whenGetRobotsURIForResource_thenThrowsIAE() {
+        URI resourceUri = URI.create("http://mobil..bloggplatsen.se/rss/");
+        utilities.getRobotsURIForResource(resourceUri);
+    }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void givenAnotherMalformedResourceURI_whenGetRobotsURIForResource_thenThrowsIAE() {
+        URI resourceUri = URI.create("http://.mattbrailsford.com/2010/07/15/10-essential-umbraco-packages-for-seo/");
+        utilities.getRobotsURIForResource(resourceUri);
+    }
 }

@@ -5,6 +5,7 @@ import com.brandwatch.robots.domain.Group;
 import com.brandwatch.robots.domain.PathDirective;
 import com.brandwatch.robots.domain.Robots;
 import com.brandwatch.robots.matching.EverythingMatcher;
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,5 +67,13 @@ public class RobotsServiceImplTest {
         URI resourceUri = URI.create("http://example.org/index.html");
         instance.isAllowed(crawlerAgent, resourceUri);
         verify(utilities).getRobotsURIForResource(resourceUri);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void givenMalformedResourceURI_whenIsAllowed_thenThrowsIAE() {
+        String crawlerAgent = "magpie";
+        URI resourceUri = URI.create("http://example.org/index.html");
+        when(utilities.getRobotsURIForResource(any(URI.class))).thenThrow(IllegalArgumentException.class);
+        instance.isAllowed(crawlerAgent, resourceUri);
     }
 }
