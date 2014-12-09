@@ -12,9 +12,13 @@ public class RobotsUtilities {
     @Nonnull
     public URI getRobotsURIForResource(@Nonnull final URI resourceUri) {
         checkNotNull(resourceUri, "resourceUri");
-        return new RobotsURIBuilder()
-                .fromUri(resourceUri)
-                .build();
+        try {
+            return new RobotsURIBuilder()
+                    .fromUri(resourceUri)
+                    .build();
+        } catch (RuntimeException e) {
+            throw new IllegalArgumentException("Failed to derive robots.txt location from malformed URI: " + resourceUri, e);
+        }
     }
 
 
