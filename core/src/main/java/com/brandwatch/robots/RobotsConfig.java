@@ -36,12 +36,23 @@ public class RobotsConfig {
     @Nonnegative
     private long requestTimeoutMillis = 10000;
 
+    @Nonnegative
+    private int readTimeoutMillis = 30000;
+
     public long getRequestTimeoutMillis() {
         return requestTimeoutMillis;
     }
 
     public void setRequestTimeoutMillis(long requestTimeoutMillis) {
         this.requestTimeoutMillis = requestTimeoutMillis;
+    }
+
+    public int getReadTimeoutMillis() {
+        return readTimeoutMillis;
+    }
+
+    public void setReadTimeoutMillis(int readTimeoutMillis) {
+        this.readTimeoutMillis = readTimeoutMillis;
     }
 
     @Nonnull
