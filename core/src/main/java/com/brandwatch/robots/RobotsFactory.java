@@ -15,6 +15,7 @@ import com.brandwatch.robots.net.LoggingClientFilter;
 import com.brandwatch.robots.util.LogLevel;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import org.glassfish.jersey.client.ClientProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,9 +124,10 @@ public class RobotsFactory {
 
     @Nonnull
     public Client createClient() {
-        return ClientBuilder.newBuilder()
-                .register(new LoggingClientFilter(this.getClass(), LogLevel.TRACE))
-                .build();
+        Client client = ClientBuilder.newClient()
+                .register(new LoggingClientFilter(this.getClass(), LogLevel.TRACE));
+        client.property(ClientProperties.READ_TIMEOUT, config.getReadTimeoutMillis());
+        return client;
     }
 
     @Nonnull

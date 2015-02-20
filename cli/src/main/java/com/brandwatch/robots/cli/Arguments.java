@@ -67,6 +67,14 @@ public class Arguments {
     private List<URI> resources = newArrayList();
 
     @Nonnegative
+    @Parameter(
+            names = {"--readTimeout", "-t"},
+            description = "Time in millis before the client times out while downloading a response payload.",
+            validateWith = PositiveInteger.class
+    )
+    private int readTimeoutMillis = 30000;
+
+    @Nonnegative
     public int getMaxFileSizeBytes() {
         return maxFileSizeBytes;
     }
@@ -93,5 +101,10 @@ public class Arguments {
 
     public boolean isHelpRequested() {
         return helpRequested;
+    }
+
+    @Nonnegative
+    public int getReadTimeoutMillis() {
+        return readTimeoutMillis;
     }
 }

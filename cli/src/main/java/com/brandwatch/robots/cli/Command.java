@@ -27,6 +27,7 @@ public class Command {
         config.setMaxFileSizeBytes(arguments.getMaxFileSizeBytes());
         config.setMaxRedirectHops(arguments.getMaxRedirectHops());
         config.setDefaultCharset(arguments.getDefaultCharset());
+        config.setReadTimeoutMillis(arguments.getReadTimeoutMillis());
 
         final RobotsFactory factory = new RobotsFactory(config);
 

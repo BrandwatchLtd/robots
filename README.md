@@ -214,4 +214,7 @@ Usage: robots [options] RESOURCES
     --maxRedirectHops, -r
        Number of HTTP 3XX (redirection) responses to follow before giving up.
        Default: 5
+    --readTimeout, -t
+       Time in millis before the client times out while downloading a response payload.
+       Default: 30000
 ```
