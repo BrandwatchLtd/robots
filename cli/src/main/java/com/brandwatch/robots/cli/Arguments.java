@@ -69,7 +69,7 @@ public class Arguments {
     @Nonnegative
     @Parameter(
             names = {"--readTimeout", "-t"},
-            description = "Time in millis before the client times out while waiting for a response.",
+            description = "Time in millis before the client times out while downloading a response payload.",
             validateWith = PositiveInteger.class
     )
     private int readTimeoutMillis = 30000;
