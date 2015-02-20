@@ -4,7 +4,7 @@
 
     <groupId>com.brandwatch</groupId>
     <artifactId>robots-parent</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Robots (parent)</name>
@@ -20,7 +20,7 @@
         <url>https://gite.brandwatch.com/Brandwatch/robots</url>
         <connection>scm:git:git@gite.brandwatch.com:Brandwatch/robots.git</connection>
         <developerConnection>scm:git:git@gite.brandwatch.com:Brandwatch/robots.git</developerConnection>
-        <tag>robots-1.1.0</tag>
+        <tag>master</tag>
     </scm>
 
     <prerequisites>
