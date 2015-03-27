@@ -1,4 +1,4 @@
-# com.brandwatch:robots
+# Robots [![Build Status](https://travis-ci.org/BrandwatchLtd/robots.svg?branch=master)](https://travis-ci.org/BrandwatchLtd/robots)
 
 This repository contains a stand alone library for the parsing of *robots.txt* files, and
 application of the robots exclusion protocol.
