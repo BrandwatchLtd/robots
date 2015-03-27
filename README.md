@@ -119,7 +119,7 @@ Include the library dependency in your maven `pom.xml`:
 <dependency>
     <groupId>com.brandwatch</groupId>
     <artifactId>robots-core</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
@@ -157,7 +157,7 @@ is in a separate module (robots-cli), which is not part of the core library.
 Currently there is no CLI distribution at all, so you'll need to build it from source all by yourself.
 
 ```sh
-git clone git@gite.brandwatch.com:Brandwatch/robots.git
+git clone git@github.com:BrandwatchLtd/robots.git
 cd robots
 mvn clean package
 cd cli/target
