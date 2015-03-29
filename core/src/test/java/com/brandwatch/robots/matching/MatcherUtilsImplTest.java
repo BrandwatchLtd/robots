@@ -52,7 +52,7 @@ public class MatcherUtilsImplTest {
 
     protected MatcherUtilsImpl utilities;
 
-    private static Matcher newPatternMatcher(String pattern) {
+    private static Matcher<String> newPatternMatcher(String pattern) {
         return agentExpressionCompiler.compile(pattern);
     }
 
@@ -63,7 +63,7 @@ public class MatcherUtilsImplTest {
 
     @Test(expected = NullPointerException.class)
     public void givenMatcherIsNull_whenGetMatchSpecificity_thenThrowsNPE() {
-        Matcher matcher = null;
+        Matcher<String> matcher = null;
         String agent = "googlebot";
         utilities.getMatchSpecificity(matcher, agent);
     }

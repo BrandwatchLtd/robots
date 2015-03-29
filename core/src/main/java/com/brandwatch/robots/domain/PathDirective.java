@@ -35,6 +35,7 @@ package com.brandwatch.robots.domain;
 
 import com.brandwatch.robots.matching.Matchable;
 import com.brandwatch.robots.matching.Matcher;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 import javax.annotation.Nonnull;
@@ -100,7 +101,7 @@ public final class PathDirective implements Directive, Matchable<String> {
     @Nonnull
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("field", field)
                 .add("value", value)
                 .toString();

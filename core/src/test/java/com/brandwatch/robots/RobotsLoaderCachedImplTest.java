@@ -74,19 +74,14 @@ public class RobotsLoaderCachedImplTest {
     @Test
     public void givenValidUri_whenLoad_resultEqualsExpected() throws Exception {
         Robots expected = new Robots.Builder().build();
-        when(cache.get(eq(EXAMPLE_URI), any(Callable.class))).thenReturn(expected);
+        when(cache.get(eq(EXAMPLE_URI), anyCallableReturning(Robots.class))).thenReturn(expected);
         Robots result = loader.load(EXAMPLE_URI);
         assertThat(result, equalTo(expected));
     }
 
     @Test
     public void givenCacheMiss_whenLoad_resultInvokesDelegateOnce() throws Exception {
-        when(cache.get(eq(EXAMPLE_URI), any(Callable.class))).thenAnswer(new Answer<Robots>() {
-            @Override
-            public Robots answer(InvocationOnMock invocation) throws Throwable {
-                return ((Callable<Robots>) invocation.getArguments()[1]).call();
-            }
-        });
+        when(cache.get(eq(EXAMPLE_URI), anyCallableReturning(Robots.class))).then(callArgument(1, Robots.class));
         loader.load(EXAMPLE_URI);
         verify(delegate).load(EXAMPLE_URI);
         verifyNoMoreInteractions(delegate);
@@ -94,7 +89,7 @@ public class RobotsLoaderCachedImplTest {
 
     @Test
     public void givenCacheHit_whenLoad_resultNotInvokesDelegate() throws Exception {
-        when(cache.get(eq(EXAMPLE_URI), any(Callable.class))).thenAnswer(new Answer<Robots>() {
+        when(cache.get(eq(EXAMPLE_URI), anyCallableReturning(Robots.class))).thenAnswer(new Answer<Robots>() {
             @Override
             public Robots answer(InvocationOnMock invocation) throws Throwable {
                 return new Robots.Builder().build();
@@ -104,4 +99,17 @@ public class RobotsLoaderCachedImplTest {
         verifyZeroInteractions(delegate);
     }
 
+    @SuppressWarnings("unchecked")
+    private static <T> Callable<T> anyCallableReturning(Class<T> returnType) {
+        return (Callable<T>)any(Callable.class);
+    }
+
+    private static <T> Answer<T> callArgument(final int index, final Class<T> expectedResultType) {
+        return new Answer<T>() {
+            @Override
+            public T answer(InvocationOnMock invocation) throws Throwable {
+                return expectedResultType.cast(((Callable<?>)invocation.getArguments()[index]).call());
+            }
+        };
+    }
 }

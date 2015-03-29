@@ -33,6 +33,7 @@ package com.brandwatch.robots.domain;
  * #L%
  */
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
 import javax.annotation.Nonnull;
@@ -79,7 +80,7 @@ public final class SiteMapDirective implements Directive {
     @Nonnull
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("value", value)
                 .toString();
     }

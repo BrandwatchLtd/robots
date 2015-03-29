@@ -330,14 +330,11 @@ public class RobotsParserTest {
     }
 
     private void givenWrongEncodingInputStream_whenParser_thenThrowsParseException(Charset actualEncoding) throws IOException, ParseException {
-        handler = mock(RobotsParseHandler.class, withSettings().verboseLogging());
+        handler = mock(RobotsParseHandler.class, withSettings());
         String input = "user-agent: example-bot\nallow: /\n";
         byte[] inputBytes = input.getBytes(actualEncoding);
-        System.out.println(Arrays.toString(inputBytes));
-
         final InputStream inputStream = ByteSource.wrap(inputBytes).openStream();
         RobotsParser robotsTxtParser = new RobotsParser(inputStream);
-
         robotsTxtParser.parse(handler);
     }
 
