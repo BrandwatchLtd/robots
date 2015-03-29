@@ -1,4 +1,8 @@
-# Robots [![Build Status](https://travis-ci.org/BrandwatchLtd/robots.svg?branch=master)](https://travis-ci.org/BrandwatchLtd/robots)
+# Robots
+
+[![Build Status](https://travis-ci.org/BrandwatchLtd/robots.svg?branch=master)](https://travis-ci.org/BrandwatchLtd/robots)
+[![Coverage Status](https://coveralls.io/repos/BrandwatchLtd/robots/badge.svg)](https://coveralls.io/r/BrandwatchLtd/robots)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.brandwatch/robots-parent/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.brandwatch/robots-parent)
 
 This repository contains a stand alone library for the parsing of *robots.txt* files, and
 application of the robots exclusion protocol.
