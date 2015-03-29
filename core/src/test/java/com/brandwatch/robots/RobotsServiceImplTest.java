@@ -46,6 +46,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.OngoingStubbing;
 
 import java.net.URI;
 
@@ -106,7 +107,7 @@ public class RobotsServiceImplTest {
     public void givenMalformedResourceURI_whenIsAllowed_thenThrowsIAE() {
         String crawlerAgent = "magpie";
         URI resourceUri = URI.create("http://example.org/index.html");
-        when(utilities.getRobotsURIForResource(any(URI.class))).thenThrow(IllegalArgumentException.class);
+        when(utilities.getRobotsURIForResource(resourceUri)).thenThrow(new IllegalArgumentException());
         instance.isAllowed(crawlerAgent, resourceUri);
     }
 }
