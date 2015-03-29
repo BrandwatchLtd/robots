@@ -35,6 +35,7 @@ package com.brandwatch.robots;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -151,7 +152,7 @@ public class RobotsConfig {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
+        return MoreObjects.toStringHelper(this)
                 .add("cacheExpiresHours", cacheExpiresHours)
                 .add("cacheMaxSizeRecords", cacheMaxSizeRecords)
                 .add("maxFileSizeBytes", maxFileSizeBytes)
