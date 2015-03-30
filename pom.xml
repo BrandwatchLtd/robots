@@ -314,8 +314,47 @@
                     <version>2.4</version>
                 </plugin>
 
+                <plugin>
+                    <groupId>org.eluder.coveralls</groupId>
+                    <artifactId>coveralls-maven-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <configuration>
+                        <sourceDirectories>
+                            <directory>core/target/generated-sources/javacc</directory>
+                        </sourceDirectories>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>cobertura-maven-plugin</artifactId>
+                    <version>2.6</version>
+                    <configuration>
+                        <format>xml</format>
+                        <maxmem>256m</maxmem>
+                        <aggregate>true</aggregate>
+                        <check/>
+                    </configuration>
+                </plugin>
+
             </plugins>
         </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+                <configuration>
+                    <sourceDirectories>
+                        <directory>core/target/generated-sources/javacc</directory>
+                    </sourceDirectories>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 
     <reporting>
