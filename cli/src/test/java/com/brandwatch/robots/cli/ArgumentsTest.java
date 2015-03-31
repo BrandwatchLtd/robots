@@ -359,4 +359,51 @@ public class ArgumentsTest {
     }
 
 
+    @Test
+    public void givenReadTimeoutMilli_whenInit_thenReadTimeoutMilliIsExpected() {
+        jCommander.parse(array("--readTimeout", "123", FIRST_RESOURCE));
+        assertThat(arguments.getReadTimeoutMillis(), equalTo(123));
+    }
+
+    @Test
+    public void givenTArgument_whenInit_thenReadTimeoutMillisIsExpected() {
+        jCommander.parse(array("-t", "456", FIRST_RESOURCE));
+        assertThat(arguments.getReadTimeoutMillis(), equalTo(456));
+    }
+
+    @Test
+    public void givenZeroReadTimeoutMillis_whenInit_thenReadTimeoutMillisIsExpected() {
+        jCommander.parse(array("--readTimeout", "0", FIRST_RESOURCE));
+        assertThat(arguments.getReadTimeoutMillis(), equalTo(0));
+    }
+
+    @Test(expected = ParameterException.class)
+    public void givenEmptyReadTimeoutMillis_whenInit_thenThrowsParameterException() {
+        jCommander.parse(array("--readTimeout", "", FIRST_RESOURCE));
+    }
+
+    @Test(expected = ParameterException.class)
+    public void givenNegativeReadTimeoutMillis_whenInit_thenThrowsParameterException() {
+        jCommander.parse(array("--readTimeout", "-1", FIRST_RESOURCE));
+    }
+
+    @Test(expected = ParameterException.class)
+    public void givenFloatingPointReadTimeoutMillis_whenInit_thenThrowsParameterException() {
+        jCommander.parse(array("--readTimeout", "1.5", FIRST_RESOURCE));
+    }
+
+    @Test(expected = ParameterException.class)
+    public void givenNonNumericReadTimeoutMillis_whenInit_thenThrowsParameterException() {
+        jCommander.parse(array("--readTimeout", "abc", FIRST_RESOURCE));
+    }
+
+    @Test(expected = ParameterException.class)
+    public void givenReadTimeoutMillisGivenTwice_whenInit_thenThrowsParameterException() {
+        jCommander.parse(array("--readTimeout", "1", "--readTimeout", "2", FIRST_RESOURCE));
+    }
+
+    @Test(expected = ParameterException.class)
+    public void givenBothReadTimeoutMillisNames_whenInit_thenThrowsParameterException() {
+        jCommander.parse(array("-t", "1", "--readTimeout", "2", FIRST_RESOURCE));
+    }
 }
