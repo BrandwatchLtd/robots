@@ -52,22 +52,14 @@ public class LoggingReader extends FilterReader {
     @Nonnull
     private final Logger logger;
 
-    public LoggingReader(@Nonnull Reader reader, @Nonnull Class<?> context, @Nonnull LogLevel level) {
+    LoggingReader(@Nonnull Reader reader, Logger logger, @Nonnull LogLevel level) {
         super(reader);
-        this.logger = LoggerFactory.getLogger(checkNotNull(context, "context"));
+        this.logger = checkNotNull(logger, "logger");
         this.level = checkNotNull(level, "level is null");
     }
 
-    public LoggingReader(@Nonnull Reader reader, @Nonnull LogLevel level) {
-        this(reader, LoggingReader.class, level);
-    }
-
-    public LoggingReader(@Nonnull Reader reader, @Nonnull Class<?> context) {
-        this(reader, context, LogLevel.DEBUG);
-    }
-
-    public LoggingReader(@Nonnull Reader reader) {
-        this(reader, LoggingReader.class, LogLevel.DEBUG);
+    public LoggingReader(@Nonnull Reader reader, @Nonnull Class<?> context, @Nonnull LogLevel level) {
+        this(reader, LoggerFactory.getLogger(checkNotNull(context, "context")), level);
     }
 
     @Override
