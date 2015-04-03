@@ -1,0 +1,9 @@
+com.brandwatch.robots
+com.brandwatch.robots.cli
+com.brandwatch.robots.cli.converters
+com.brandwatch.robots.cli.validators
+com.brandwatch.robots.domain
+com.brandwatch.robots.matching
+com.brandwatch.robots.net
+com.brandwatch.robots.parser
+com.brandwatch.robots.util
