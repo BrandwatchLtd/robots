@@ -19,7 +19,7 @@
             <comments>A permissive free software license</comments>
         </license>
     </licenses>
-    
+
     <modules>
         <module>core</module>
         <module>integration-tests</module>
@@ -364,6 +364,9 @@
                             <root>src/main</root>
                             <root>src/test</root>
                         </roots>
+                        <extraExtensions>
+                            <jj>java</jj>
+                        </extraExtensions>
                     </configuration>
                     <executions>
                         <execution>
