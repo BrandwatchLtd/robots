@@ -83,7 +83,7 @@ public class RobotsParserRejectedDataTest {
     @Before
     public void setup() throws IOException {
         handler = mock(RobotsParseHandler.class);
-        robotsTxtParser = new RobotsParser(data);
+        robotsTxtParser = new RobotsParserImpl(data);
     }
 
     @Test(expected = ParseException.class)

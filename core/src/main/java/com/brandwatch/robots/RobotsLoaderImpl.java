@@ -115,7 +115,7 @@ final class RobotsLoaderImpl implements RobotsLoader {
         log.debug("Conditional allow; parsing contents of {}", robotsResource);
 
         final Reader reader = new LoggingReader(robotsData, this.getClass(), LogLevel.TRACE);
-        final RobotsParser parser = new RobotsParser(reader);
+        final RobotsParser parser = factory.createRobotsParser(reader);
         final RobotsBuildingParseHandler handler = factory.createRobotsBuildingHandler();
 
         try {

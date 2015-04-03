@@ -46,7 +46,7 @@ import static com.brandwatch.robots.AbstractDataTest.resourceReader;
 import static org.mockito.Mockito.inOrder;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RobotsParserFunctionalTest {
+public class RobotsParserImplFunctionalTest {
 
     @Mock
     private RobotsParseHandler handler;
@@ -54,7 +54,7 @@ public class RobotsParserFunctionalTest {
     @Test
     public void givenDailyMailBoards_whenParse_thenHandlerInteractionsAreExpected() throws IOException, ParseException {
         Reader reader = resourceReader("http_boards.dailymail.co.uk_robots.txt");
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser = new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
         InOrder o = inOrder(handler);
         o.verify(handler).startEntry();
@@ -72,7 +72,7 @@ public class RobotsParserFunctionalTest {
     @Test
     public void givenDailyMail_whenParse_thenHandlerInteractionsAreExpected() throws IOException, ParseException {
         Reader reader = resourceReader("http_www.dailymail.co.uk_robots.txt");
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser = new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
 
         InOrder o = inOrder(handler);
@@ -241,7 +241,7 @@ public class RobotsParserFunctionalTest {
     @Test
     public void giveWwwGoogleCom_whenParse_thenHandlerInteractionsAreExpected() throws IOException, ParseException {
         Reader reader = resourceReader("http_www.google.com_robots.txt");
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser = new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
         InOrder o = inOrder(handler);
         o.verify(handler).startEntry();
@@ -560,7 +560,7 @@ public class RobotsParserFunctionalTest {
     @Test
     public void givenWwwBrandwatchCom_whenParse_thenHandlerInteractionsAreExpected() throws IOException, ParseException {
         Reader reader = resourceReader("http_www.brandwatch.com_robots.txt");
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser = new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
         InOrder o = inOrder(handler);
 

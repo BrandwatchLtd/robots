@@ -46,13 +46,13 @@ import java.io.InputStream;
 import static org.mockito.Mockito.mock;
 
 @RunWith(Parameterized.class)
-public class RobotsParserAcceptedDataTest {
+public class RobotsParserImplAcceptedDataTest {
 
     private final InputStream data;
     private RobotsParseHandler handler;
     private RobotsParser robotsTxtParser;
 
-    public RobotsParserAcceptedDataTest(String data) {
+    public RobotsParserImplAcceptedDataTest(String data) {
         this.data = new ByteArrayInputStream(data.getBytes());
     }
 
@@ -84,7 +84,7 @@ public class RobotsParserAcceptedDataTest {
     @Before
     public void setup() throws IOException {
         handler = mock(RobotsParseHandler.class);
-        robotsTxtParser = new RobotsParser(data);
+        robotsTxtParser = new RobotsParserImpl(data);
     }
 
     @Test

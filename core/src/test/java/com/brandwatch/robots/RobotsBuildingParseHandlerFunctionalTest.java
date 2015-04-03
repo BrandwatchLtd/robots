@@ -38,6 +38,7 @@ import com.brandwatch.robots.matching.ExpressionCompiler;
 import com.brandwatch.robots.matching.Matcher;
 import com.brandwatch.robots.parser.ParseException;
 import com.brandwatch.robots.parser.RobotsParser;
+import com.brandwatch.robots.parser.RobotsParserImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -61,7 +62,7 @@ public class RobotsBuildingParseHandlerFunctionalTest {
     @Test
     public void givenDailyMailBoards_whenParse_thenRobotsObjectEqualsExpected() throws IOException, ParseException {
         Reader reader = resourceReader("http_boards.dailymail.co.uk_robots.txt");
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser = new RobotsParserImpl(reader);
         RobotsBuildingParseHandler handler = new RobotsBuildingParseHandler(
                 pathExpressionCompiler,
                 agentExpressionCompiler);
@@ -86,8 +87,7 @@ public class RobotsBuildingParseHandlerFunctionalTest {
     @Test
     public void givenWwwBrandwatchCom_whenParse_thenRobotsObjectEqualsExpected() throws IOException, ParseException {
         Reader reader = resourceReader("http_www.brandwatch.com_robots.txt");
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
-        RobotsConfig config = new RobotsConfig();
+        RobotsParser robotsTxtParser = new RobotsParserImpl(reader);
         RobotsBuildingParseHandler handler = new RobotsBuildingParseHandler(pathExpressionCompiler, agentExpressionCompiler);
         robotsTxtParser.parse(handler);
 

@@ -34,6 +34,7 @@ package com.brandwatch.robots;
  */
 
 import com.brandwatch.robots.parser.RobotsParser;
+import com.brandwatch.robots.parser.RobotsParserImpl;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Resources;
@@ -80,7 +81,7 @@ public abstract class AbstractDataTest {
 
     @Before
     public final void setupAbstractTest() throws IOException {
-        robotsTxtParser = new RobotsParser(resourceReader(resourceName));
+        robotsTxtParser = new RobotsParserImpl(resourceReader(resourceName));
     }
 
 }

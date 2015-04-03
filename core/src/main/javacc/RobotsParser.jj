@@ -23,14 +23,14 @@ options {
   FORCE_LA_CHECK = false;
 }
 
-PARSER_BEGIN(RobotsParser)
+PARSER_BEGIN(RobotsParserImpl)
 
 package com.brandwatch.robots.parser;
 
-public class RobotsParser {
+public class RobotsParserImpl implements RobotsParser {
 }
 
-PARSER_END(RobotsParser)
+PARSER_END(RobotsParserImpl)
 
 SKIP :
 {
