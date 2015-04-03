@@ -55,21 +55,13 @@ public class LoggingClientFilter implements ClientRequestFilter, ClientResponseF
     @Nonnull
     private final LogLevel level;
 
-    public LoggingClientFilter(@Nonnull Class<?> context, @Nonnull LogLevel level) {
-        logger = LoggerFactory.getLogger(checkNotNull(context, "context"));
+    LoggingClientFilter(@Nonnull Logger logger, @Nonnull LogLevel level) {
+        this.logger =checkNotNull(logger, "logger");
         this.level = checkNotNull(level, "level is null");
     }
 
-    public LoggingClientFilter(@Nonnull Class<?> context) {
-        this(context, LogLevel.DEBUG);
-    }
-
-    public LoggingClientFilter(@Nonnull LogLevel level) {
-        this(LoggingClientFilter.class, level);
-    }
-
-    public LoggingClientFilter() {
-        this(LoggingClientFilter.class, LogLevel.DEBUG);
+    public LoggingClientFilter(@Nonnull Class<?> context, @Nonnull LogLevel level) {
+        this(LoggerFactory.getLogger(checkNotNull(context, "context")), level);
     }
 
     @Override
