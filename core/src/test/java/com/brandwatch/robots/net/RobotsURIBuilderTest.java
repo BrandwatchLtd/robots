@@ -37,9 +37,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.annotation.Nonnull;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
+import static java.text.MessageFormat.format;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -50,6 +52,10 @@ public class RobotsURIBuilderTest {
     private static final String VALID_HOST = "www.example.com";
     @Nonnull
     private static final String VALID_SCHEME = "http";
+    @Nonnull
+    private static final String VALID_USER_INFO = "example-user";
+    private static final int VALID_PORT = 80;
+
     private RobotsURIBuilder builder;
 
     @Before
@@ -109,12 +115,12 @@ public class RobotsURIBuilderTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void givenNullURL_whenCopyFrom_thenThrowsNPE() {
+    public void givenNullURL_whenFromURL_thenThrowsNPE() {
         builder.fromURL(null);
     }
 
     @Test(expected = NullPointerException.class)
-    public void givenNullURI_whenCopyFrom_thenThrowsNPE() {
+    public void givenNullURI_whenFromURL_thenThrowsNPE() {
         builder.fromUri(null);
     }
 
@@ -142,6 +148,34 @@ public class RobotsURIBuilderTest {
         builder.withHost(VALID_HOST);
         URI result = builder.build();
         assertThat(result.getPort(), equalTo(80));
+    }
+
+    @Test
+    public void givenUserInfo_whenBuild_thenResultUserInfoEqual() {
+        builder.withHost(VALID_HOST).withScheme(VALID_SCHEME).withUserInfo(VALID_USER_INFO);
+        URI result = builder.build();
+        assertThat(result.getUserInfo(), equalTo(VALID_USER_INFO));
+    }
+
+    @Test
+    public void givenURL_whenFromURL_thenResultContainsExpectedFields() throws MalformedURLException {
+        URL url = new URL(format("{0}://{1}@{2}:{3}", VALID_SCHEME, VALID_USER_INFO, VALID_HOST, VALID_PORT));
+        URI result = builder.fromURL(url).build();
+        assertThat(result.getUserInfo(), equalTo(VALID_USER_INFO));
+        assertThat(result.getHost(), equalTo(VALID_HOST));
+        assertThat(result.getPort(), equalTo(VALID_PORT));
+        assertThat(result.getScheme(), equalTo(VALID_SCHEME));
+    }
+
+
+    @Test
+    public void givenURI_whenFromURI_thenResultContainsExpectedFields() throws MalformedURLException {
+        URI uri = URI.create(format("{0}://{1}@{2}:{3}", VALID_SCHEME, VALID_USER_INFO, VALID_HOST, VALID_PORT));
+        URI result = builder.fromUri(uri).build();
+        assertThat(result.getUserInfo(), equalTo(VALID_USER_INFO));
+        assertThat(result.getHost(), equalTo(VALID_HOST));
+        assertThat(result.getPort(), equalTo(VALID_PORT));
+        assertThat(result.getScheme(), equalTo(VALID_SCHEME));
     }
 
 
