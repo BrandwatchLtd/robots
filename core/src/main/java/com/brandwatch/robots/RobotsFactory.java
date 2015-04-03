@@ -45,6 +45,8 @@ import com.brandwatch.robots.matching.MatcherUtilsImpl;
 import com.brandwatch.robots.net.CharSourceSupplier;
 import com.brandwatch.robots.net.CharSourceSupplierHttpClientImpl;
 import com.brandwatch.robots.net.LoggingClientFilter;
+import com.brandwatch.robots.parser.RobotsParser;
+import com.brandwatch.robots.parser.RobotsParserImpl;
 import com.brandwatch.robots.util.LogLevel;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -55,6 +57,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import java.io.Reader;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
@@ -166,5 +169,10 @@ public class RobotsFactory {
     @Nonnull
     public MatcherUtils getMatcherUtils() {
         return matcherUtils;
+    }
+
+    @Nonnull
+    public RobotsParser createRobotsParser(@Nonnull Reader reader) {
+        return new RobotsParserImpl(checkNotNull(reader, "reader is null"));
     }
 }

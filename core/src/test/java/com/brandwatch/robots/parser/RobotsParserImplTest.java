@@ -56,49 +56,49 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.withSettings;
 
 @RunWith(MockitoJUnitRunner.class)
-public class RobotsParserTest {
+public class RobotsParserImplTest {
 
     @Mock
     private RobotsParseHandler handler;
 
     @Test(expected = NullPointerException.class)
     public void givenNullInputStream_whenNewInstance_thenThrowsNPE() {
-        new RobotsParser((InputStream) null);
+        new RobotsParserImpl((InputStream) null);
     }
 
 
     @Test
     public void givenEmptyStream_whenParser_thenNoExceptionThrown() throws IOException, ParseException {
         final InputStream inputStream = ByteSource.empty().openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(inputStream);
+        RobotsParser robotsTxtParser = new RobotsParserImpl(inputStream);
         robotsTxtParser.parse(handler);
     }
 
     @Test
     public void givenEmptyReader_whenParse_thenNoExceptionThrown() throws IOException, ParseException {
         Reader reader = CharSource.empty().openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser = new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
     }
 
     @Test
     public void givenSingleBlankLine_whenParse_thenNoExceptionThrown() throws IOException, ParseException {
         Reader reader = CharSource.wrap("\n").openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser = new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
     }
 
     @Test
     public void givenSingleCommentLine_whenParse_thenNoExceptionThrown() throws IOException, ParseException {
         Reader reader = CharSource.wrap("# comment line \n").openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser = new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
     }
 
     @Test
     public void givenTwoCommentLines_whenParse_thenNoExceptionThrown() throws IOException, ParseException {
         Reader reader = CharSource.wrap("# comment line 1 \n# comment line 2 \n").openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser = new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
     }
 
@@ -106,7 +106,7 @@ public class RobotsParserTest {
     @Test
     public void givenLowerCaseUserAgentLine_whenParse_thenHandlerCalledWithExpectedAgent() throws IOException, ParseException {
         Reader reader = CharSource.wrap("user-agent: example-bot\n").openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser =new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
         verify(handler).userAgent("example-bot");
     }
@@ -114,7 +114,7 @@ public class RobotsParserTest {
     @Test
     public void givenUpperCaseUserAgentLine_whenParse_thenHandlerCalledWithExpectedAgent() throws IOException, ParseException {
         Reader reader = CharSource.wrap("USER-AGENT: example-bot\n").openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser =new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
         verify(handler).userAgent("example-bot");
     }
@@ -122,7 +122,7 @@ public class RobotsParserTest {
     @Test
     public void givenMixedCaseUserAgentLine_whenParse_thenHandlerCalledWithExpectedAgent() throws IOException, ParseException {
         Reader reader = CharSource.wrap("uSeR-aGeNt: example-bot\n").openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser =new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
         verify(handler).userAgent("example-bot");
     }
@@ -130,7 +130,7 @@ public class RobotsParserTest {
     @Test
     public void givenTwoUserAgentLines_whenParse_thenHandlerCalledWithExpectedAgent() throws IOException, ParseException {
         Reader reader = CharSource.wrap("user-agent: first\nuser-agent: second\n").openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser =new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
         verify(handler).userAgent("first");
         verify(handler).userAgent("second");
@@ -139,7 +139,7 @@ public class RobotsParserTest {
     @Test
     public void givenMixedCaseUserAgentLine_whenParse_thenStartEntryCalled() throws IOException, ParseException {
         Reader reader = CharSource.wrap("user-agent: example-bot\n").openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser =new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
         verify(handler).startEntry();
     }
@@ -147,7 +147,7 @@ public class RobotsParserTest {
     @Test
     public void givenMixedCaseUserAgentLine_whenParse_thenEndEntryCalled() throws IOException, ParseException {
         Reader reader = CharSource.wrap("user-agent: example-bot\n").openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser =new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
         verify(handler).endEntry();
     }
@@ -155,7 +155,7 @@ public class RobotsParserTest {
     @Test
     public void givenEmpty_whenParse_thenZeroInteractionOnHandler() throws IOException, ParseException {
         Reader reader = CharSource.empty().openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser =new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
         verifyZeroInteractions(handler);
     }
@@ -163,7 +163,7 @@ public class RobotsParserTest {
     @Test
     public void givenUserAgentMissingEOL_whenParse_thenEndEntryCalled() throws IOException, ParseException {
         Reader reader = CharSource.wrap("user-agent: example-bot").openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser =new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
         verify(handler).endEntry();
     }
@@ -171,7 +171,7 @@ public class RobotsParserTest {
     @Test
     public void givenEmptyDisallow_whenParse_thenDisallowCalledWithEmptyString() throws IOException, ParseException {
         Reader reader = CharSource.wrap("user-agent: example-bot\ndisallow:\n").openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser =new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
         verify(handler).disallow("");
     }
@@ -180,7 +180,7 @@ public class RobotsParserTest {
     @Test
     public void givenUserAgentWithTrailingSpace_whenParse_thenAgentIsTrimmed() throws IOException, ParseException {
         Reader reader = CharSource.wrap("user-agent: example-bot \n").openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser =new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
         verify(handler).userAgent("example-bot");
     }
@@ -189,7 +189,7 @@ public class RobotsParserTest {
     @Test
     public void givenUserAgentEndingInComment_whenParse_thenAgentProduced() throws IOException, ParseException {
         Reader reader = CharSource.wrap("user-agent: example-bot # some comment\n").openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser =new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
         verify(handler).userAgent("example-bot");
     }
@@ -198,7 +198,7 @@ public class RobotsParserTest {
     @Test
     public void givenBlankLineSeparatedAgents_whenParse_thenAgentsProduced() throws IOException, ParseException {
         Reader reader = CharSource.wrap("user-agent: example-bot\n\n\n\nuser-agent: naughty-bot").openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser =new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
         verify(handler).userAgent("example-bot");
         verify(handler).userAgent("naughty-bot");
@@ -208,7 +208,7 @@ public class RobotsParserTest {
     @Test
     public void givenTrailingNewLines_whenParse_thenAgentProduced() throws IOException, ParseException {
         Reader reader = CharSource.wrap("user-agent: example-bot\n\n\n\n").openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser =new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
         verify(handler).userAgent("example-bot");
     }
@@ -216,7 +216,7 @@ public class RobotsParserTest {
     @Test
     public void givenHostRule_whenParse_thenDirectiveProduced() throws IOException, ParseException {
         Reader reader = CharSource.wrap("user-agent: *\nhost: example.com\n").openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser =new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
         verify(handler).otherDirective("host", "example.com");
     }
@@ -225,7 +225,7 @@ public class RobotsParserTest {
     @Test
     public void givenCrawlDelayRule_whenParse_thenDirectiveProduced() throws IOException, ParseException {
         Reader reader = CharSource.wrap("user-agent: *\ncrawl-delay: 10\n").openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser =new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
         verify(handler).otherDirective("crawl-delay", "10");
     }
@@ -234,7 +234,7 @@ public class RobotsParserTest {
     @Test
     public void givenUnsupportedRule_whenParse_thenDirectiveProduced() throws IOException, ParseException {
         Reader reader = CharSource.wrap("user-agent: *\nCheese-burgers: yummy\n").openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser =new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
         verify(handler).otherDirective("Cheese-burgers", "yummy");
     }
@@ -242,7 +242,7 @@ public class RobotsParserTest {
     @Test
     public void givenMissingFinalEOL_whenParse_thenDirectiveProduced() throws IOException, ParseException {
         Reader reader = CharSource.wrap("user-agent: *\nallow: /").openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser =new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
         verify(handler).allow("/");
     }
@@ -250,7 +250,7 @@ public class RobotsParserTest {
     @Test
     public void givenMissingPath_whenParse_thenDirectiveProduced() throws IOException, ParseException {
         Reader reader = CharSource.wrap("user-agent: *\nallow:\n").openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser =new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
         verify(handler).allow("");
     }
@@ -258,7 +258,7 @@ public class RobotsParserTest {
     @Test
     public void givenMissingPathAndEOL_whenParse_thenDirectiveProduced() throws IOException, ParseException {
         Reader reader = CharSource.wrap("user-agent: *\nallow:").openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser =new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
         verify(handler).allow("");
     }
@@ -266,7 +266,7 @@ public class RobotsParserTest {
     @Test
     public void givenCommentMissingEOL_whenParse_thenNoExceptionThrown() throws IOException, ParseException {
         Reader reader = CharSource.wrap("#").openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser =new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
     }
 
@@ -280,7 +280,7 @@ public class RobotsParserTest {
                 "<h1>Some text</h1>\n" +
                 "</body>\n" +
                 "</html>").openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(reader);
+        RobotsParser robotsTxtParser =new RobotsParserImpl(reader);
         robotsTxtParser.parse(handler);
     }
 
@@ -334,7 +334,7 @@ public class RobotsParserTest {
         String input = "user-agent: example-bot\nallow: /\n";
         byte[] inputBytes = input.getBytes(actualEncoding);
         final InputStream inputStream = ByteSource.wrap(inputBytes).openStream();
-        RobotsParser robotsTxtParser = new RobotsParser(inputStream);
+        RobotsParser robotsTxtParser =new RobotsParserImpl(inputStream);
         robotsTxtParser.parse(handler);
     }
 

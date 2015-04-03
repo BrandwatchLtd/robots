@@ -44,11 +44,11 @@ import java.io.IOException;
 import static org.mockito.Mockito.mock;
 
 @RunWith(Parameterized.class)
-public class RobotsParserDataTest extends AbstractDataTest {
+public class RobotsParserImplDataTest extends AbstractDataTest {
 
     private RobotsParseHandler handler;
 
-    public RobotsParserDataTest(String resourceName) {
+    public RobotsParserImplDataTest(String resourceName) {
         super(resourceName);
     }
 

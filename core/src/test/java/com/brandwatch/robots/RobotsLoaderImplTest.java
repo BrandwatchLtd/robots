@@ -82,6 +82,7 @@ public class RobotsLoaderImplTest {
         when(factory.createDisallowAllRobots()).thenReturn(DISALLOW_ALL);
         when(factory.createCharSourceSupplier()).thenReturn(charSourceSupplier);
 
+        when(factory.createRobotsParser(any(Reader.class))).thenCallRealMethod();
         instance = new RobotsLoaderImpl(factory);
     }
 
