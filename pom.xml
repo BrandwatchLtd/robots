@@ -358,8 +358,6 @@
                     <version>1.8</version>
                     <configuration>
                         <licenseName>bsd_3</licenseName>
-                        <failOnMissingHeader>true</failOnMissingHeader>
-                        <failOnNotUptodateHeader>true</failOnNotUptodateHeader>
                         <roots>
                             <root>src/main</root>
                             <root>src/test</root>
@@ -374,6 +372,10 @@
                             <goals>
                                 <goal>check-file-header</goal>
                             </goals>
+                            <configuration>
+                                <failOnMissingHeader>true</failOnMissingHeader>
+                                <failOnNotUptodateHeader>true</failOnNotUptodateHeader>
+                            </configuration>
                         </execution>
                     </executions>
                 </plugin>
