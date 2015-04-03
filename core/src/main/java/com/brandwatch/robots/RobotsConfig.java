@@ -85,7 +85,8 @@ public class RobotsConfig {
         return readTimeoutMillis;
     }
 
-    public void setReadTimeoutMillis(int readTimeoutMillis) {
+    public void setReadTimeoutMillis(@Nonnegative int readTimeoutMillis) {
+        checkArgument(readTimeoutMillis >= 0, "readTimeoutMillis is negative");
         this.readTimeoutMillis = readTimeoutMillis;
     }
 
@@ -160,6 +161,7 @@ public class RobotsConfig {
                 .add("defaultCharset", defaultCharset)
                 .add("userAgent", userAgent)
                 .add("requestTimeoutMillis", requestTimeoutMillis)
+                .add("readTimeoutMillis", readTimeoutMillis)
                 .toString();
     }
 }
