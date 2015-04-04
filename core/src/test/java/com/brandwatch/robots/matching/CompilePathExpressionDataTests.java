@@ -151,6 +151,7 @@ public class CompilePathExpressionDataTests {
                 .add(new Object[]{"/", "/page.htm", true})
                 .add(new Object[]{"/************************************", "/index.html", true})
                 .add(new Object[]{"/*$", "/index.html", true})
+                .add(new Object[]{"^/*$", "/index.html", true})
                 .build();
     }
 
