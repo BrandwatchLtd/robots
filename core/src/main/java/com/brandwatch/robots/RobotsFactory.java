@@ -48,6 +48,7 @@ import com.brandwatch.robots.net.LoggingClientFilter;
 import com.brandwatch.robots.parser.RobotsParser;
 import com.brandwatch.robots.parser.RobotsParserImpl;
 import com.brandwatch.robots.util.LogLevel;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.glassfish.jersey.client.ClientProperties;
@@ -67,15 +68,23 @@ public class RobotsFactory {
 
     private static final Logger log = LoggerFactory.getLogger(RobotsFactory.class);
 
-    private final RobotsUtilities utilities = new RobotsUtilities();
-    private final MatcherUtils matcherUtils = new MatcherUtilsImpl();
-
+    @Nonnull
+    private final RobotsUtilities utilities;
+    @Nonnull
+    private final MatcherUtils matcherUtils;
     @Nonnull
     private final RobotsConfig config;
 
-    public RobotsFactory(@Nonnull RobotsConfig config) {
+    @VisibleForTesting
+    RobotsFactory(@Nonnull RobotsConfig config, RobotsUtilities utilities, MatcherUtils matcherUtils) {
+        this.utilities = utilities;
+        this.matcherUtils = matcherUtils;
         this.config = checkNotNull(config, "config is null");
         log.debug("Initializing factory with config: {}", config);
+    }
+
+    public RobotsFactory(@Nonnull RobotsConfig config) {
+        this(checkNotNull(config, "config is null"), new RobotsUtilities(), new MatcherUtilsImpl());
     }
 
     @Nonnull
