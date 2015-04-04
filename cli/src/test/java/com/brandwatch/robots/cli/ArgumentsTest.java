@@ -35,6 +35,7 @@ package com.brandwatch.robots.cli;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+import com.brandwatch.robots.RobotsConfig;
 import com.google.common.base.Charsets;
 import org.junit.Before;
 import org.junit.Test;
@@ -405,5 +406,34 @@ public class ArgumentsTest {
     @Test(expected = ParameterException.class)
     public void givenBothReadTimeoutMillisNames_whenInit_thenThrowsParameterException() {
         jCommander.parse(array("-t", "1", "--readTimeout", "2", FIRST_RESOURCE));
+    }
+
+    @Test
+    public void givenRedirectHopsArgument_whenBuildRobotsConfig_thenMaxRedirectHopsIsExpected() {
+        jCommander.parse(array("--maxRedirectHops", "123", FIRST_RESOURCE));
+        RobotsConfig config = arguments.buildRobotsConfig();
+        assertThat(config.getMaxRedirectHops(), equalTo(123));
+    }
+
+    @Test
+    public void givenFileSizeArgument_whenBuildRobotsConfig_thenFileSizeIsExpected() {
+        jCommander.parse(array("--maxFileSizeBytes", "123", FIRST_RESOURCE));
+        RobotsConfig config = arguments.buildRobotsConfig();
+        assertThat(config.getMaxFileSizeBytes(), equalTo(123));
+    }
+
+    @Test
+    public void givenCharsetArgument_whenBuildRobotsConfig_thenCharsetIsExpected() {
+        jCommander.parse(array("--defaultCharset", "UTF-16", FIRST_RESOURCE));
+        RobotsConfig config = arguments.buildRobotsConfig();
+        assertThat(config.getDefaultCharset(), equalTo(Charsets.UTF_16));
+    }
+
+
+    @Test
+    public void givenReadTimeoutArgument_whenBuildRobotsConfig_thenReadTimeoutIsExpected() {
+        jCommander.parse(array("--readTimeout", "123", FIRST_RESOURCE));
+        RobotsConfig config = arguments.buildRobotsConfig();
+        assertThat(config.getReadTimeoutMillis(), equalTo(123));
     }
 }

@@ -33,17 +33,20 @@ package com.brandwatch.robots.cli;
  * #L%
  */
 
-import com.brandwatch.robots.RobotsConfig;
 import com.brandwatch.robots.RobotsFactory;
 import com.brandwatch.robots.RobotsService;
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Lists.transform;
 
 public class Command {
 
@@ -56,21 +59,15 @@ public class Command {
 
     public List<Result> getResults() {
 
-        final RobotsConfig config = new RobotsConfig();
-        config.setMaxFileSizeBytes(arguments.getMaxFileSizeBytes());
-        config.setMaxRedirectHops(arguments.getMaxRedirectHops());
-        config.setDefaultCharset(arguments.getDefaultCharset());
-        config.setReadTimeoutMillis(arguments.getReadTimeoutMillis());
-
-        final RobotsFactory factory = new RobotsFactory(config);
-
-        final RobotsService service = factory.createService();
+        final RobotsService service = new RobotsFactory(arguments.buildRobotsConfig()).createService();
         try {
-            ImmutableList.Builder<Result> results = ImmutableList.builder();
-            for (URI resource : arguments.getResources()) {
-                results.add(new Result(resource, service.isAllowed(arguments.getAgent(), resource)));
-            }
-            return results.build();
+            return ImmutableList.copyOf(transform(arguments.getResources(), new Function<URI, Result>() {
+                @Nullable
+                @Override
+                public Result apply(@Nullable URI resource) {
+                    return new Result(resource, service.isAllowed(arguments.getAgent(), resource));
+                }
+            }));
         } finally {
             try {
                 service.close();
