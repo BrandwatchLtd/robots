@@ -441,4 +441,139 @@ public class RobotsParserImplTest {
         verify(handler, times(10)).userAgent(anyString());
     }
 
+    @Test
+    public void givenDirectiveStartingWithTab_whenParse_producesOtherDirectiveMatchingInput() throws IOException, ParseException {
+        CharSource source = wrap("\tfoo: bar");
+        RobotsParserImpl parser = new RobotsParserImpl(source.openStream());
+        parser.parse(handler);
+        verify(handler).otherDirective("\tfoo", "bar");
+    }
+
+    @Test
+    public void givenDirectiveStartingWithLineFeed_whenParse_producesOtherDirectiveMatchingInput() throws IOException, ParseException {
+        CharSource source = wrap("\ffoo: bar");
+        RobotsParserImpl parser = new RobotsParserImpl(source.openStream());
+        parser.parse(handler);
+        verify(handler).otherDirective("\ffoo", "bar");
+    }
+
+    @Test
+    public void givenDirectiveStartingWithSpace_whenParse_producesOtherDirectiveMatchingInput() throws IOException, ParseException {
+        CharSource source = wrap(" foo: bar");
+        RobotsParserImpl parser = new RobotsParserImpl(source.openStream());
+        parser.parse(handler);
+        verify(handler).otherDirective(" foo", "bar");
+    }
+
+    @Test
+    public void givenLowerCaseSiteMapDirective_whenParse_producesSiteMap() throws IOException, ParseException {
+        CharSource source = wrap("sitemap: sitemap.xml");
+        RobotsParserImpl parser = new RobotsParserImpl(source.openStream());
+        parser.parse(handler);
+        verify(handler).siteMap("sitemap.xml");
+    }
+
+    @Test
+    public void givenUpdateCaseSiteMapDirective_whenParse_producesSiteMap() throws IOException, ParseException {
+        CharSource source = wrap("SITEMAP: sitemap.xml");
+        RobotsParserImpl parser = new RobotsParserImpl(source.openStream());
+        parser.parse(handler);
+        verify(handler).siteMap("sitemap.xml");
+    }
+
+    @Test
+    public void givenUpperCaseAllowDirective_whenParse_producesAllow() throws IOException, ParseException {
+        CharSource source = wrap("user-agent: example-bot\nALLOW: *");
+        RobotsParserImpl parser = new RobotsParserImpl(source.openStream());
+        parser.parse(handler);
+        verify(handler).allow("*");
+    }
+
+    @Test
+    public void givenLowerCaseAllowDirective_whenParse_producesAllow() throws IOException, ParseException {
+        CharSource source = wrap("user-agent: example-bot\nallow: *");
+        RobotsParserImpl parser = new RobotsParserImpl(source.openStream());
+        parser.parse(handler);
+        verify(handler).allow("*");
+    }
+
+    @Test
+    public void givenUpperCaseDisallowDirective_whenParse_producesDisallow() throws IOException, ParseException {
+        CharSource source = wrap("user-agent: example-bot\ndisallow: *");
+        RobotsParserImpl parser = new RobotsParserImpl(source.openStream());
+        parser.parse(handler);
+        verify(handler).disallow("*");
+    }
+
+    @Test
+    public void givenLowerCaseDisallowDirective_whenParse_producesDisallow() throws IOException, ParseException {
+        CharSource source = wrap("user-agent: example-bot\nDISALLOW: *");
+        RobotsParserImpl parser = new RobotsParserImpl(source.openStream());
+        parser.parse(handler);
+        verify(handler).disallow("*");
+    }
+
+    @Test(expected = ParseException.class)
+    public void givenCarriageReturnFollowedByNull_whenParse_throwsParserException() throws IOException, ParseException {
+        CharSource source = wrap("\r\0");
+        RobotsParserImpl parser = new RobotsParserImpl(source.openStream());
+        parser.parse(handler);
+    }
+
+    @Test
+    public void givenMultiByteValue_whenParse_thenProducesExpectedDirective() throws IOException, ParseException {
+        CharSource source = wrap("things: スタッフ");
+        RobotsParserImpl parser = new RobotsParserImpl(source.openStream());
+        parser.parse(handler);
+        verify(handler).otherDirective("things", "スタッフ");
+    }
+
+    @Test
+    public void givenMultiByteField_whenParse_thenProducesExpectedDirective() throws IOException, ParseException {
+        CharSource source = wrap("スタッフ: things");
+        RobotsParserImpl parser = new RobotsParserImpl(source.openStream());
+        parser.parse(handler);
+        verify(handler).otherDirective("スタッフ", "things");
+    }
+
+    @Test
+    public void givenMultiByteSitemap_whenParse_thenProducesExpectedDirective() throws IOException, ParseException {
+        CharSource source = wrap("sitemap: スタッフ.xml");
+        RobotsParserImpl parser = new RobotsParserImpl(source.openStream());
+        parser.parse(handler);
+        verify(handler).siteMap("スタッフ.xml");
+    }
+
+    @Test
+    public void givenMultiByteUserAgent_whenParse_thenProducesExpectedDirective() throws IOException, ParseException {
+        CharSource source = wrap("user-agent: スタッフ");
+        RobotsParserImpl parser = new RobotsParserImpl(source.openStream());
+        parser.parse(handler);
+        verify(handler).userAgent("スタッフ");
+    }
+
+    @Test
+    public void givenMultiByteAllow_whenParse_thenProducesExpectedDirective() throws IOException, ParseException {
+        CharSource source = wrap("user-agent: foo\nallow: スタッフ");
+        RobotsParserImpl parser = new RobotsParserImpl(source.openStream());
+        parser.parse(handler);
+        verify(handler).allow("スタッフ");
+    }
+
+    @Test
+    public void givenMultiByteDisallow_whenParse_thenProducesExpectedDirective() throws IOException, ParseException {
+        CharSource source = wrap("user-agent: foo\ndisallow: スタッフ");
+        RobotsParserImpl parser = new RobotsParserImpl(source.openStream());
+        parser.parse(handler);
+        verify(handler).disallow("スタッフ");
+    }
+
+    @Test
+    public void givenComment_whenParse_thenNothingProduced() throws IOException, ParseException {
+        CharSource source = wrap("# comment");
+        RobotsParserImpl parser = new RobotsParserImpl(source.openStream());
+        parser.parse(handler);
+        verifyZeroInteractions(handler);
+    }
+
 }
