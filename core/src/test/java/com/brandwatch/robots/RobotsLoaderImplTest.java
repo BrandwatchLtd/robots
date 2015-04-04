@@ -35,11 +35,13 @@ package com.brandwatch.robots;
 
 import com.brandwatch.robots.domain.Robots;
 import com.brandwatch.robots.net.CharSourceSupplier;
+import com.brandwatch.robots.parser.ParseException;
+import com.brandwatch.robots.parser.RobotsParseHandler;
+import com.brandwatch.robots.parser.RobotsParser;
 import com.google.common.io.CharSource;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -47,10 +49,13 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URI;
+import java.util.concurrent.TimeoutException;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -70,6 +75,8 @@ public class RobotsLoaderImplTest {
     private RobotsFactory factory;
     @Mock
     private CharSourceSupplier charSourceSupplier;
+    @Mock
+    private RobotsParser parser;
 
     private RobotsLoaderImpl instance;
 
@@ -82,7 +89,7 @@ public class RobotsLoaderImplTest {
         when(factory.createDisallowAllRobots()).thenReturn(DISALLOW_ALL);
         when(factory.createCharSourceSupplier()).thenReturn(charSourceSupplier);
 
-        when(factory.createRobotsParser(any(Reader.class))).thenCallRealMethod();
+        when(factory.createRobotsParser(any(Reader.class))).thenReturn(parser);
         instance = new RobotsLoaderImpl(factory);
     }
 
@@ -139,5 +146,50 @@ public class RobotsLoaderImplTest {
         Robots result = instance.load(EXAMPLE_URI);
         assertThat(result, equalTo(ALLOW_ALL));
     }
+
+    @Test
+    public void whenClose_thenCloseCalledOnCharSource() throws IOException {
+        instance.close();
+        verify(charSourceSupplier).close();
+    }
+
+    @Test
+    public void givenSupplierThrowsTemporaryAllow_whenLoad_thenAllowAll() throws IOException {
+        CharSource charSource = mock(CharSource.class);
+        when(charSource.openBufferedStream()).thenThrow(new TemporaryAllow(""));
+        when(charSourceSupplier.get(any(URI.class))).thenReturn(charSource);
+        Robots result = instance.load(EXAMPLE_URI);
+        assertThat(result, equalTo(ALLOW_ALL));
+    }
+
+    @Test
+    public void givenSupplierThrowsTemporaryDisallow_whenLoad_thenDisallowAll() throws IOException {
+        CharSource charSource = mock(CharSource.class);
+        when(charSource.openBufferedStream()).thenThrow(new TemporaryDisallow(""));
+        when(charSourceSupplier.get(any(URI.class))).thenReturn(charSource);
+        Robots result = instance.load(EXAMPLE_URI);
+        assertThat(result, equalTo(DISALLOW_ALL));
+    }
+
+    @Test
+    public void givenSupplierThrowsIOECausedByTimeout_whenLoad_thenAllowAll() throws IOException {
+        CharSource charSource = mock(CharSource.class);
+        when(charSource.openBufferedStream()).thenThrow(new IOException(new TimeoutException()));
+        when(charSourceSupplier.get(any(URI.class))).thenReturn(charSource);
+        Robots result = instance.load(EXAMPLE_URI);
+        assertThat(result, equalTo(ALLOW_ALL));
+    }
+
+    @Test
+    public void givenParserThrowsParseException_whenLoad_thenAllowAll() throws IOException, ParseException {
+        when(charSourceSupplier.get(any(URI.class)))
+                .thenReturn(CharSource.empty());
+        doThrow(new ParseException()).when(parser).parse(any(RobotsParseHandler.class));
+        when(factory.createRobotsParser(any(Reader.class))).thenReturn(parser);
+
+        Robots result = instance.load(EXAMPLE_URI);
+        assertThat(result, equalTo(ALLOW_ALL));
+    }
+
 
 }
