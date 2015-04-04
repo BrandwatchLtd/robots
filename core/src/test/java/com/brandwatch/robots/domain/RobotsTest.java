@@ -33,6 +33,11 @@ package com.brandwatch.robots.domain;
  * #L%
  */
 
+import org.junit.Test;
+
+import static org.hamcrest.Matchers.empty;
+import static org.junit.Assert.assertThat;
+
 public class RobotsTest extends AbstractDomainObjectTest<Robots> {
 
     @Override
@@ -40,4 +45,9 @@ public class RobotsTest extends AbstractDomainObjectTest<Robots> {
         return new Robots.Builder().build();
     }
 
+    @Test
+    public void givenEmptyRobots_whenGetNonGroupDirectives_thenReturnsEmptyList() {
+        Robots robots = new Robots.Builder().build();
+        assertThat(robots.getNonGroupDirectives(), empty());
+    }
 }

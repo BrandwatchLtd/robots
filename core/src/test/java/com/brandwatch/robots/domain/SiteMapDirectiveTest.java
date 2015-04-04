@@ -33,12 +33,29 @@ package com.brandwatch.robots.domain;
  * #L%
  */
 
+import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 public class SiteMapDirectiveTest extends AbstractDomainObjectTest<SiteMapDirective> {
 
-    private static final String VALID_SITEMAP = "http://example.com/sitemap.xml";
+    private static final String VALID_SITE_MAP = "http://example.com/sitemap.xml";
 
     @Override
     protected SiteMapDirective newValidInstance() {
-        return new SiteMapDirective(VALID_SITEMAP);
+        return new SiteMapDirective(VALID_SITE_MAP);
+    }
+
+    @Test
+    public void givenValidSiteMapDirective_whenGetValue_thenReturnsExpectedValue() {
+        SiteMapDirective siteMapDirective = new SiteMapDirective(VALID_SITE_MAP);
+        assertThat(siteMapDirective.getValue(), equalTo(VALID_SITE_MAP));
+    }
+
+    @Test
+    public void givenValidSiteMapDirective_whenGetField_thenReturnsExpectedValue() {
+        SiteMapDirective siteMapDirective = new SiteMapDirective(VALID_SITE_MAP);
+        assertThat(siteMapDirective.getField(), equalTo("sitemap"));
     }
 }

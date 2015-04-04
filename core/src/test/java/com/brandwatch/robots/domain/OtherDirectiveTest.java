@@ -33,10 +33,29 @@ package com.brandwatch.robots.domain;
  * #L%
  */
 
+import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
+
 public class OtherDirectiveTest extends AbstractDomainObjectTest<OtherDirective> {
 
+    private static final String FIELD = "things";
+    private static final String VALUE = "stuff";
     @Override
     protected OtherDirective newValidInstance() {
-        return new OtherDirective("things", "stuff");
+        return new OtherDirective(FIELD, VALUE);
+    }
+
+    @Test
+    public void givenValidOtherDirective_whenGetField_theResultEqualsExpected() {
+        OtherDirective directive = new OtherDirective(FIELD, VALUE);
+        assertThat(directive.getField(), equalTo(FIELD));
+    }
+
+    @Test
+    public void givenValidOtherDirective_whenGetValue_theResultEqualsExpected() {
+        OtherDirective directive = new OtherDirective(FIELD, VALUE);
+        assertThat(directive.getValue(), equalTo(VALUE));
     }
 }

@@ -33,6 +33,12 @@ package com.brandwatch.robots.domain;
  * #L%
  */
 
+import org.junit.Test;
+
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertThat;
+
 public class GroupTest extends AbstractDomainObjectTest<Group> {
 
     @Override
@@ -40,4 +46,25 @@ public class GroupTest extends AbstractDomainObjectTest<Group> {
         return new Group.Builder().build();
     }
 
+    @Test
+    public void givenGroupIsEmpty_whenGetDirectives_thenReturnsEmptyList() {
+        Group group = new Group.Builder().build();
+        assertThat(group.getDirectives(), empty());
+    }
+
+    @Test
+    public void givenGroupIsSingleton_whenGetDirectives_thenReturnsCollectionOfSizeOne() {
+        Group group = new Group.Builder()
+                .withDirective(new OtherDirective("key", "value"))
+                .build();
+        assertThat(group.getDirectives(), hasSize(1));
+    }
+
+    @Test
+    public void givenGroupContainsOtherDirective_whenGetOtherDirectives_thenReturnsCollectionOfSizeOne() {
+        Group group = new Group.Builder()
+                .withDirective(new OtherDirective("key", "value"))
+                .build();
+        assertThat(group.getDirectives(OtherDirective.class), hasSize(1));
+    }
 }
