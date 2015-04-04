@@ -66,6 +66,7 @@ import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.anyObject;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -184,4 +185,9 @@ public class CharSourceSupplierHttpClientImplTest {
         source.openStream();
     }
 
+    @Test
+    public void whenClose_thenClientClose() throws IOException {
+        instance.close();
+        verify(client).close();
+    }
 }
