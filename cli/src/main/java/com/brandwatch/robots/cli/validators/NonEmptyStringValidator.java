@@ -4,7 +4,7 @@ package com.brandwatch.robots.cli.validators;
  * #%L
  * Robots (command-line interface)
  * %%
- * Copyright (C) 2015 Brandwatch
+ * Copyright (C) 2014 - 2015 Brandwatch
  * %%
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
