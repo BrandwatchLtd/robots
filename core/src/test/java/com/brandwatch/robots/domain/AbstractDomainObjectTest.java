@@ -1,8 +1,8 @@
-package com.brandwatch.robots.cli;
+package com.brandwatch.robots.domain;
 
 /*
  * #%L
- * Robots (command-line interface)
+ * Robots (core)
  * %%
  * Copyright (C) 2014 - 2015 Brandwatch
  * %%
@@ -33,48 +33,45 @@ package com.brandwatch.robots.cli;
  * #L%
  */
 
-import com.brandwatch.robots.RobotsFactory;
-import com.brandwatch.robots.RobotsService;
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import org.junit.Test;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.IOException;
-import java.net.URI;
-import java.util.List;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.isA;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Lists.transform;
+public abstract class AbstractDomainObjectTest<T> {
 
-public class Command {
-
-    @Nonnull
-    private final Arguments arguments;
-
-    public Command(@Nonnull Arguments arguments) {
-        this.arguments = checkNotNull(arguments, "argument is null");
+    @Test
+    public void givenTwoValidInstances_whenEquals_thenReturnsTrue() {
+        T firstInstance = newValidInstance();
+        T secondInstance = newValidInstance();
+        boolean equal = firstInstance.equals(secondInstance);
+        assertThat(equal, equalTo(true));
     }
 
-    public List<Result> getResults() {
-
-        final RobotsService service = new RobotsFactory(arguments.buildRobotsConfig()).createService();
-        try {
-            return ImmutableList.copyOf(transform(arguments.getResources(), new Function<URI, Result>() {
-                @Nullable
-                @Override
-                public Result apply(@Nullable URI resource) {
-                    return new Result(resource, service.isAllowed(arguments.getAgent(), resource));
-                }
-            }));
-        } finally {
-            try {
-                service.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+    @Test
+    public void givenValidInstance_whenEqualsNull_thenReturnsFalse() {
+        T firstInstance = newValidInstance();
+        boolean equal = firstInstance.equals(null);
+        assertThat(equal, equalTo(false));
     }
+
+    @Test
+    public void givenTwoValidInstances_whenHashCode_thenReturnsSameValue() {
+        T firstInstance = newValidInstance();
+        T secondInstance = newValidInstance();
+        assertThat(firstInstance.hashCode(), equalTo(secondInstance.hashCode()));
+    }
+
+    @Test
+    public void givenValidInstance_whenToString_thenReturnsNonNull() {
+        T firstInstance = newValidInstance();
+        String result = firstInstance.toString();
+        assertThat(result, notNullValue());
+    }
+
+
+    protected abstract T newValidInstance();
 
 }

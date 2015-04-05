@@ -33,48 +33,37 @@ package com.brandwatch.robots.cli;
  * #L%
  */
 
-import com.brandwatch.robots.RobotsFactory;
-import com.brandwatch.robots.RobotsService;
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import org.junit.Test;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Lists.transform;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 
-public class Command {
+public class ResultTest {
 
-    @Nonnull
-    private final Arguments arguments;
+    private static final URI VALID_RESOURCE = URI.create("http://example.com");
 
-    public Command(@Nonnull Arguments arguments) {
-        this.arguments = checkNotNull(arguments, "argument is null");
+    @Test(expected = NullPointerException.class)
+    public void givenResourceIsNull_whenInstantiate_thenThrowsNPE() {
+        new Result(null, true);
     }
 
-    public List<Result> getResults() {
-
-        final RobotsService service = new RobotsFactory(arguments.buildRobotsConfig()).createService();
-        try {
-            return ImmutableList.copyOf(transform(arguments.getResources(), new Function<URI, Result>() {
-                @Nullable
-                @Override
-                public Result apply(@Nullable URI resource) {
-                    return new Result(resource, service.isAllowed(arguments.getAgent(), resource));
-                }
-            }));
-        } finally {
-            try {
-                service.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+    @Test
+    public void givenValidURI_whenGetResource_thenResultsEqualsExpected() {
+        Result result = new Result(VALID_RESOURCE, true);
+        assertThat(result.getResource(), equalTo(VALID_RESOURCE));
     }
 
+    @Test
+    public void givenResourceAllowed_whenIsAllowed_thenReturnsTrue() {
+        Result result = new Result(VALID_RESOURCE, true);
+        assertThat(result.isAllowed(), equalTo(true));
+    }
+
+    @Test
+    public void givenResourceDisallowed_whenIsAllowed_thenReturnsFalse() {
+        Result result = new Result(VALID_RESOURCE, false);
+        assertThat(result.isAllowed(), equalTo(false));
+    }
 }

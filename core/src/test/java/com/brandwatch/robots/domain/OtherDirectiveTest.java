@@ -1,8 +1,8 @@
-package com.brandwatch.robots.cli;
+package com.brandwatch.robots.domain;
 
 /*
  * #%L
- * Robots (command-line interface)
+ * Robots (core)
  * %%
  * Copyright (C) 2014 - 2015 Brandwatch
  * %%
@@ -33,48 +33,29 @@ package com.brandwatch.robots.cli;
  * #L%
  */
 
-import com.brandwatch.robots.RobotsFactory;
-import com.brandwatch.robots.RobotsService;
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
+import org.junit.Test;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.IOException;
-import java.net.URI;
-import java.util.List;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.junit.Assert.assertThat;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Lists.transform;
+public class OtherDirectiveTest extends AbstractDomainObjectTest<OtherDirective> {
 
-public class Command {
-
-    @Nonnull
-    private final Arguments arguments;
-
-    public Command(@Nonnull Arguments arguments) {
-        this.arguments = checkNotNull(arguments, "argument is null");
+    private static final String FIELD = "things";
+    private static final String VALUE = "stuff";
+    @Override
+    protected OtherDirective newValidInstance() {
+        return new OtherDirective(FIELD, VALUE);
     }
 
-    public List<Result> getResults() {
-
-        final RobotsService service = new RobotsFactory(arguments.buildRobotsConfig()).createService();
-        try {
-            return ImmutableList.copyOf(transform(arguments.getResources(), new Function<URI, Result>() {
-                @Nullable
-                @Override
-                public Result apply(@Nullable URI resource) {
-                    return new Result(resource, service.isAllowed(arguments.getAgent(), resource));
-                }
-            }));
-        } finally {
-            try {
-                service.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+    @Test
+    public void givenValidOtherDirective_whenGetField_theResultEqualsExpected() {
+        OtherDirective directive = new OtherDirective(FIELD, VALUE);
+        assertThat(directive.getField(), equalTo(FIELD));
     }
 
+    @Test
+    public void givenValidOtherDirective_whenGetValue_theResultEqualsExpected() {
+        OtherDirective directive = new OtherDirective(FIELD, VALUE);
+        assertThat(directive.getValue(), equalTo(VALUE));
+    }
 }

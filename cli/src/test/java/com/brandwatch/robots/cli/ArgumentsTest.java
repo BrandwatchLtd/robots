@@ -35,6 +35,7 @@ package com.brandwatch.robots.cli;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
+import com.brandwatch.robots.RobotsConfig;
 import com.google.common.base.Charsets;
 import org.junit.Before;
 import org.junit.Test;
@@ -359,4 +360,80 @@ public class ArgumentsTest {
     }
 
 
+    @Test
+    public void givenReadTimeoutMilli_whenInit_thenReadTimeoutMilliIsExpected() {
+        jCommander.parse(array("--readTimeout", "123", FIRST_RESOURCE));
+        assertThat(arguments.getReadTimeoutMillis(), equalTo(123));
+    }
+
+    @Test
+    public void givenTArgument_whenInit_thenReadTimeoutMillisIsExpected() {
+        jCommander.parse(array("-t", "456", FIRST_RESOURCE));
+        assertThat(arguments.getReadTimeoutMillis(), equalTo(456));
+    }
+
+    @Test
+    public void givenZeroReadTimeoutMillis_whenInit_thenReadTimeoutMillisIsExpected() {
+        jCommander.parse(array("--readTimeout", "0", FIRST_RESOURCE));
+        assertThat(arguments.getReadTimeoutMillis(), equalTo(0));
+    }
+
+    @Test(expected = ParameterException.class)
+    public void givenEmptyReadTimeoutMillis_whenInit_thenThrowsParameterException() {
+        jCommander.parse(array("--readTimeout", "", FIRST_RESOURCE));
+    }
+
+    @Test(expected = ParameterException.class)
+    public void givenNegativeReadTimeoutMillis_whenInit_thenThrowsParameterException() {
+        jCommander.parse(array("--readTimeout", "-1", FIRST_RESOURCE));
+    }
+
+    @Test(expected = ParameterException.class)
+    public void givenFloatingPointReadTimeoutMillis_whenInit_thenThrowsParameterException() {
+        jCommander.parse(array("--readTimeout", "1.5", FIRST_RESOURCE));
+    }
+
+    @Test(expected = ParameterException.class)
+    public void givenNonNumericReadTimeoutMillis_whenInit_thenThrowsParameterException() {
+        jCommander.parse(array("--readTimeout", "abc", FIRST_RESOURCE));
+    }
+
+    @Test(expected = ParameterException.class)
+    public void givenReadTimeoutMillisGivenTwice_whenInit_thenThrowsParameterException() {
+        jCommander.parse(array("--readTimeout", "1", "--readTimeout", "2", FIRST_RESOURCE));
+    }
+
+    @Test(expected = ParameterException.class)
+    public void givenBothReadTimeoutMillisNames_whenInit_thenThrowsParameterException() {
+        jCommander.parse(array("-t", "1", "--readTimeout", "2", FIRST_RESOURCE));
+    }
+
+    @Test
+    public void givenRedirectHopsArgument_whenBuildRobotsConfig_thenMaxRedirectHopsIsExpected() {
+        jCommander.parse(array("--maxRedirectHops", "123", FIRST_RESOURCE));
+        RobotsConfig config = arguments.buildRobotsConfig();
+        assertThat(config.getMaxRedirectHops(), equalTo(123));
+    }
+
+    @Test
+    public void givenFileSizeArgument_whenBuildRobotsConfig_thenFileSizeIsExpected() {
+        jCommander.parse(array("--maxFileSizeBytes", "123", FIRST_RESOURCE));
+        RobotsConfig config = arguments.buildRobotsConfig();
+        assertThat(config.getMaxFileSizeBytes(), equalTo(123));
+    }
+
+    @Test
+    public void givenCharsetArgument_whenBuildRobotsConfig_thenCharsetIsExpected() {
+        jCommander.parse(array("--defaultCharset", "UTF-16", FIRST_RESOURCE));
+        RobotsConfig config = arguments.buildRobotsConfig();
+        assertThat(config.getDefaultCharset(), equalTo(Charsets.UTF_16));
+    }
+
+
+    @Test
+    public void givenReadTimeoutArgument_whenBuildRobotsConfig_thenReadTimeoutIsExpected() {
+        jCommander.parse(array("--readTimeout", "123", FIRST_RESOURCE));
+        RobotsConfig config = arguments.buildRobotsConfig();
+        assertThat(config.getReadTimeoutMillis(), equalTo(123));
+    }
 }

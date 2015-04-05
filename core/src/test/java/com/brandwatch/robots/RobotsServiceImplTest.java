@@ -38,26 +38,39 @@ import com.brandwatch.robots.domain.Group;
 import com.brandwatch.robots.domain.PathDirective;
 import com.brandwatch.robots.domain.Robots;
 import com.brandwatch.robots.matching.EverythingMatcher;
-import org.hamcrest.Matchers;
-import org.junit.After;
+import com.brandwatch.robots.matching.MatcherUtils;
+import com.google.common.base.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.OngoingStubbing;
 
+import java.io.IOException;
 import java.net.URI;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyCollection;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RobotsServiceImplTest {
+
+    private static final String CRAWLER_AGENT = "magpie";
+    private static final URI RESOURCE_URI = URI.create("http://example.org/absolute/URI/with/absolute/path/to/resource.txt");
+    private static final PathDirective ALLOW_PATH_DIRECTIVE = new PathDirective(PathDirective.Field.allow, "", new EverythingMatcher<String>());
+    private static final PathDirective DISALLOW_PATH_DIRECTIVE = new PathDirective(PathDirective.Field.disallow, "", new EverythingMatcher<String>());
+    private static final Robots EMPTY_ROBOTS = new Robots.Builder().build();
+    private static final Group GROUP = new Group.Builder()
+            .withDirective(new AgentDirective("xxx", new EverythingMatcher<String>()))
+            .build();
+    private static final Robots SINGLE_GROUP_ROBOTS = new Robots.Builder().withGroup(GROUP).build();
 
     @Mock
     private RobotsLoader loader;
@@ -65,49 +78,95 @@ public class RobotsServiceImplTest {
     @Mock
     private RobotsUtilities utilities;
 
+    @Mock
+    private MatcherUtils matcherUtils;
+
     @InjectMocks
     private RobotsServiceImpl instance;
 
     @Before
     public final void startUp() throws Exception {
-        when(loader.load(any(URI.class))).thenReturn(new Robots.Builder().build());
+        when(loader.load(any(URI.class))).thenReturn(EMPTY_ROBOTS);
     }
 
     @Test(expected = NullPointerException.class)
     public void givenNullUri_whenIsAllowed_thenThrowsNPE() {
-        String crawlerAgent = "magpie";
-        URI resourceUri = null;
-        instance.isAllowed(crawlerAgent, resourceUri);
+        instance.isAllowed(CRAWLER_AGENT, null);
     }
 
     @Test(expected = NullPointerException.class)
     public void givenNullAgent_whenIsAllowed_thenThrowsNPE() {
-        String crawlerAgent = null;
-        URI resourceUri = URI.create("http://example.org/index.html");
-        instance.isAllowed(crawlerAgent, resourceUri);
+        instance.isAllowed(null, RESOURCE_URI);
     }
 
     @Test
     public void givenExampleUri_whenIsAllowed_thenReturnsTrue() {
-        String crawlerAgent = "magpie";
-        URI resourceUri = URI.create("http://example.org/absolute/URI/with/absolute/path/to/resource.txt");
-        boolean result = instance.isAllowed(crawlerAgent, resourceUri);
+        boolean result = instance.isAllowed(CRAWLER_AGENT, RESOURCE_URI);
         assertThat(result, is(true));
     }
 
     @Test
     public void givenExampleUri_whenIsAllowed_thenSourceFactoryIsInvoked() {
-        String crawlerAgent = "magpie";
-        URI resourceUri = URI.create("http://example.org/index.html");
-        instance.isAllowed(crawlerAgent, resourceUri);
-        verify(utilities).getRobotsURIForResource(resourceUri);
+        instance.isAllowed(CRAWLER_AGENT, RESOURCE_URI);
+        verify(utilities).getRobotsURIForResource(RESOURCE_URI);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void givenMalformedResourceURI_whenIsAllowed_thenThrowsIAE() {
-        String crawlerAgent = "magpie";
-        URI resourceUri = URI.create("http://example.org/index.html");
-        when(utilities.getRobotsURIForResource(resourceUri)).thenThrow(new IllegalArgumentException());
-        instance.isAllowed(crawlerAgent, resourceUri);
+        when(utilities.getRobotsURIForResource(RESOURCE_URI)).thenThrow(new IllegalArgumentException());
+        instance.isAllowed(CRAWLER_AGENT, RESOURCE_URI);
     }
+
+    @Test
+    public void whenClose_thenCloseCalledOnLoader() throws IOException {
+        instance.close();
+        verify(loader).close();
+    }
+
+    @Test
+    public void givenLoaderThrowsException_whenIsAllowed_thenReturnsTrue() throws Exception {
+        when(loader.load(any(URI.class))).thenThrow(Exception.class);
+        boolean allowed = instance.isAllowed(CRAWLER_AGENT, RESOURCE_URI);
+        assertThat(allowed, equalTo(true));
+    }
+
+    @Test
+    public void givenLoaderProducesSingleNonMatchingGroup_whenIsAllowed_thenReturnsTrue() throws Exception {
+        when(loader.load(any(URI.class))).thenReturn(SINGLE_GROUP_ROBOTS);
+        when(matcherUtils.getMostSpecificMatchingGroup(anyCollection(), anyString())).thenReturn(Optional.absent());
+
+        boolean allowed = instance.isAllowed(CRAWLER_AGENT, RESOURCE_URI);
+        assertThat(allowed, equalTo(true));
+    }
+    @Test
+    public void givenLoaderProducesMatchingGroup_butNotMatchingPath_whenIsAllowed_thenReturnsTrue() throws Exception {
+        when(loader.load(any(URI.class))).thenReturn(SINGLE_GROUP_ROBOTS);
+        when(matcherUtils.getMostSpecificMatchingGroup(anyCollection(), anyString())).thenReturn(Optional.of(GROUP));
+        when(matcherUtils.getMostSpecificMatch(anyCollection(), anyString())).thenReturn(Optional.absent());
+
+        boolean allowed = instance.isAllowed(CRAWLER_AGENT, RESOURCE_URI);
+        assertThat(allowed, equalTo(true));
+    }
+
+
+    @Test
+    public void givenLoaderProducesMatchingGroup_andSingleMatchingPath_andFieldIsAllow_whenIsAllowed_thenReturnsTrue() throws Exception {
+        when(loader.load(any(URI.class))).thenReturn(SINGLE_GROUP_ROBOTS);
+        when(matcherUtils.getMostSpecificMatchingGroup(anyCollection(), anyString())).thenReturn(Optional.of(GROUP));
+        when(matcherUtils.getMostSpecificMatch(anyCollection(), anyString())).thenReturn(Optional.of(ALLOW_PATH_DIRECTIVE));
+
+        boolean allowed = instance.isAllowed(CRAWLER_AGENT, RESOURCE_URI);
+        assertThat(allowed, equalTo(true));
+    }
+
+    @Test
+    public void givenLoaderProducesMatchingGroup_andSingleMatchingPath_andFieldIsDisallow_whenIsAllowed_thenReturnsTrue() throws Exception {
+        when(loader.load(any(URI.class))).thenReturn(SINGLE_GROUP_ROBOTS);
+        when(matcherUtils.getMostSpecificMatchingGroup(anyCollection(), anyString())).thenReturn(Optional.of(GROUP));
+        when(matcherUtils.getMostSpecificMatch(anyCollection(), anyString())).thenReturn(Optional.of(DISALLOW_PATH_DIRECTIVE));
+
+        boolean allowed = instance.isAllowed(CRAWLER_AGENT, RESOURCE_URI);
+        assertThat(allowed, equalTo(false));
+    }
+
 }

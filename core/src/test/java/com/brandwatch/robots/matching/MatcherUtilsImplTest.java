@@ -33,6 +33,7 @@ package com.brandwatch.robots.matching;
  * #L%
  */
 
+import com.brandwatch.robots.domain.AgentDirective;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
@@ -41,10 +42,22 @@ import org.junit.Test;
 import java.util.Collections;
 import java.util.List;
 
+import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
 public class MatcherUtilsImplTest {
+
+    private static final String TARGET = "abc";
+    private static final Matchable<String> MATCHING_MATCHABLE = new AgentDirective(TARGET, new EverythingMatcher<String>());
+    private static final Matchable<String> SPECIFIC_MATCHING_MATCHABLE = new AgentDirective(TARGET, new EverythingMatcher<String>(){
+        @Override
+        public double getSpecificity() {
+            return super.getSpecificity() * 2;
+        }
+    });
+    private static final Matchable<String> NONMATCHING_MATCHABLE = new AgentDirective("xyz", new NothingMatcher<String>());
 
     private static ExpressionCompiler agentExpressionCompiler = new ExpressionCompilerBuilder()
             .withCaseSensitivity(false)
@@ -191,5 +204,90 @@ public class MatcherUtilsImplTest {
         Optional<List<Matchable<String>>> result = utilities.getMostSpecificMatchingGroup(groups, agentString);
         assertThat(result, equalTo(Optional.<List<Matchable<String>>>absent()));
     }
+
+    @Test(expected = NullPointerException.class)
+    public void givenMatchersIsNull_whenGetMostSpecificMatch_thenThrowsNPE() {
+        List<Matchable<String>> matchers = null;
+        String target = "googlebot";
+        utilities.getMostSpecificMatch(matchers, target);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void givenTargetIsNull_whenGetMostSpecificMatch_thenThrowsNPE() {
+        List<Matchable<String>> matchers = Collections.emptyList();
+        String target = null;
+        utilities.getMostSpecificMatch(matchers, target);
+    }
+
+    @Test
+    public void givenMatchersAreEmpty_whenGetMostSpecificMatch_thenReturnsAbsent() {
+        List<Matchable<String>> matchers = Collections.emptyList();
+        String target = "abc";
+        Optional<Matchable<String>> result = utilities.getMostSpecificMatch(matchers, target);
+        assertFalse(result.isPresent());
+    }
+
+
+
+    @Test
+    public void givenSingleNonMatchingMatcher_whenGetMostSpecificMatch_thenReturnsAbsent() {
+        List<Matchable<String>> matchers = ImmutableList.of(
+                NONMATCHING_MATCHABLE
+        );
+        Optional<Matchable<String>> result = utilities.getMostSpecificMatch(matchers, TARGET);
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    public void givenSingleMatchingMatchable_whenGetMostSpecificMatch_thenReturnsMatchable() {
+        List<Matchable<String>> matchers = ImmutableList.of(
+                MATCHING_MATCHABLE
+        );
+        Optional<Matchable<String>> result = utilities.getMostSpecificMatch(matchers, TARGET);
+        assertTrue(result.isPresent());
+        assertThat(result.get(), equalTo(MATCHING_MATCHABLE));
+    }
+
+    @Test
+    public void givenTwoMatchables_theFirstMatching__whenGetMostSpecificMatch_thenReturnsMatchable() {
+        List<Matchable<String>> matchers = ImmutableList.of(
+                MATCHING_MATCHABLE, NONMATCHING_MATCHABLE
+        );
+        Optional<Matchable<String>> result = utilities.getMostSpecificMatch(matchers, TARGET);
+        assertTrue(result.isPresent());
+        assertThat(result.get(), equalTo(MATCHING_MATCHABLE));
+    }
+
+    @Test
+    public void givenTwoMatchables_theSecondMatching_whenGetMostSpecificMatch_thenReturnsMatchable() {
+        List<Matchable<String>> matchers = ImmutableList.of(
+                NONMATCHING_MATCHABLE, MATCHING_MATCHABLE
+        );
+        Optional<Matchable<String>> result = utilities.getMostSpecificMatch(matchers, TARGET);
+        assertTrue(result.isPresent());
+        assertThat(result.get(), equalTo(MATCHING_MATCHABLE));
+    }
+
+    @Test
+    public void givenTwoMatchables_theFirstBeingMoreSpecific_whenGetMostSpecificMatch_thenReturnsMostSpecific() {
+        List<Matchable<String>> matchers = ImmutableList.of(
+                SPECIFIC_MATCHING_MATCHABLE, MATCHING_MATCHABLE
+        );
+        Optional<Matchable<String>> result = utilities.getMostSpecificMatch(matchers, TARGET);
+        assertTrue(result.isPresent());
+        assertThat(result.get(), equalTo(SPECIFIC_MATCHING_MATCHABLE));
+    }
+
+    @Test
+    public void givenTwoMatchables_theSecondBeingMoreSpecific_whenGetMostSpecificMatch_thenReturnsMostSpecific() {
+        List<Matchable<String>> matchers = ImmutableList.of(
+                MATCHING_MATCHABLE, SPECIFIC_MATCHING_MATCHABLE
+        );
+        Optional<Matchable<String>> result = utilities.getMostSpecificMatch(matchers, TARGET);
+        assertTrue(result.isPresent());
+        assertThat(result.get(), equalTo(SPECIFIC_MATCHING_MATCHABLE));
+    }
+
+
 
 }

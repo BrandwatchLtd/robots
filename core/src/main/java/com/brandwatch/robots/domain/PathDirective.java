@@ -69,6 +69,11 @@ public final class PathDirective implements Directive, Matchable<String> {
     }
 
     @Nonnull
+    public Field getFieldValue() {
+        return field;
+    }
+
+    @Nonnull
     @Override
     public String getValue() {
         return value;

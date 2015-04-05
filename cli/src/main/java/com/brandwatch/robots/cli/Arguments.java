@@ -35,6 +35,7 @@ package com.brandwatch.robots.cli;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.validators.PositiveInteger;
+import com.brandwatch.robots.RobotsConfig;
 import com.brandwatch.robots.cli.converters.CharsetConverter;
 import com.brandwatch.robots.cli.converters.URIConverter;
 import com.brandwatch.robots.cli.validators.AbsoluteURIValidator;
@@ -140,4 +141,15 @@ public class Arguments {
     public int getReadTimeoutMillis() {
         return readTimeoutMillis;
     }
+
+    @Nonnull
+    public RobotsConfig buildRobotsConfig() {
+        final RobotsConfig config = new RobotsConfig();
+        config.setMaxFileSizeBytes(getMaxFileSizeBytes());
+        config.setMaxRedirectHops(getMaxRedirectHops());
+        config.setDefaultCharset(getDefaultCharset());
+        config.setReadTimeoutMillis(getReadTimeoutMillis());
+        return config;
+    }
+
 }

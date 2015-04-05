@@ -33,47 +33,42 @@ package com.brandwatch.robots.net;
  * #L%
  */
 
-import com.brandwatch.robots.RobotsConfig;
-import com.google.common.base.Charsets;
-import com.google.common.io.CharSource;
-import org.junit.Before;
+import com.brandwatch.robots.util.LogLevel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.slf4j.Logger;
 
+import javax.annotation.Nonnull;
+import javax.ws.rs.client.ClientRequestContext;
+import javax.ws.rs.client.ClientResponseContext;
 import java.io.IOException;
-import java.net.URI;
 
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class CharSourceSupplierBasicImplTest {
+public class LoggingClientFilterTest {
 
     @Mock
-    private RobotsConfig config;
-
+    private Logger logger;
+    @Mock
+    private LogLevel level;
     @InjectMocks
-    private CharSourceSupplierBasicImpl instance;
+    private LoggingClientFilter loggingClientFilter;
+    @Mock
+    private ClientRequestContext clientRequestContext;
+    @Mock
+    private ClientResponseContext clientResponseContext;
 
-    @Before
-    public void setup() {
-        when(config.getMaxFileSizeBytes()).thenReturn(1000000);
-        when(config.getDefaultCharset()).thenReturn(Charsets.UTF_8);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void givenNullUri_whenGet_thenThrowsNPE() throws IOException {
-        instance.get(null);
+    @Test
+    public void givenRequestContext_whenFilter_thenNoExceptionThrown() throws IOException {
+        loggingClientFilter.filter(clientRequestContext);
     }
 
     @Test
-    public void givenExampleUri_whenGet_thenReturnsCharSource() throws IOException {
-        CharSource result = instance.get(URI.create("http://example.com/robots.txt"));
-        assertThat(result, notNullValue());
+    public void givenRequestAndResponseContext_whenFilter_thenNoExceptionThrown() throws IOException {
+        loggingClientFilter.filter(clientRequestContext, clientResponseContext);
     }
-
 }

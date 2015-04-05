@@ -43,6 +43,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.Callable;
 
@@ -69,6 +70,12 @@ public class RobotsLoaderCachedImplTest {
     @Test(expected = NullPointerException.class)
     public void givenNullUri_whenLoad_thenThrowsNPE() throws Exception {
         loader.load(null);
+    }
+
+    @Test
+    public void whenClose_thenCloseCalledDelegate() throws IOException {
+        loader.close();
+        verify(delegate).close();
     }
 
     @Test
