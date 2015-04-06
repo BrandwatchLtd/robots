@@ -48,6 +48,7 @@ import com.brandwatch.robots.net.LoggingClientFilter;
 import com.brandwatch.robots.parser.RobotsParser;
 import com.brandwatch.robots.parser.RobotsParserImpl;
 import com.brandwatch.robots.util.LogLevel;
+import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -64,6 +65,16 @@ import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * A <tt>RobotsFactory</tt> is used to create all the various components of the service.
+ *
+ * In particular, it can {@link #createService() create} the {@link RobotsService }
+ * facade, which is what most users will be interested in.
+ * <p />
+ * Note the <tt>@Beta</tt> annotation on various methods. While these methods are
+ * currently exposed, they aren't really part of the core API and so should be avoided.
+ * In future releases they are likely to change or disappear entirely, without further warning.
+ */
 public class RobotsFactory {
 
     private static final Logger log = LoggerFactory.getLogger(RobotsFactory.class);
@@ -83,15 +94,23 @@ public class RobotsFactory {
         log.debug("Initializing factory with config: {}", config);
     }
 
+    /**
+     * Construct a new factory instance from the given configuration.
+     *
+     * @param config global configuration options
+     * @throws NullPointerException when <tt>config</tt> is null
+     */
     public RobotsFactory(@Nonnull RobotsConfig config) {
         this(checkNotNull(config, "config is null"), new RobotsUtilities(), new MatcherUtilsImpl());
     }
 
+    @Beta
     @Nonnull
     public Robots createAllowAllRobots() {
         return createConstantRobots(PathDirective.Field.allow);
     }
 
+    @Beta
     @Nonnull
     public Robots createDisallowAllRobots() {
         return createConstantRobots(PathDirective.Field.disallow);
@@ -108,23 +127,27 @@ public class RobotsFactory {
                 .build();
     }
 
+    @Beta
     @Nonnull
     public RobotsUtilities getUtilities() {
         return utilities;
     }
 
     @Nonnull
+    @Beta
     public RobotsLoader createLoader() {
         return new RobotsLoaderCachedImpl(
                 new RobotsLoaderImpl(this),
                 createCache());
     }
 
+    @Beta
     @Nonnull
     public CharSourceSupplier createCharSourceSupplier() {
         return new CharSourceSupplierHttpClientImpl(config, createClient());
     }
 
+    @Beta
     @Nonnull
     public ExpressionCompiler createPathExpressionCompiler() {
         return new ExpressionCompilerBuilder()
@@ -133,6 +156,7 @@ public class RobotsFactory {
                 .build();
     }
 
+    @Beta
     @Nonnull
     public ExpressionCompiler createAgentExpressionCompiler() {
         return new ExpressionCompilerBuilder()
@@ -140,6 +164,7 @@ public class RobotsFactory {
                 .build();
     }
 
+    @Beta
     @Nonnull
     public Cache<URI, Robots> createCache() {
 
@@ -153,6 +178,11 @@ public class RobotsFactory {
                 .build();
     }
 
+    /**
+     * Instantiate a new service facade, used for checking robots.txt files.
+     *
+     * @return a new service facade instance
+     */
     @Nonnull
     public RobotsService createService() {
         RobotsServiceImpl service = new RobotsServiceImpl(
@@ -160,6 +190,7 @@ public class RobotsFactory {
         return service;
     }
 
+    @Beta
     @Nonnull
     public RobotsBuildingParseHandler createRobotsBuildingHandler() {
         return new RobotsBuildingParseHandler(
@@ -167,6 +198,7 @@ public class RobotsFactory {
                 createAgentExpressionCompiler());
     }
 
+    @Beta
     @Nonnull
     public Client createClient() {
         Client client = ClientBuilder.newClient()
@@ -175,11 +207,13 @@ public class RobotsFactory {
         return client;
     }
 
+    @Beta
     @Nonnull
     public MatcherUtils getMatcherUtils() {
         return matcherUtils;
     }
 
+    @Beta
     @Nonnull
     public RobotsParser createRobotsParser(@Nonnull Reader reader) {
         return new RobotsParserImpl(checkNotNull(reader, "reader is null"));
