@@ -36,8 +36,22 @@ package com.brandwatch.robots;
 import java.io.Closeable;
 import java.net.URI;
 
+/**
+ * <tt>RobotsService</tt> is a high-level facade over the whole robots library.
+ */
 public interface RobotsService extends Closeable {
 
-    boolean isAllowed(String crawlerAgentString, URI url);
+    /**
+     * Check whether a crawler is allowed to access the given resource.
+     * <p/>
+     * The user-agent string identifies the crawler, and is used to find
+     * matching agent directive groups. The resource is used to determine a <tt>robots.txt</tt>
+     * resource, and, if it exists, to match path directives therein.
+     *
+     * @param crawlerAgentString crawler identifier
+     * @param resource location of a resource we are checking for access to
+     * @return true if the crawler is allowed to access the resource, false otherwise
+     */
+    boolean isAllowed(String crawlerAgentString, URI resource);
 
 }
