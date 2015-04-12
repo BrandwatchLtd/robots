@@ -210,7 +210,7 @@ public class RobotsConfig {
      * Time after which cached responses should be discarded, and new request be made.
      * <p/>
      * After retrieving and parsing a <tt>robots.txt</tt> file, the parsed response is
-     * cached. This is improve performance of subsequent requests, and reduce
+     * cached. This is to improve performance of subsequent requests, and reduce
      * load on the target server.
      *
      * @param cacheExpiresHours time in hours before cached <tt>robots.txt</tt> files are expired
