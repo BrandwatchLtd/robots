@@ -35,6 +35,8 @@ package com.brandwatch.robots;
 
 import com.brandwatch.robots.domain.Robots;
 import com.brandwatch.robots.net.CharSourceSupplier;
+import com.brandwatch.robots.net.TemporaryAllow;
+import com.brandwatch.robots.net.TemporaryDisallow;
 import com.brandwatch.robots.parser.ParseException;
 import com.brandwatch.robots.parser.RobotsParseHandler;
 import com.brandwatch.robots.parser.RobotsParser;
