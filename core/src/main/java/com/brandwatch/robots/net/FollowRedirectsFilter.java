@@ -47,6 +47,7 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -55,7 +56,7 @@ import static com.google.common.collect.Sets.union;
 
 public class FollowRedirectsFilter implements ClientResponseFilter {
 
-    private static final String VISITED_URIS_KEY = "com.brandwatch.robots.net.FollowRedirectFilter.visited";
+    private static final String VISITED_LOCATIONS_KEY = "com.brandwatch.robots.net.FollowRedirectFilter.visited";
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -92,29 +93,29 @@ public class FollowRedirectsFilter implements ClientResponseFilter {
         return true;
     }
 
-    private boolean isRedirectWithinLimits(ClientRequestContext requestContext, URI location) {
+    private boolean isRedirectWithinLimits(ClientRequestContext requestContext, URI nextLocation) {
 
-        final Set<URI> visited = getVisitedWithCurrentUri(requestContext);
+        final Set<URI> visitedLocations = getVisitedLocations(requestContext);
 
-        if (visited.contains(location)) {
-            log.warn("Detected redirect cycle: {}", visited);
+        if (visitedLocations.contains(nextLocation)) {
+            log.warn("Detected redirect cycle: {} -> {}", visitedLocations, nextLocation);
             return false;
         }
 
-        if (visited.size() > maxRedirectHops) {
-            log.warn("Reached max hops following redirects: {}", visited);
+        if (visitedLocations.size() > maxRedirectHops) {
+            log.warn("Reached max hops ({}) following redirects: {}", maxRedirectHops, visitedLocations);
             return false;
         }
 
         return true;
     }
 
-    private void followRedirect(ClientRequestContext requestContext, ClientResponseContext responseContext, URI location) throws IOException {
-        log.debug("Following redirect: {} => {}", requestContext.getUri(), responseContext.getLocation());
+    private void followRedirect(ClientRequestContext requestContext, ClientResponseContext responseContext, URI location) {
+        log.debug("Following redirect: {} => {}", requestContext.getUri(), location);
 
         populateResponseContext(
                 responseContext,
-                doRedirect(requestContext, location)
+                getRedirectResponse(requestContext, location)
         );
     }
 
@@ -122,26 +123,26 @@ public class FollowRedirectsFilter implements ClientResponseFilter {
         return requestContext.getUri().resolve(responseContext.getLocation());
     }
 
-    private Response doRedirect(ClientRequestContext requestContext, URI redirectLocation) {
+    private Response getRedirectResponse(ClientRequestContext requestContext, URI redirectLocation) {
         return requestContext.getClient()
                 .target(redirectLocation)
                 .request()
                 .accept(getAcceptedMediaTypes(requestContext))
-                .property(VISITED_URIS_KEY, getVisitedWithCurrentUri(requestContext))
+                .property(VISITED_LOCATIONS_KEY, getVisitedLocations(requestContext))
                 .build(requestContext.getMethod())
                 .invoke();
     }
 
-    private Set<URI> getVisitedWithCurrentUri(ClientRequestContext requestContext) {
-        return union(getVisited(requestContext), ImmutableSet.of(requestContext.getUri()));
+    private Set<URI> getVisitedLocations(ClientRequestContext requestContext) {
+        return union(getVisitedLocationsProperty(requestContext), ImmutableSet.of(requestContext.getUri()));
     }
 
-    private Set<URI> getVisited(ClientRequestContext requestContext) {
-        Object value = requestContext.getProperty(VISITED_URIS_KEY);
-        if (value == null) {
-            return ImmutableSet.of(requestContext.getUri());
-        }
-        return (Set<URI>) value;
+    @SuppressWarnings("unchecked")
+    private Set<URI> getVisitedLocationsProperty(ClientRequestContext requestContext) {
+        final Object rawValue = requestContext.getProperty(VISITED_LOCATIONS_KEY);
+        return rawValue == null
+                ? Collections.<URI>emptySet()
+                : (Set<URI>) rawValue;
     }
 
     private MediaType[] getAcceptedMediaTypes(ClientRequestContext requestContext) {
