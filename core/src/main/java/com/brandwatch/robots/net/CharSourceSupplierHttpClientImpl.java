@@ -48,7 +48,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.Response.Status.Family;
 import javax.ws.rs.core.Response.StatusType;
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -56,22 +55,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static com.google.common.base.Optional.absent;
 import static com.google.common.base.Optional.fromNullable;
-import static com.google.common.base.Optional.of;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Lists.newArrayListWithCapacity;
 import static java.text.MessageFormat.format;
 
 public class CharSourceSupplierHttpClientImpl implements CharSourceSupplier {
-
-    private static final Logger log = LoggerFactory.getLogger(CharSourceSupplierHttpClientImpl.class);
 
     private final Client client;
     private final RobotsConfig config;
@@ -89,7 +82,7 @@ public class CharSourceSupplierHttpClientImpl implements CharSourceSupplier {
             public Reader openStream() throws IOException {
                 final Response response;
                 try {
-                    response = getResponseFollowingRedirects(resource);
+                    response = getResponse(resource);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 } catch (TimeoutException e) {
@@ -104,39 +97,6 @@ public class CharSourceSupplierHttpClientImpl implements CharSourceSupplier {
     @Override
     public void close() throws IOException {
         client.close();
-    }
-
-    @Nonnull
-    private Response getResponseFollowingRedirects(@Nonnull final URI resource) throws InterruptedException, TimeoutException {
-        final List<URI> visited = newArrayListWithCapacity(config.getMaxRedirectHops() + 1);
-        URI location = resource;
-
-        Optional<Response> response = absent();
-
-        while (!response.isPresent()) {
-
-            response = of(getResponse(location));
-            visited.add(resource);
-
-            if (response.get().getStatusInfo().getFamily() == Family.REDIRECTION) {
-                final Optional<URI> redirect = of(response.get().getLocation());
-
-                if (!redirect.isPresent()) {
-                    log.warn("Missing redirect location in response for: {}", location);
-                } else if (visited.contains(redirect.get())) {
-                    log.warn("Detected redirect cycle: {}", visited);
-                } else if (visited.size() > config.getMaxRedirectHops()) {
-                    log.warn("Reached max hops following redirects: {}", visited);
-                } else {
-                    log.debug("Following redirect: {} => {}", location, redirect);
-                    location = redirect.get();
-                    response.get().close();
-                    response = absent();
-                }
-            }
-        }
-
-        return response.get();
     }
 
     @Nonnull

@@ -44,6 +44,7 @@ import com.brandwatch.robots.matching.MatcherUtils;
 import com.brandwatch.robots.matching.MatcherUtilsImpl;
 import com.brandwatch.robots.net.CharSourceSupplier;
 import com.brandwatch.robots.net.CharSourceSupplierHttpClientImpl;
+import com.brandwatch.robots.net.FollowRedirectsFilter;
 import com.brandwatch.robots.net.LoggingClientFilter;
 import com.brandwatch.robots.parser.RobotsParser;
 import com.brandwatch.robots.parser.RobotsParserImpl;
@@ -202,6 +203,7 @@ public class RobotsFactory {
     @Nonnull
     public Client createClient() {
         Client client = ClientBuilder.newClient()
+                .register(new FollowRedirectsFilter(config.getMaxRedirectHops()))
                 .register(new LoggingClientFilter(this.getClass(), LogLevel.TRACE));
         client.property(ClientProperties.READ_TIMEOUT, config.getReadTimeoutMillis());
         return client;
