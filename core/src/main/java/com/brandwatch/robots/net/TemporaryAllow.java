@@ -1,4 +1,4 @@
-package com.brandwatch.robots;
+package com.brandwatch.robots.net;
 
 /*
  * #%L
@@ -33,9 +33,9 @@ package com.brandwatch.robots;
  * #L%
  */
 
-import java.io.IOException;
+import javax.ws.rs.WebApplicationException;
 
-public class TemporaryAllow extends IOException {
+public class TemporaryAllow extends WebApplicationException {
 
     private static final long serialVersionUID = -5465749384575181415L;
 

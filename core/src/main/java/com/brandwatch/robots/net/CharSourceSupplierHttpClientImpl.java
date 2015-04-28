@@ -34,21 +34,14 @@ package com.brandwatch.robots.net;
  */
 
 import com.brandwatch.robots.RobotsConfig;
-import com.brandwatch.robots.TemporaryAllow;
-import com.brandwatch.robots.TemporaryDisallow;
-import com.google.common.base.Optional;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.Response.StatusType;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,9 +53,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static com.google.common.base.Optional.fromNullable;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.text.MessageFormat.format;
 
 public class CharSourceSupplierHttpClientImpl implements CharSourceSupplier {
 
@@ -88,8 +79,7 @@ public class CharSourceSupplierHttpClientImpl implements CharSourceSupplier {
                 } catch (TimeoutException e) {
                     throw new IOException(e);
                 }
-
-                return handleResponse(response);
+                return conditionalAllow(response);
             }
         };
     }
@@ -118,57 +108,12 @@ public class CharSourceSupplierHttpClientImpl implements CharSourceSupplier {
     }
 
     @Nonnull
-    private Reader handleResponse(@Nonnull Response response) throws TemporaryAllow, TemporaryDisallow {
-        final StatusType info = response.getStatusInfo();
-
-        final Optional<Status> status = fromNullable(Status.fromStatusCode(info.getStatusCode()));
-        if (status.isPresent()) {
-            switch (status.get()) {
-                case UNAUTHORIZED:
-                case FORBIDDEN:
-                case PAYMENT_REQUIRED:
-                    return fullDisallow(statusMessage(info));
-            }
-        }
-
-        switch (info.getFamily()) {
-            case SUCCESSFUL:
-                return conditionalAllow(response);
-            case INFORMATIONAL:
-            case REDIRECTION:
-            case CLIENT_ERROR:
-            case OTHER:
-                return fullAllow(statusMessage(info));
-            case SERVER_ERROR:
-                return fullDisallow(statusMessage(info));
-        }
-
-        throw new AssertionError("Unknown status family: " + info.getFamily());
-    }
-
-    @Nonnull
     private Reader conditionalAllow(@Nonnull final Response response) {
         return new InputStreamReader(
                 ByteStreams.limit(
                         new BufferedInputStream((InputStream) response.getEntity()),
                         config.getMaxFileSizeBytes()),
                 config.getDefaultCharset());
-    }
-
-    @Nonnull
-    private Reader fullAllow(@Nonnull String reason, @Nonnull Object... args) throws TemporaryAllow {
-        throw new TemporaryAllow(format(reason, args));
-    }
-
-    @Nonnull
-    private Reader fullDisallow(@Nonnull String reason, @Nonnull Object... args) throws TemporaryDisallow {
-        throw new TemporaryDisallow(format(reason, args));
-    }
-
-    private static String statusMessage(StatusType info) {
-        return (info.getReasonPhrase() != null)
-                ? format("response status: {0} \"{1}\"", info.getStatusCode(), info.getReasonPhrase())
-                : format("response status: {0}", info.getStatusCode());
     }
 
 }

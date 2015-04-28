@@ -34,8 +34,6 @@ package com.brandwatch.robots.net;
  */
 
 import com.brandwatch.robots.RobotsConfig;
-import com.brandwatch.robots.TemporaryAllow;
-import com.brandwatch.robots.TemporaryDisallow;
 import com.google.common.base.Charsets;
 import com.google.common.io.ByteSource;
 import com.google.common.io.CharSource;
@@ -120,69 +118,6 @@ public class CharSourceSupplierHttpClientImplTest {
     public void givenExampleUri_whenGet_thenReturnsCharSource() throws IOException {
         CharSource result = instance.get(URI.create("http://example.com/robots.txt"));
         assertThat(result, notNullValue());
-    }
-
-    @Test(expected = TemporaryDisallow.class)
-    public void givenServerError_whenOpenStream_thenDisallowAll() throws IOException {
-        when(statusInfo.getFamily()).thenReturn(Family.SERVER_ERROR);
-        when(statusInfo.getStatusCode()).thenReturn(500);
-        when(statusInfo.getReasonPhrase()).thenReturn("Server Error");
-        CharSource source = instance.get(EXAMPLE_URI);
-        source.openStream();
-    }
-
-    @Test(expected = TemporaryAllow.class)
-    public void givenClientError_whenOpenStream_thenAllowAll() throws IOException {
-        when(statusInfo.getFamily()).thenReturn(Family.CLIENT_ERROR);
-        when(statusInfo.getStatusCode()).thenReturn(400);
-        when(statusInfo.getReasonPhrase()).thenReturn("Client Error");
-        CharSource source = instance.get(EXAMPLE_URI);
-        source.openStream();
-    }
-
-    @Test(expected = TemporaryDisallow.class)
-    public void givenUnauthorized_whenOpenStream_thenDisallowAll() throws IOException {
-        when(statusInfo.getFamily()).thenReturn(Family.CLIENT_ERROR);
-        when(statusInfo.getStatusCode()).thenReturn(401);
-        when(statusInfo.getReasonPhrase()).thenReturn("Unauthorized");
-        CharSource source = instance.get(EXAMPLE_URI);
-        source.openStream();
-    }
-
-    @Test(expected = TemporaryDisallow.class)
-    public void givenPaymentRequired_whenOpenStream_thenDisallowAll() throws IOException {
-        when(statusInfo.getFamily()).thenReturn(Family.CLIENT_ERROR);
-        when(statusInfo.getStatusCode()).thenReturn(402);
-        when(statusInfo.getReasonPhrase()).thenReturn("Payment Required");
-        CharSource source = instance.get(EXAMPLE_URI);
-        source.openStream();
-    }
-
-    @Test(expected = TemporaryDisallow.class)
-    public void givenForbidden_whenOpenStream_thenDisallowAll() throws IOException {
-        when(statusInfo.getFamily()).thenReturn(Family.CLIENT_ERROR);
-        when(statusInfo.getStatusCode()).thenReturn(403);
-        when(statusInfo.getReasonPhrase()).thenReturn("Forbidden");
-        CharSource source = instance.get(EXAMPLE_URI);
-        source.openStream();
-    }
-
-    @Test(expected = TemporaryAllow.class)
-    public void givenNotFound_whenOpenStream_thenAllowAll() throws IOException {
-        when(statusInfo.getFamily()).thenReturn(Family.CLIENT_ERROR);
-        when(statusInfo.getStatusCode()).thenReturn(404);
-        when(statusInfo.getReasonPhrase()).thenReturn("Not Found");
-        CharSource source = instance.get(EXAMPLE_URI);
-        source.openStream();
-    }
-
-    @Test(expected = TemporaryAllow.class)
-    public void givenOtherStatus_whenOpenStream_thenAllowAll() throws IOException {
-        when(statusInfo.getFamily()).thenReturn(Family.OTHER);
-        when(statusInfo.getStatusCode()).thenReturn(600);
-        when(statusInfo.getReasonPhrase()).thenReturn("Not Found");
-        CharSource source = instance.get(EXAMPLE_URI);
-        source.openStream();
     }
 
     @Test
