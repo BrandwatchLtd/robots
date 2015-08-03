@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.brandwatch.mixpanel</groupId>
+    <artifactId>mixpanel-client</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+    </properties>
+    <name>Mixpanel Client</name>
+    <description>A friendly wrapper around the main Mixpanel Java client with added async support for high throughput applications</description>
+    <dependencies>
+        
+        <dependency>
+            <groupId>com.mixpanel</groupId>
+            <artifactId>mixpanel-java</artifactId>
+            <version>1.4.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.12</version>
+            <type>jar</type>
+        </dependency>
+        
+        <!-- Test Dependencies -->
+        
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>1.10.19</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <version>1.3</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    
+    <scm>
+        <connection>scm:git:git@gite.brandwatch.com:lukew/async-mixpanel-client.git</connection>
+        <developerConnection>scm:git:git@gite.brandwatch.com:lukew/async-mixpanel-client.git</developerConnection>
+        <url>https://gite.brandwatch.com/lukew/async-mixpanel-client</url>
+        <tag>HEAD</tag>
+    </scm>
+    
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <url>https://nexus.brandwatch.com/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>https://nexus.brandwatch.com/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <version>3.0.1</version>
+                <inherited>true</inherited>
+                <configuration>
+                    <failOnError>true</failOnError>
+                    <xmlOutput>true</xmlOutput>
+                    <xmlOutputDirectory>${project.build.directory}/findbugs</xmlOutputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>findbugs-test-compile</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    
+</project>
