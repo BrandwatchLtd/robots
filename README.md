@@ -10,7 +10,20 @@ The official Mixpanel client falls down in a few ways. First it relies a lot on 
 Second the official client is synchronous adding delay to your code. We live in a multicore world these days so this wrapper offloads that sensing delay to another thread and deals with queueing and scheduling for you.
 
 # How?
+To add the dependency to Maven:
+
+```xml
+<dependency>
+  <groupId>com.brandwatch.mixpanel</groupId>
+  <artifactId>mixpanel-client</artifactId>
+  <version>${mixpanel.version}</version>
+</dependency>
 ```
+
+You can find the latest version number on [Nexus](https://nexus.brandwatch.com/index.html#nexus-search;quick~mixpanel-client).
+
+
+```java
 ClientConfig config = new ClientConfigBuilder()
                           .maxBatchSize(1000)
                           .maxBatchTimeInSeconds(10)
