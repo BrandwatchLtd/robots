@@ -55,9 +55,9 @@
     </dependencies>
     
     <scm>
-        <connection>scm:git:git@gite.brandwatch.com:lukew/async-mixpanel-client.git</connection>
-        <developerConnection>scm:git:git@gite.brandwatch.com:lukew/async-mixpanel-client.git</developerConnection>
-        <url>https://gite.brandwatch.com/lukew/async-mixpanel-client</url>
+        <connection>scm:git:git@gite.brandwatch.com:Brandwatch/async-mixpanel-client.git</connection>
+        <developerConnection>scm:git:git@gite.brandwatch.com:Brandwatch/async-mixpanel-client.git</developerConnection>
+        <url>https://gite.brandwatch.com/Brandwatch/async-mixpanel-client</url>
         <tag>HEAD</tag>
     </scm>
     
