@@ -1,6 +1,3 @@
-#Build Status
-[![Build Status](https://jenkins.brandwatch.com/buildStatus/icon?job=async-mixpanel-client)](https://jenkins.brandwatch.com/view/mixpanel-client/job/async-mixpanel-client/)
-
 # What Is This?
 This repo hosts a wrapper around the official Mixpanel Java client.
 
