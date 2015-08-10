@@ -54,23 +54,23 @@
         </dependency>
     </dependencies>
     
-    <scm>
-        <connection>scm:git:git@gite.brandwatch.com:Brandwatch/async-mixpanel-client.git</connection>
-        <developerConnection>scm:git:git@gite.brandwatch.com:Brandwatch/async-mixpanel-client.git</developerConnection>
-        <url>https://gite.brandwatch.com/Brandwatch/async-mixpanel-client</url>
-        <tag>HEAD</tag>
-    </scm>
-    
     <distributionManagement>
-        <repository>
-            <id>releases</id>
-            <url>https://nexus.brandwatch.com/content/repositories/releases</url>
-        </repository>
         <snapshotRepository>
-            <id>snapshots</id>
-            <url>https://nexus.brandwatch.com/content/repositories/snapshots</url>
+            <id>sonatype-nexus-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
     </distributionManagement>
+
+    <scm>
+        <url>https://github.com/BrandwatchLtd/robots</url>
+        <connection>scm:git:git@github.com:BrandwatchLtd/robots.git</connection>
+        <developerConnection>scm:git:git@github.com:BrandwatchLtd/robots.git</developerConnection>
+        <tag>master</tag>
+    </scm>
     
     <build>
         <plugins>
