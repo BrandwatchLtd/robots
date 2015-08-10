@@ -37,3 +37,6 @@ Java 8 or above
 
 # Building The Project
 `mvn clean package`
+
+# Licence
+This library is made avaliable under the LGPL 3.0 licence. Please see LICENCE.txt for more details.
