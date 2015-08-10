@@ -1,4 +1,4 @@
-# What Is This? [![Build Status](https://travis-ci.org/BrandwatchLtd/async-mixpanel-client.svg)](https://travis-ci.org/BrandwatchLtd/async-mixpanel-client)
+# What Is This? [![Build Status](https://travis-ci.org/BrandwatchLtd/async-mixpanel-client.svg)](https://travis-ci.org/BrandwatchLtd/async-mixpanel-client) [![Coverage Status](https://coveralls.io/repos/BrandwatchLtd/async-mixpanel-client/badge.svg?branch=master&service=github)](https://coveralls.io/github/BrandwatchLtd/async-mixpanel-client?branch=master)
 This repo hosts a wrapper around the official Mixpanel Java client.
 
 # Why?
