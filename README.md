@@ -33,7 +33,7 @@ client.event("my-event-key");
 ```
 
 # Requirements
-Java 6 or above
+Java 8 or above
 
 # Building The Project
 `mvn clean package`
