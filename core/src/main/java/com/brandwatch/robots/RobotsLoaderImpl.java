@@ -130,13 +130,13 @@ final class RobotsLoaderImpl implements RobotsLoader {
 
     @Nonnull
     private Robots fullAllow(@Nonnull URI robotsResource, @Nonnull String reason, @Nonnull Object... args) {
-        log.info("Allowing entire site: {}; {}", site(robotsResource), format(reason, args));
+        log.debug("Allowing entire site: {}; {}", site(robotsResource), format(reason, args));
         return factory.createAllowAllRobots();
     }
 
     @Nonnull
     private Robots fullDisallow(@Nonnull URI robotsResource, @Nonnull String reason, @Nonnull Object... args) {
-        log.info("Disallowing entire site: {}; {}", site(robotsResource), format(reason, args));
+        log.debug("Disallowing entire site: {}; {}", site(robotsResource), format(reason, args));
         return factory.createDisallowAllRobots();
     }
 
