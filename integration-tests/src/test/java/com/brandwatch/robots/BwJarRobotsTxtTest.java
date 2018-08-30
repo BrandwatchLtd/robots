@@ -131,6 +131,12 @@ public class BwJarRobotsTxtTest {
         assertTrue(isAllowed("http://www.example.com/unhipbot.html"));
     }
 
+    @Test
+    public void testMultipleAsterisk() throws Exception {
+        parse("multipleAsterisk.txt");
+        assertTrue(isAllowed("http://www.example.com/unhipbot.html"));
+    }
+
     private void parse(String robotsResourceName) throws IOException {
         final CharSource fakeSource = asCharSource(
                 getResource(getClass(), robotsResourceName),

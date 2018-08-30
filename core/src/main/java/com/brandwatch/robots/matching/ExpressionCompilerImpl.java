@@ -77,7 +77,8 @@ class ExpressionCompilerImpl implements ExpressionCompiler {
         if (expression.isEmpty()) {
             return new EverythingMatcher<String>();
         } else {
-            return new ExpressionMatcher(compileWildcardExpressionToRegex(expression), getSpecificity(expression));
+            String adjustedExpression = expression.replaceAll("[*]+", "*");
+            return new ExpressionMatcher(compileWildcardExpressionToRegex(adjustedExpression), getSpecificity(adjustedExpression));
         }
     }
 
