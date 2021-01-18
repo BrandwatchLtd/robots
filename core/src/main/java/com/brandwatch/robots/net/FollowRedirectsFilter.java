@@ -54,6 +54,8 @@ import java.util.Set;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.Sets.union;
 
+import com.brandwatch.robots.net.exception.ExcludedDomainException;
+
 public class FollowRedirectsFilter implements ClientResponseFilter {
 
     private static final String VISITED_LOCATIONS_KEY = "com.brandwatch.robots.net.FollowRedirectFilter.visited";
@@ -62,10 +64,13 @@ public class FollowRedirectsFilter implements ClientResponseFilter {
 
     @Nonnegative
     private final int maxRedirectHops;
+    @Nonnull
+    private final Set<String> excludedDomains;
 
-    public FollowRedirectsFilter(@Nonnegative int maxRedirectHops) {
+    public FollowRedirectsFilter(@Nonnegative int maxRedirectHops, @Nonnull Set<String> excludedDomains) {
         checkArgument(maxRedirectHops >= 0, "maxRedirectHops is negative");
         this.maxRedirectHops = maxRedirectHops;
+        this.excludedDomains = excludedDomains;
     }
 
     @Override
@@ -90,6 +95,11 @@ public class FollowRedirectsFilter implements ClientResponseFilter {
             return false;
         }
 
+        if (isRedirectToExcludedDomain(responseContext.getLocation().getHost())) {
+                log.debug("Redirect location present in domain exclusions: {} -> {}", requestContext.getUri(), responseContext.getLocation());
+                throw new ExcludedDomainException();
+        }
+
         return true;
     }
 
@@ -108,6 +118,14 @@ public class FollowRedirectsFilter implements ClientResponseFilter {
         }
 
         return true;
+    }
+
+    private boolean isRedirectToExcludedDomain(String host) {
+        if (host == null) {
+            return false;
+        }
+        return excludedDomains.contains(host) || excludedDomains.stream()
+            .anyMatch(excludedDomain -> host.endsWith("." + excludedDomain));
     }
 
     private void followRedirect(ClientRequestContext requestContext, ClientResponseContext responseContext, URI location) {

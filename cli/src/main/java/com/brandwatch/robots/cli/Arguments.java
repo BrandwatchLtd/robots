@@ -41,6 +41,7 @@ import com.brandwatch.robots.cli.converters.URIConverter;
 import com.brandwatch.robots.cli.validators.AbsoluteURIValidator;
 import com.brandwatch.robots.cli.validators.NonEmptyStringValidator;
 import com.google.common.base.Charsets;
+import com.google.common.collect.Sets;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -74,6 +75,13 @@ public class Arguments {
             validateWith = PositiveInteger.class
     )
     private int maxRedirectHops = 5;
+
+    @Nonnull
+    @Parameter(
+            names = {"--excludedDomains", "-x"},
+            description = "Set of domains to always consider denied. Will consider, for each domain supplied, both exact matches of and any subdomain thereof to be excluded. Values are comma separated."
+    )
+    private List<String> excludedDomains = newArrayList();
 
     @Nonnull
     @Parameter(
@@ -149,6 +157,7 @@ public class Arguments {
         config.setMaxRedirectHops(getMaxRedirectHops());
         config.setDefaultCharset(getDefaultCharset());
         config.setReadTimeoutMillis(getReadTimeoutMillis());
+        config.setExcludedDomains(Sets.newHashSet(excludedDomains));
         return config;
     }
 

@@ -429,11 +429,17 @@ public class ArgumentsTest {
         assertThat(config.getDefaultCharset(), equalTo(Charsets.UTF_16));
     }
 
-
     @Test
     public void givenReadTimeoutArgument_whenBuildRobotsConfig_thenReadTimeoutIsExpected() {
         jCommander.parse(array("--readTimeout", "123", FIRST_RESOURCE));
         RobotsConfig config = arguments.buildRobotsConfig();
         assertThat(config.getReadTimeoutMillis(), equalTo(123));
+    }
+
+    @Test
+    public void givenExcludedDomainsArgument_whenBuildRobotsConfig_thenExcludedDomainsAreExpected() {
+        jCommander.parse(array("--excludedDomains", "google.com,facebook.com,instagram.com", FIRST_RESOURCE));
+        RobotsConfig config = arguments.buildRobotsConfig();
+        assertThat(config.getExcludedDomains(), containsInAnyOrder("google.com", "facebook.com", "instagram.com"));
     }
 }

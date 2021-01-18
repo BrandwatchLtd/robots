@@ -39,16 +39,21 @@ import com.brandwatch.robots.domain.PathDirective;
 import com.brandwatch.robots.domain.Robots;
 import com.brandwatch.robots.matching.EverythingMatcher;
 import com.brandwatch.robots.matching.MatcherUtils;
+import com.brandwatch.robots.net.exception.ExcludedDomainException;
+
 import com.google.common.base.Optional;
+import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.UncheckedExecutionException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -56,14 +61,23 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyCollection;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import javax.ws.rs.ProcessingException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RobotsServiceImplTest {
 
     private static final String CRAWLER_AGENT = "magpie";
     private static final URI RESOURCE_URI = URI.create("http://example.org/absolute/URI/with/absolute/path/to/resource.txt");
+    private static final URI DOMAIN_EXCLUDED_RESOURCE_URI = URI.create("http://test.anotherexample.org/absolute/URI/with/absolute/path/to/resource.txt");
+    private static final URI ROBOTS_URI = URI.create("http://example.org/robots.txt");
+    private static final URI EXCLUDED_ROBOTS_URI = URI.create("http://anotherexample.org/robots.txt");
+    private static final URI INCLUDED_ROBOTS_URI = URI.create("http://another.example.org/robots.txt");
+    private static final URI SUBDOMAIN_EXCLUDED_ROBOTS_URI = URI.create("http://example.anotherexample.org/robots.txt");
+    private static final URI PREFIX_INCLUDED_ROBOTS_URI = URI.create("http://example-anotherexample.org/robots.txt");
     private static final PathDirective ALLOW_PATH_DIRECTIVE = new PathDirective(PathDirective.Field.allow, "", new EverythingMatcher<String>());
     private static final PathDirective DISALLOW_PATH_DIRECTIVE = new PathDirective(PathDirective.Field.disallow, "", new EverythingMatcher<String>());
     private static final Robots EMPTY_ROBOTS = new Robots.Builder().build();
@@ -71,6 +85,7 @@ public class RobotsServiceImplTest {
             .withDirective(new AgentDirective("xxx", new EverythingMatcher<String>()))
             .build();
     private static final Robots SINGLE_GROUP_ROBOTS = new Robots.Builder().withGroup(GROUP).build();
+    private static final Set<String> EXCLUDED_DOMAINS = Sets.newHashSet("anotherexample.org");
 
     @Mock
     private RobotsLoader loader;
@@ -81,11 +96,13 @@ public class RobotsServiceImplTest {
     @Mock
     private MatcherUtils matcherUtils;
 
-    @InjectMocks
     private RobotsServiceImpl instance;
 
     @Before
     public final void startUp() throws Exception {
+        instance = new RobotsServiceImpl(loader, utilities, matcherUtils, EXCLUDED_DOMAINS);
+        when(utilities.getRobotsURIForResource(eq(RESOURCE_URI))).thenReturn(ROBOTS_URI);
+        when(utilities.getRobotsURIForResource(eq(DOMAIN_EXCLUDED_RESOURCE_URI))).thenReturn(EXCLUDED_ROBOTS_URI);
         when(loader.load(any(URI.class))).thenReturn(EMPTY_ROBOTS);
     }
 
@@ -103,6 +120,40 @@ public class RobotsServiceImplTest {
     public void givenExampleUri_whenIsAllowed_thenReturnsTrue() {
         boolean result = instance.isAllowed(CRAWLER_AGENT, RESOURCE_URI);
         assertThat(result, is(true));
+    }
+
+    @Test
+    public void givenExampleUriWithExcludedDomain_whenIsAllowed_thenReturnsFalse() {
+        boolean result = instance.isAllowed(CRAWLER_AGENT, DOMAIN_EXCLUDED_RESOURCE_URI);
+        assertThat(result, is(false));
+    }
+
+    @Test
+    public void givenExampleUriWithIncludedDomain_whenIsAllowed_thenReturnsTrue() {
+        when(utilities.getRobotsURIForResource(eq(DOMAIN_EXCLUDED_RESOURCE_URI))).thenReturn(INCLUDED_ROBOTS_URI);
+        boolean result = instance.isAllowed(CRAWLER_AGENT, DOMAIN_EXCLUDED_RESOURCE_URI);
+        assertThat(result, is(true));
+    }
+
+    @Test
+    public void givenExampleUriWithExcludedSubDomain_whenIsAllowed_thenReturnsFalse() {
+        when(utilities.getRobotsURIForResource(eq(DOMAIN_EXCLUDED_RESOURCE_URI))).thenReturn(SUBDOMAIN_EXCLUDED_ROBOTS_URI);
+        boolean result = instance.isAllowed(CRAWLER_AGENT, DOMAIN_EXCLUDED_RESOURCE_URI);
+        assertThat(result, is(false));
+    }
+
+    @Test
+    public void givenExampleUriWithIncludeDomainByPrefix_whenIsAllowed_thenReturnsTrue() {
+        when(utilities.getRobotsURIForResource(eq(DOMAIN_EXCLUDED_RESOURCE_URI))).thenReturn(PREFIX_INCLUDED_ROBOTS_URI);
+        boolean result = instance.isAllowed(CRAWLER_AGENT, DOMAIN_EXCLUDED_RESOURCE_URI);
+        assertThat(result, is(true));
+    }
+
+    @Test
+    public void givenExampleUriWithExcludedDomainException_whenIsAllowed_thenReturnsFalse() throws Exception {
+        when(loader.load(eq(EXCLUDED_ROBOTS_URI))).thenThrow(new UncheckedExecutionException(new ProcessingException(new ExcludedDomainException())));
+        boolean result = instance.isAllowed(CRAWLER_AGENT, DOMAIN_EXCLUDED_RESOURCE_URI);
+        assertThat(result, is(false));
     }
 
     @Test

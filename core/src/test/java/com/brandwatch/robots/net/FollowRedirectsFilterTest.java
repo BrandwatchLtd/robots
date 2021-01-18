@@ -48,8 +48,13 @@ import javax.ws.rs.core.UriBuilder;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.util.Set;
+
+import com.google.common.collect.Sets;
+
 public class FollowRedirectsFilterTest extends JerseyTest {
 
+    private static final Set<String> EXCLUDED_DOMAINS = Sets.newHashSet("example.com");
     private static final String RESOURCE_PAYLOAD = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
 
     @Path("test")
@@ -108,7 +113,7 @@ public class FollowRedirectsFilterTest extends JerseyTest {
 
     @Override
     protected void configureClient(ClientConfig config) {
-        config.register(new FollowRedirectsFilter(2));
+        config.register(new FollowRedirectsFilter(2, EXCLUDED_DOMAINS));
         config.property(ClientProperties.FOLLOW_REDIRECTS, false);
     }
 

@@ -37,13 +37,19 @@ import com.brandwatch.robots.domain.Group;
 import com.brandwatch.robots.domain.PathDirective;
 import com.brandwatch.robots.domain.Robots;
 import com.brandwatch.robots.matching.MatcherUtils;
+import com.brandwatch.robots.net.exception.ExcludedDomainException;
+
 import com.google.common.base.Optional;
+import com.google.common.base.Throwables;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+
 import java.io.IOException;
 import java.net.URI;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -54,11 +60,13 @@ class RobotsServiceImpl implements RobotsService {
     private final RobotsLoader loader;
     private final RobotsUtilities utilities;
     private final MatcherUtils matcherUtils;
+    private final Set<String> excludedDomains;
 
-    public RobotsServiceImpl(@Nonnull RobotsLoader loader, @Nonnull RobotsUtilities utilities, MatcherUtils matcherUtils) {
+    public RobotsServiceImpl(@Nonnull RobotsLoader loader, @Nonnull RobotsUtilities utilities, MatcherUtils matcherUtils, @Nonnull Set<String> excludedDomains) {
         this.matcherUtils = matcherUtils;
         this.loader = checkNotNull(loader, "loader");
         this.utilities = checkNotNull(utilities, "utilities");
+        this.excludedDomains = excludedDomains;
     }
 
     @Override
@@ -70,10 +78,18 @@ class RobotsServiceImpl implements RobotsService {
         final URI robotsUri = utilities.getRobotsURIForResource(resourceUri);
         log.debug("Resolved robots URI to: {}", robotsUri);
 
+        if (isExcludedDomain(robotsUri.getHost())) {
+            log.debug("Domain was present in exclusion set");
+            return disallow(resourceUri);
+        }
+
         final Robots robots;
         try {
             robots = loader.load(robotsUri);
         } catch (Exception e) {
+            if (Throwables.getRootCause(e) instanceof ExcludedDomainException) {
+                return disallow(resourceUri);
+            }
             log.debug("Download failure {}", e.getMessage());
             return allow(resourceUri);
         }
@@ -123,4 +139,13 @@ class RobotsServiceImpl implements RobotsService {
     public void close() throws IOException {
         loader.close();
     }
+
+    private boolean isExcludedDomain(String host) {
+        if (host == null) {
+            return false;
+        }
+        return excludedDomains.contains(host) || excludedDomains.stream()
+            .anyMatch(excludedDomain -> host.endsWith("." + excludedDomain));
+    }
+
 }

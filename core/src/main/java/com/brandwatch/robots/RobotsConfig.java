@@ -39,6 +39,8 @@ import com.google.common.base.MoreObjects;
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import java.nio.charset.Charset;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -76,6 +78,9 @@ public class RobotsConfig {
 
     @Nonnegative
     private int maxRedirectHops = 5;
+
+    @Nonnull
+    private Set<String> excludedDomains = new HashSet<>();
 
     @Nonnull
     private Charset defaultCharset = Charsets.UTF_8;
@@ -128,6 +133,27 @@ public class RobotsConfig {
     public void setReadTimeoutMillis(@Nonnegative int readTimeoutMillis) {
         checkArgument(readTimeoutMillis >= 0, "readTimeoutMillis is negative");
         this.readTimeoutMillis = readTimeoutMillis;
+    }
+
+    /**
+     * @return the set of domains to <em>always</em> consider denied.
+     * @see #setExcludedDomains(Set)
+     */
+    @Nonnull
+    public Set<String> getExcludedDomains() {
+        return excludedDomains;
+    }
+
+    /**
+     * Allows robots resolution to be skipped for a set of domains, even after following redirects.
+     * Any matching domains will be considered disallowed.
+     * Both {@link String#equals(Object)} or {@link String#endsWith(String)} (prefixed with a '.' to match subdomains)
+     * are considered valid matches for the purposes of exclusion.
+     *
+     * @param excludedDomains Set of domains to <em>always</em> consider denied.
+     */
+    public void setExcludedDomains(@Nonnull Set<String> excludedDomains) {
+        this.excludedDomains = excludedDomains;
     }
 
     /**
@@ -276,6 +302,7 @@ public class RobotsConfig {
                 .add("userAgent", userAgent)
                 .add("requestTimeoutMillis", requestTimeoutMillis)
                 .add("readTimeoutMillis", readTimeoutMillis)
+                .add("excludedDomains", excludedDomains)
                 .toString();
     }
 }

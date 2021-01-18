@@ -188,7 +188,7 @@ public class RobotsFactory {
     @Nonnull
     public RobotsService createService() {
         RobotsServiceImpl service = new RobotsServiceImpl(
-                createLoader(), getUtilities(), getMatcherUtils());
+                createLoader(), getUtilities(), getMatcherUtils(), config.getExcludedDomains());
         return service;
     }
 
@@ -204,7 +204,7 @@ public class RobotsFactory {
     @Nonnull
     public Client createClient() {
         Client client = ClientBuilder.newClient()
-                .register(new FollowRedirectsFilter(config.getMaxRedirectHops()))
+                .register(new FollowRedirectsFilter(config.getMaxRedirectHops(), config.getExcludedDomains()))
                 .register(new HttpStatusHandler())
                 .register(new LoggingClientFilter(this.getClass(), LogLevel.TRACE));
         client.property(ClientProperties.READ_TIMEOUT, config.getReadTimeoutMillis());
