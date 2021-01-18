@@ -1,6 +1,6 @@
 # Robots
 
-[![Build Status](https://travis-ci.org/BrandwatchLtd/robots.svg?branch=master)](https://travis-ci.org/BrandwatchLtd/robots)
+![Java CI with Maven](https://github.com/BrandwatchLtd/robots/workflows/Java%20CI%20with%20Maven/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/BrandwatchLtd/robots/badge.svg)](https://coveralls.io/r/BrandwatchLtd/robots)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.brandwatch/robots-parent/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.brandwatch/robots-parent)
 
