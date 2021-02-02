@@ -158,6 +158,7 @@ public class Arguments {
         config.setDefaultCharset(getDefaultCharset());
         config.setReadTimeoutMillis(getReadTimeoutMillis());
         config.setExcludedDomains(Sets.newHashSet(excludedDomains));
+        config.setUserAgent(agent);
         return config;
     }
 
