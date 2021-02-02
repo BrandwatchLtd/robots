@@ -95,7 +95,6 @@ public class CharSourceSupplierHttpClientImpl implements CharSourceSupplier {
         Future<Response> future = client.target(resource)
                 .request()
                 .accept(MediaType.TEXT_PLAIN_TYPE.withCharset(config.getDefaultCharset().displayName()))
-                .header(HttpHeaders.USER_AGENT, config.getUserAgent())
                 .buildGet()
                 .submit();
         try {

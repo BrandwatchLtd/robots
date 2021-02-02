@@ -47,6 +47,7 @@ import com.brandwatch.robots.net.CharSourceSupplierHttpClientImpl;
 import com.brandwatch.robots.net.FollowRedirectsFilter;
 import com.brandwatch.robots.net.HttpStatusHandler;
 import com.brandwatch.robots.net.LoggingClientFilter;
+import com.brandwatch.robots.net.UserAgentBinder;
 import com.brandwatch.robots.parser.RobotsParser;
 import com.brandwatch.robots.parser.RobotsParserImpl;
 import com.brandwatch.robots.util.LogLevel;
@@ -206,6 +207,7 @@ public class RobotsFactory {
         Client client = ClientBuilder.newClient()
                 .register(new FollowRedirectsFilter(config.getMaxRedirectHops(), config.getExcludedDomains()))
                 .register(new HttpStatusHandler())
+                .register(new UserAgentBinder(config.getUserAgent()))
                 .register(new LoggingClientFilter(this.getClass(), LogLevel.TRACE));
         client.property(ClientProperties.READ_TIMEOUT, config.getReadTimeoutMillis());
         return client;
