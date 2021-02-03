@@ -210,6 +210,7 @@ public class RobotsFactory {
                 .register(new UserAgentBinder(config.getUserAgent()))
                 .register(new LoggingClientFilter(this.getClass(), LogLevel.TRACE));
         client.property(ClientProperties.READ_TIMEOUT, config.getReadTimeoutMillis());
+        client.property(ClientProperties.FOLLOW_REDIRECTS, Boolean.FALSE);
         return client;
     }
 
